@@ -2,6 +2,13 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/anastasia.gurieva", "destination": "/anastasia-gurieva" }
+    {
+      "source": "/anastasia.gurieva",
+      "destination": "/anastasia-gurieva"
+    },
+    {
+      "source": "/madam_vualya",
+      "destination": "/madam-vualya"
+    }
   ]
 }
