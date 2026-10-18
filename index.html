@@ -2,33 +2,165 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>tap-page — страница для вашего дела</title>
-<meta name="description" content="Красивая страница в шапку профиля для мастеров и малого бизнеса. Без подписки.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>tap-page — страница для вашего дела за пару минут</title>
+<meta name="description" content="Опишите своё дело, дайте ссылку на источник и референс — ИИ соберёт красивую страницу с услугами, ценами и записью.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
 <style>
+:root{--cream:#FBF7F2;--sand:#F1E6DA;--beige:#D9C2A9;--gold:#B58E68;--gold-d:#8E6A48;--ink:#2B2320;--ink2:#6E615A;--line:#E7DACB}
 *{box-sizing:border-box;margin:0}
-body{min-height:100vh;display:grid;place-items:center;padding:24px;font-family:Urbanist,system-ui,sans-serif;color:#2B2320;
-  background:radial-gradient(90% 60% at 80% 0%,#F1E3D4,transparent 60%),#FBF7F2}
-main{max-width:520px;text-align:center}
-.mark{font-size:13px;letter-spacing:.3em;color:#8E6A48;font-weight:600}
-h1{font-weight:500;font-size:clamp(34px,7vw,52px);line-height:1.08;margin:16px 0}
-p{color:#6E615A;font-size:17px;line-height:1.5}
-a.card{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:28px;padding:16px 20px;border-radius:20px;
-  background:#fff;border:1px solid #E7DACB;color:inherit;text-decoration:none;font-weight:600;text-align:left}
-a.card small{display:block;font-weight:500;color:#6E615A}
-a.card:hover{border-color:#D9C2A9}
-footer{margin-top:28px;font-size:13px;color:#6E615A}
+html{background:#FBF7F2}
+body{min-height:100vh;font-family:Urbanist,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;
+  background:radial-gradient(80% 55% at 85% 0%,#F1E3D4 0%,rgba(241,227,212,0) 60%),radial-gradient(60% 40% at 0% 100%,#F3E8DC 0%,rgba(243,232,220,0) 70%),var(--cream)}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:860px;margin:0 auto;padding:0 max(18px,env(safe-area-inset-left)) 0 max(18px,env(safe-area-inset-right))}
+header{display:flex;align-items:center;height:68px}
+.logo{font-size:13px;letter-spacing:.3em;font-weight:700;color:var(--gold-d)}
+header a.ex{margin-left:auto;font-size:14px;color:var(--ink2)}
+header a.ex:hover{color:var(--ink)}
+.hero{text-align:center;padding:56px 0 24px}
+.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.6);border-radius:999px;padding:7px 14px;font-size:13px;color:var(--ink2)}
+.pill i{width:7px;height:7px;border-radius:50%;background:#7BC67E;box-shadow:0 0 0 4px rgba(123,198,126,.18)}
+h1{font-weight:500;font-size:clamp(36px,6.4vw,60px);line-height:1.05;letter-spacing:-.02em;margin:20px auto 16px;max-width:760px;text-wrap:balance}
+h1 em{font:400 1.18em "Pinyon Script",cursive;color:var(--gold);font-style:normal;padding:0 .05em}
+.lead{color:var(--ink2);font-size:18px;max-width:560px;margin:0 auto;line-height:1.5}
+
+/* AI composer */
+.composer{margin:34px auto 0;background:#fff;border:1px solid var(--line);border-radius:28px;padding:16px;text-align:left;
+  box-shadow:0 30px 60px -36px rgba(80,55,35,.45),0 2px 0 rgba(255,255,255,.8) inset}
+.composer:focus-within{border-color:var(--beige);box-shadow:0 30px 60px -36px rgba(80,55,35,.55),0 0 0 4px rgba(217,194,169,.25)}
+.composer textarea{width:100%;border:0;outline:0;resize:none;font:500 18px/1.45 Urbanist,sans-serif;color:var(--ink);background:transparent;min-height:84px;padding:6px 8px}
+.composer textarea::placeholder{color:#A99B91}
+.links{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.field{display:flex;align-items:center;gap:10px;background:var(--cream);border:1px solid var(--line);border-radius:16px;padding:0 12px;height:52px}
+.field:focus-within{border-color:var(--beige);background:#fff}
+.field svg{flex:none;width:20px;height:20px;color:var(--gold)}
+.field div{flex:1;min-width:0}
+.field label{display:block;font-size:11.5px;font-weight:600;letter-spacing:.04em;color:var(--ink2);line-height:1}
+.field input{width:100%;border:0;outline:0;background:transparent;font:500 15px Urbanist,sans-serif;color:var(--ink);padding:4px 0 0}
+.field input::placeholder{color:#B4A79E}
+.bar{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.chips{display:flex;gap:8px;flex-wrap:wrap;flex:1}
+.chips button{border:1px solid var(--line);background:#fff;border-radius:999px;height:34px;padding:0 13px;font:500 13.5px Urbanist,sans-serif;color:var(--ink2);cursor:pointer}
+.chips button:hover{border-color:var(--beige);color:var(--ink)}
+.go{display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 22px 0 26px;border:0;border-radius:999px;cursor:pointer;
+  background:var(--ink);color:#F6EEE6;font:600 16px Urbanist,sans-serif;transition:transform .2s,background .2s}
+.go:hover{background:#41342E;transform:translateY(-1px)}
+.go svg{width:20px;height:20px}
+.hint{margin-top:12px;font-size:13px;color:var(--ink2);text-align:center}
+
+/* how + example */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:56px 0 0}
+.step{background:rgba(255,255,255,.65);border:1px solid var(--line);border-radius:22px;padding:20px}
+.step b{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--beige);font-size:14px;margin-bottom:12px}
+.step h3{font-size:17px;font-weight:600}
+.step p{font-size:14px;color:var(--ink2);margin-top:4px;line-height:1.45}
+.ex-card{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0 0;padding:18px 22px;border-radius:22px;
+  background:var(--ink);color:#F4ECE4}
+.ex-card small{display:block;color:#BFAFA2;font-size:13px;margin-bottom:2px}
+.ex-card span.t{font-weight:600;font-size:17px}
+.ex-card .arr{flex:none;width:40px;height:40px;border-radius:50%;background:var(--beige);color:var(--ink);display:grid;place-items:center;font-size:18px;transition:transform .2s}
+.ex-card:hover .arr{transform:translateX(3px)}
+footer{padding:48px 0 calc(32px + env(safe-area-inset-bottom));text-align:center;font-size:13px;color:var(--ink2)}
+
+/* modal */
+dialog{margin:auto;border:0;border-radius:28px;padding:0;max-width:420px;width:calc(100% - 32px);color:var(--ink);background:#fff;box-shadow:0 40px 80px -30px rgba(43,35,32,.55)}
+dialog::backdrop{background:rgba(43,35,32,.45);backdrop-filter:blur(4px)}
+.m{padding:30px 28px 26px;text-align:center}
+.m .ico{width:64px;height:64px;margin:0 auto 16px;border-radius:50%;display:grid;place-items:center;background:var(--sand);color:var(--gold-d)}
+.m h2{font-weight:600;font-size:24px;letter-spacing:-.01em}
+.m p{color:var(--ink2);margin-top:8px;line-height:1.5}
+.m .acts{display:flex;gap:10px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+.m .acts a,.m .acts button{height:46px;padding:0 20px;border-radius:999px;font:600 15px Urbanist,sans-serif;display:inline-flex;align-items:center;cursor:pointer}
+.m .acts a{background:var(--beige);color:var(--ink)}
+.m .acts button{background:#fff;border:1px solid var(--line);color:var(--ink)}
+dialog[open]{animation:pop .28s ease}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+
+@media (max-width:640px){
+  .hero{padding:28px 0 12px}
+  .lead{font-size:16px}
+  .composer{padding:12px;border-radius:24px}
+  .composer textarea{font-size:16px;min-height:96px}
+  .links{grid-template-columns:1fr}
+  .go{width:100%;justify-content:center}
+  .steps{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
-<main>
-  <div class="mark">TAP-PAGE</div>
-  <h1>Страница для вашего дела — в шапку профиля</h1>
-  <p>Услуги, цены, работы и запись в одном экране. Без конструктора и ежемесячной подписки.</p>
-  <a class="card" href="/anastasia.gurieva"><span>Анастасия Гурьева<small>натуральный перманент, Красноярск</small></span><span>→</span></a>
-  <footer>Хотите такую же? Напишите в Instagram @makswo</footer>
-</main>
+<div class="wrap">
+  <header>
+    <a class="logo" href="/">TAP-PAGE</a>
+    <a class="ex" href="/anastasia.gurieva">Пример страницы →</a>
+  </header>
+
+  <section class="hero">
+    <span class="pill"><i></i>ИИ собирает страницу по вашим ссылкам</span>
+    <h1>Страница для вашего дела <em>за пару минут</em></h1>
+    <p class="lead">Опишите, чем занимаетесь, дайте ссылку, откуда взять фото и цены, и сайт, который нравится по стилю. Остальное сделает ИИ.</p>
+
+    <form class="composer" id="composer" autocomplete="off">
+      <textarea id="prompt" rows="3" placeholder="Сделай мне страницу: я мастер перманента в Красноярске, нужны услуги, цены, работы и запись"></textarea>
+      <div class="links">
+        <div class="field">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>
+          <div><label for="source">Источник информации</label><input id="source" type="url" inputmode="url" placeholder="Ссылка на ваш профиль или сайт"></div>
+        </div>
+        <div class="field">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18"/><circle cx="6.5" cy="6.5" r=".5" fill="currentColor"/><path d="M8 14l3 3 5-6"/></svg>
+          <div><label for="ref">Референс дизайна</label><input id="ref" type="url" inputmode="url" placeholder="Сайт, который нравится по стилю"></div>
+        </div>
+      </div>
+      <div class="bar">
+        <div class="chips" aria-label="Примеры">
+          <button type="button" data-p="Сделай страницу для салона красоты: услуги, цены, мастера и онлайн-запись">Салон красоты</button>
+          <button type="button" data-p="Сделай страницу для кофейни: меню, фото, адрес и часы работы">Кофейня</button>
+          <button type="button" data-p="Сделай страницу для аренды техники: каталог, цены за сутки и кнопка заявки">Аренда</button>
+        </div>
+        <button class="go" type="submit">Сделать страницу
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </form>
+    <p class="hint">Без конструктора и ежемесячной подписки</p>
+  </section>
+
+  <section>
+    <div class="steps">
+      <div class="step"><b>1</b><h3>Опишите дело</h3><p>Пара предложений: кто вы, что предлагаете, что должно быть на странице.</p></div>
+      <div class="step"><b>2</b><h3>Дайте ссылки</h3><p>Откуда взять тексты, фото и цены — и какой сайт нравится по стилю.</p></div>
+      <div class="step"><b>3</b><h3>Получите страницу</h3><p>Короткий адрес tap-page.ru/вы — для визитки, мессенджеров и шапки профиля.</p></div>
+    </div>
+    <a class="ex-card" href="/anastasia.gurieva">
+      <span><small>Пример готовой страницы</small><span class="t">Анастасия Гурьева — натуральный перманент, Красноярск</span></span>
+      <span class="arr">→</span>
+    </a>
+  </section>
+
+  <footer>tap-page.ru · страницы для мастеров и малого бизнеса</footer>
+</div>
+
+<dialog id="soon" aria-labelledby="soonT">
+  <div class="m">
+    <div class="ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l2.6 8.4L23 12l-8.4 2.6L12 23l-2.6-8.4L1 12l8.4-2.6z"/></svg></div>
+    <h2 id="soonT">Скоро появится</h2>
+    <p>Мы дорабатываем автоматическую сборку страниц. Совсем скоро здесь можно будет получить свою страницу за пару минут.</p>
+    <div class="acts">
+      <a href="/anastasia.gurieva">Посмотреть пример</a>
+      <button type="button" id="close">Понятно</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+const dlg=document.getElementById('soon'), prompt=document.getElementById('prompt');
+document.getElementById('composer').addEventListener('submit',e=>{e.preventDefault(); dlg.showModal();});
+document.getElementById('close').addEventListener('click',()=>dlg.close());
+dlg.addEventListener('click',e=>{if(e.target===dlg) dlg.close();});
+document.querySelectorAll('.chips button').forEach(b=>b.addEventListener('click',()=>{prompt.value=b.dataset.p; prompt.focus();}));
+prompt.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)){e.preventDefault(); dlg.showModal();}});
+</script>
 </body>
 </html>
