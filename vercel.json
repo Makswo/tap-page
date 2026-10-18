@@ -2,6 +2,6 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/anastasia.gurieva", "destination": "/anastasia-gurieva/index.html" }
+    { "source": "/anastasia.gurieva", "destination": "/anastasia-gurieva" }
   ]
 }
