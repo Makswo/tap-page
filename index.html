@@ -56,7 +56,9 @@ h1 em{font:400 1.18em "Pinyon Script",cursive;color:var(--gold);font-style:norma
 .step b{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--beige);font-size:14px;margin-bottom:12px}
 .step h3{font-size:17px;font-weight:600}
 .step p{font-size:14px;color:var(--ink2);margin-top:4px;line-height:1.45}
-.ex-card{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0 0;padding:18px 22px;border-radius:22px;
+.examples{margin-top:44px}
+.ex-h{font-size:13px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--ink2);text-align:center;margin-bottom:14px}
+.ex-card{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0;padding:18px 22px;border-radius:22px;
   background:var(--ink);color:#F4ECE4}
 .ex-card small{display:block;color:#BFAFA2;font-size:13px;margin-bottom:2px}
 .ex-card span.t{font-weight:600;font-size:17px}
@@ -99,7 +101,6 @@ dialog[open]{animation:pop .28s ease}
   <section class="hero">
     <span class="pill"><i></i>ИИ собирает страницу по вашим ссылкам</span>
     <h1>Страница для вашего дела <em>за пару минут</em></h1>
-    <p class="lead">Опишите, чем занимаетесь, дайте ссылку, откуда взять фото и цены, и сайт, который нравится по стилю. Остальное сделает ИИ.</p>
 
     <form class="composer" id="composer" autocomplete="off">
       <textarea id="prompt" rows="3" placeholder="Сделай мне страницу: я мастер перманента в Красноярске, нужны услуги, цены, работы и запись"></textarea>
@@ -127,14 +128,10 @@ dialog[open]{animation:pop .28s ease}
     <p class="hint">Без конструктора и ежемесячной подписки</p>
   </section>
 
-  <section>
-    <div class="steps">
-      <div class="step"><b>1</b><h3>Опишите дело</h3><p>Пара предложений: кто вы, что предлагаете, что должно быть на странице.</p></div>
-      <div class="step"><b>2</b><h3>Дайте ссылки</h3><p>Откуда взять тексты, фото и цены — и какой сайт нравится по стилю.</p></div>
-      <div class="step"><b>3</b><h3>Получите страницу</h3><p>Короткий адрес tap-page.ru/вы — для визитки, мессенджеров и шапки профиля.</p></div>
-    </div>
+  <section class="examples">
+    <h2 class="ex-h">Примеры работ</h2>
     <a class="ex-card" href="/anastasia.gurieva">
-      <span><small>Пример готовой страницы</small><span class="t">Анастасия Гурьева — натуральный перманент, Красноярск</span></span>
+      <span><small>Перманентный макияж · Красноярск</small><span class="t">Анастасия Гурьева</span></span>
       <span class="arr">→</span>
     </a>
   </section>
