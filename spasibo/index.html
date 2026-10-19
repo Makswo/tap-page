@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Вы в листе ожидания — tap-page</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<style>
+:root{--cream:#FBF7F2;--sand:#F1E6DA;--beige:#D9C2A9;--gold:#B58E68;--gold-d:#8E6A48;--ink:#2B2320;--ink2:#6E615A;--line:#E7DACB}
+*{box-sizing:border-box;margin:0}
+html{background:var(--cream)}
+body{min-height:100vh;min-height:100dvh;display:grid;grid-template-rows:auto 1fr auto;font-family:Urbanist,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;
+  background:radial-gradient(80% 45% at 85% 0%,#F1E3D4 0%,rgba(241,227,212,0) 60%),var(--cream);
+  padding:0 max(18px,env(safe-area-inset-right)) 0 max(18px,env(safe-area-inset-left))}
+a{color:inherit;text-decoration:none}
+header{display:flex;align-items:center;height:68px;max-width:1160px;width:100%;margin:0 auto}
+.logo{font-size:13px;letter-spacing:.3em;font-weight:700;color:var(--gold-d)}
+main{display:grid;place-items:center;padding:24px 0}
+.card{max-width:460px;width:100%;background:#fff;border:1px solid var(--line);border-radius:28px;padding:36px 28px 28px;text-align:center;box-shadow:0 30px 60px -40px rgba(80,55,35,.45)}
+.ok{width:72px;height:72px;margin:0 auto 18px;border-radius:50%;display:grid;place-items:center;background:var(--sand);color:var(--gold-d)}
+.ok svg{animation:pop .5s ease both}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+h1{font-weight:600;font-size:30px;line-height:1.1;letter-spacing:-.01em;text-wrap:balance}
+h1 em{font:400 1.2em "Pinyon Script",Georgia,"Times New Roman",serif;color:var(--gold);font-style:normal}
+p{color:var(--ink2);margin-top:10px;line-height:1.5;font-size:16px}
+.acts{display:grid;gap:10px;margin-top:24px}
+.acts a{display:flex;align-items:center;justify-content:center;height:52px;border-radius:999px;font-weight:600;font-size:16px}
+.acts .p{background:var(--ink);color:#F6EEE6}
+.acts .s{background:var(--sand)}
+footer{text-align:center;font-size:13px;color:var(--ink2);padding:24px 0 calc(24px + env(safe-area-inset-bottom))}
+</style>
+</head>
+<body>
+<header><a class="logo" href="/">TAP-PAGE</a></header>
+<main>
+  <div class="card">
+    <div class="ok"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <h1>Вы в листе <em>ожидания</em></h1>
+    <p>Спасибо! Публиковать страницы начнём совсем скоро. Сохраните tap-page.ru в закладки — здесь всё и появится.</p>
+    <div class="acts">
+      <a class="p" href="/">Вернуться к конструктору</a>
+      <a class="s" href="/madam_vualya">Посмотреть пример страницы</a>
+    </div>
+  </div>
+</main>
+<footer>tap-page.ru · страницы для мастеров и малого бизнеса</footer>
+<script>try{localStorage.setItem('tp_wait','1')}catch(e){}</script>
+</body>
+</html>

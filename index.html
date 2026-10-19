@@ -162,9 +162,12 @@ dialog::backdrop{background:rgba(43,35,32,.45);backdrop-filter:blur(4px)}
 .m .ico{width:64px;height:64px;margin:0 auto 16px;border-radius:50%;display:grid;place-items:center;background:var(--sand);color:var(--gold-d)}
 .m h2{font-weight:600;font-size:24px}
 .m p{color:var(--ink2);margin-top:8px;line-height:1.5}
-.m .acts{display:flex;gap:10px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+.join{display:flex;align-items:center;justify-content:center;height:54px;margin-top:22px;border-radius:999px;background:var(--ink);color:#F6EEE6;font-weight:600;font-size:16.5px;transition:background .2s}
+.join:hover{background:#41342E}
+.join[hidden]{display:none}
+.m .acts{display:flex;gap:10px;justify-content:center;margin-top:10px;flex-wrap:wrap}
 .m .acts a,.m .acts button{height:46px;padding:0 20px;border-radius:999px;font-weight:600;font-size:15px;display:inline-flex;align-items:center;cursor:pointer}
-.m .acts a{background:var(--beige);color:var(--ink)}
+.m .acts a{background:var(--sand);color:var(--ink)}
 .m .acts button{background:#fff;border:1px solid var(--line)}
 dialog[open]{animation:pop .28s ease}
 @keyframes pop{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
@@ -186,6 +189,8 @@ dialog[open]{animation:pop .28s ease}
   .exs{grid-template-columns:1fr}
 }
 </style>
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -273,9 +278,10 @@ dialog[open]{animation:pop .28s ease}
 <dialog id="soon" aria-labelledby="soonT">
   <div class="m">
     <div class="ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l2.6 8.4L23 12l-8.4 2.6L12 23l-2.6-8.4L1 12l8.4-2.6z"/></svg></div>
-    <h2 id="soonT">Скоро появится</h2>
-    <p>Предпросмотр уже работает, а публикацию страниц мы запускаем совсем скоро. Тогда здесь можно будет получить свою страницу за пару минут.</p>
-    <div class="acts"><a href="/madam_vualya">Посмотреть пример</a><button type="button" id="close">Понятно</button></div>
+    <h2 id="soonT">Публикация скоро</h2>
+    <p id="soonP">Предпросмотр уже работает, а публиковать страницы мы начнём совсем скоро. Встаньте в лист ожидания — одной кнопкой, без регистрации.</p>
+    <a class="join" id="join" href="/spasibo">Встать в лист ожидания</a>
+    <div class="acts"><a href="/madam_vualya">Посмотреть пример</a><button type="button" id="close">Позже</button></div>
   </div>
 </dialog>
 
@@ -403,6 +409,9 @@ $('slug').addEventListener('input',e=>{const v=e.target.value.toLowerCase().repl
 
 // submit
 const dlg=$('soon');
+let joined=false;try{joined=localStorage.getItem('tp_wait')==='1'}catch(e){}
+if(joined){$('soonT').textContent='Вы уже в листе ожидания';$('soonP').textContent='Спасибо! Публиковать страницы начнём совсем скоро — загляните на tap-page.ru через пару недель.';$('join').hidden=true;$('close').textContent='Понятно'}
+$('join').addEventListener('click',()=>{try{localStorage.setItem('tp_wait','1')}catch(e){}try{window.va&&window.va('event',{name:'waitlist'})}catch(e){}});
 $('form').addEventListener('submit',e=>{e.preventDefault();dlg.showModal()});
 $('close').onclick=()=>dlg.close(); dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
 
