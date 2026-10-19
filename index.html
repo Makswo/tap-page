@@ -65,10 +65,22 @@ h1 em{font:400 1.18em "Pinyon Script",Georgia,"Times New Roman",serif;color:var(
 .lg.has .t{opacity:0}
 .hf{display:grid;gap:8px;padding-left:104px;margin-top:10px}
 /* buttons editor */
-.btns{border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.btns{border:1px solid var(--line);border-radius:16px}
+.btns .br:first-child{border-radius:15px 15px 0 0}
+.btns .add{border-radius:0 0 15px 15px}
 .br{display:grid;grid-template-columns:46px minmax(0,1fr) minmax(0,1.25fr) 32px 32px;gap:4px;align-items:center;padding:5px 6px;border-top:1px solid #F0E7DD;background:#fff}
 .br:first-child{border-top:0}
-.br select{height:38px;border:0;border-radius:10px;background:var(--cream);padding:0 2px;font-size:16px;text-align:center;cursor:pointer}
+.icw{position:relative}
+.icb{width:40px;height:38px;border:0;border-radius:11px;background:#F4EDE8;color:var(--gold-d);display:grid;place-items:center;cursor:pointer;transition:background .15s}
+.icb:hover{background:var(--sand)}
+.icb svg{width:20px;height:20px}
+.ipop{position:absolute;z-index:20;top:44px;left:0;width:300px;max-width:calc(100vw - 48px);display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:8px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 24px 50px -24px rgba(62,46,38,.45)}
+.ipop[hidden]{display:none}
+.ipop button{display:grid;justify-items:center;gap:3px;padding:8px 2px 6px;border:0;border-radius:11px;background:transparent;color:var(--gold-d);cursor:pointer;font-size:10.5px}
+.ipop button span{color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.ipop button svg{width:20px;height:20px}
+.ipop button:hover{background:var(--cream)}
+.ipop button.on{background:#F4EDE8}
 .br input{height:38px;border:0;border-radius:10px;background:transparent;padding:0 8px;font-size:14.5px;outline:0;min-width:0}
 .br input:focus{background:var(--cream)}
 .br .lb{font-weight:600}
@@ -104,7 +116,9 @@ h1 em{font:400 1.18em "Pinyon Script",Georgia,"Times New Roman",serif;color:var(
 .p-tag{font-size:13px;color:#7A6A61;margin-top:4px}
 .p-links{display:grid;gap:8px;margin-top:12px}
 .p-b{display:flex;align-items:center;gap:10px;min-height:50px;padding:7px 12px 7px 8px;border-radius:15px;background:#fff;border:1px solid #EADFD8;font-weight:500;font-size:13.5px;text-align:left}
-.p-b i{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#F4EDE8;font-style:normal;font-size:16px}
+.p-b i{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#F4EDE8;color:#8C6B57}
+.p-b i svg{width:18px;height:18px}
+.p-b.main i{color:#fff}
 .p-b span{flex:1;line-height:1.2;word-break:break-word}
 .p-b small{display:block;font-weight:400;font-size:11px;color:#7A6A61}
 .p-b.main{background:var(--accent);border-color:var(--accent);color:#fff}
@@ -152,7 +166,7 @@ dialog[open]{animation:pop .28s ease}
   .lbl2 small{display:none}
   .ask textarea{min-height:104px}
   .br{grid-template-columns:46px minmax(0,1fr) 30px 30px;grid-template-areas:"ic lb mn rm" "ic ur ur ur";row-gap:0}
-  .br select{grid-area:ic}.br .lb{grid-area:lb}.br .ur{grid-area:ur}.br .mn{grid-area:mn}.br .rm{grid-area:rm}
+  .br .icw{grid-area:ic}.br .lb{grid-area:lb}.br .ur{grid-area:ur}.br .mn{grid-area:mn}.br .rm{grid-area:rm}
   .exs{grid-template-columns:1fr}
 }
 </style>
@@ -245,7 +259,31 @@ dialog[open]{animation:pop .28s ease}
 </dialog>
 
 <script>
-const ICONS={'📅':'Запись','📖':'Каталог','📞':'Телефон','💬':'WhatsApp','✈️':'Telegram','📍':'Карта','🏷️':'Цены','⭐':'Отзывы','🛍️':'Магазин','☕':'Меню','✂️':'Услуги','📷':'Портфолио','🎓':'Обучение','🍂':'Акция','🌐':'Сайт','🎁':'Подарок','🏋️':'Тренировки','🧁':'Торты','🔧':'Ремонт','🚚':'Доставка'};
+const ICONS={
+ '📅':['Запись','<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>'],
+ '👗':['Платья','<path d="M12 3c-1.7 0-2.6 1.2-2.6 2.6h5.2C14.6 4.2 13.7 3 12 3zM9.4 5.6L6 21h12L14.6 5.6"/>'],
+ '📖':['Каталог','<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5M9 8h7"/>'],
+ '📞':['Телефон','<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>'],
+ '💬':['Написать','<path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.2A8 8 0 1 1 20 12z"/>'],
+ '✈️':['Telegram','<path d="M21 4L3 11l6.5 2.2L12 20l3.2-4.3L19 19z"/><path d="M9.5 13.2L21 4"/>'],
+ '📍':['Карта','<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>'],
+ '🏷️':['Цены','<path d="M3 4h8l10 10-7 7L4 11z"/><circle cx="8" cy="8.5" r="1.5"/>'],
+ '⭐':['Отзывы','<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>'],
+ '🛍️':['Магазин','<path d="M5 8h14l-1 13H6z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/>'],
+ '☕':['Меню','<path d="M4 9h13v4a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6z"/><path d="M17 10.5h1.5a2.5 2.5 0 0 1 0 5H16.5M8 3v3M12 3v3"/>'],
+ '✂️':['Услуги','<circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="M8.5 8.8L20 19M8.5 15.2L20 5"/>'],
+ '📷':['Портфолио','<path d="M3 8.5A2.5 2.5 0 0 1 5.5 6H7l1.5-2h7L17 6h1.5A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="3.5"/>'],
+ '🎓':['Обучение','<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v4.5c0 1.6 2.7 3.5 6 3.5s6-1.9 6-3.5V11M22 9v5"/>'],
+ '🍂':['Акция','<path d="M5 19C5 10 10 5 20 4c0 10-5 15-14 15z"/><path d="M5 19l8.5-8.5"/>'],
+ '🌐':['Сайт','<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/>'],
+ '🎁':['Подарок','<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v9h14v-9M12 8v13M12 8c-2-4-5.5-3.5-4.5-1 .4 1 2.5 1 4.5 1zM12 8c2-4 5.5-3.5 4.5-1-.4 1-2.5 1-4.5 1z"/>'],
+ '🏋️':['Тренировки','<path d="M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12"/>'],
+ '🧁':['Торты','<path d="M4 21h16M5 21v-7h14v7M5 17.5c2.3 1.3 4.7 1.3 7 0s4.7-1.3 7 0M12 14v-3M12 8.5c-1.2-1-1.2-2.3 0-3.5 1.2 1.2 1.2 2.5 0 3.5"/>'],
+ '🔧':['Ремонт','<path d="M15 3.5a5 5 0 0 0-4.6 6.9l-6.7 6.7a1.9 1.9 0 0 0 2.7 2.7l6.7-6.7A5 5 0 0 0 20.5 9l-3 .9L15 7.4l.9-3z"/>'],
+ '🚚':['Доставка','<path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>'],
+ '🔗':['Ссылка','<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>']
+};
+const svg=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${(ICONS[k]||ICONS['🔗'])[1]}</svg>`;
 const COLORS=['#A8846F','#2B2320','#B5452B','#C8642B','#6B7F5E','#3E6A8A','#8A5A83','#D19A3A'];
 const TPL={
  'Салон красоты':{desc:'Сделай страницу для салона красоты: услуги, цены, мастера и онлайн-запись',sub:'Салон красоты · Ваш город',tag:'Красота без лишних слов',b:[['📅','Записаться онлайн','Выберите время и мастера'],['🏷️','Услуги и цены',''],['💬','Написать в WhatsApp',''],['📞','Позвонить нам','']]},
@@ -258,7 +296,7 @@ const TPL={
  'Кондитер':{desc:'Сделай страницу для кондитера: торты на заказ, начинки, цены и заказ',sub:'Торты на заказ · Ваш город',tag:'Торт, который запомнят',b:[['🧁','Каталог тортов',''],['🏷️','Начинки и цены','за 1 кг'],['💬','Заказать торт',''],['🚚','Доставка','']]},
  'Ремонт телефонов':{desc:'Сделай страницу для мастерской по ремонту телефонов: услуги, цены, сроки и запись',sub:'Ремонт телефонов · Ваш город',tag:'Чиним быстро и с гарантией',b:[['🔧','Узнать стоимость ремонта',''],['🏷️','Цены на услуги',''],['📞','Позвонить',''],['📍','Как нас найти','']]},
  'Репетитор':{desc:'Сделай страницу для репетитора: предметы, формат занятий, отзывы и запись',sub:'Репетитор · онлайн',tag:'Объясняю так, что становится понятно',b:[['🎓','Записаться на пробное занятие',''],['🏷️','Формат и цены',''],['⭐','Отзывы учеников',''],['✈️','Написать в Telegram','']]},
- 'Свадебный салон':{desc:'Сделай страницу для свадебного салона: каталог платьев, акции и запись на примерку',sub:'Свадебный салон · Ваш город',tag:'Здесь живёт платье твоей мечты',b:[['📅','Записаться на примерку','Выберите удобные дату и время'],['📖','Каталог платьев',''],['🍂','Распродажа',''],['📞','Позвонить нам','']]},
+ 'Свадебный салон':{desc:'Сделай страницу для свадебного салона: каталог платьев, акции и запись на примерку',sub:'Свадебный салон · Ваш город',tag:'Здесь живёт платье твоей мечты',b:[['📅','Записаться на примерку','Выберите удобные дату и время'],['👗','Каталог платьев',''],['🍂','Распродажа',''],['📞','Позвонить нам','']]},
  'Психолог':{desc:'Сделай страницу для психолога: с чем работаю, формат, стоимость и запись',sub:'Психолог · онлайн и очно',tag:'Бережно и по делу',b:[['📅','Записаться на консультацию',''],['🏷️','С чем работаю и стоимость',''],['🎓','Образование',''],['✈️','Написать в Telegram','']]}
 };
 const $=id=>document.getElementById(id);
@@ -284,15 +322,21 @@ upl($('cover'),$('coverUp'),'cover'); upl($('logo'),$('logoUp'),'logo');
 // buttons editor
 function renderBtns(){const w=$('btns');w.innerHTML='';
   state.btns.forEach((b,i)=>{const row=document.createElement('div');row.className='br';
-    const sel=document.createElement('select');sel.title='Иконка';Object.entries(ICONS).forEach(([e,n])=>{const o=document.createElement('option');o.value=e;o.textContent=e;o.title=n;if(e===b.icon)o.selected=true;sel.appendChild(o)});
-    sel.onchange=()=>{b.icon=sel.value;render()};
+    const sel=document.createElement('div');sel.className='icw';
+    const ib=document.createElement('button');ib.type='button';ib.className='icb';ib.title='Сменить иконку';ib.innerHTML=svg(b.icon);
+    const pop=document.createElement('div');pop.className='ipop';pop.hidden=true;
+    Object.entries(ICONS).forEach(([k,[n]])=>{const o=document.createElement('button');o.type='button';o.title=n;o.innerHTML=svg(k)+`<span>${n}</span>`;if(k===b.icon)o.className='on';
+      o.onclick=()=>{b.icon=k;ib.innerHTML=svg(k);pop.hidden=true;pop.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===o));render()};pop.appendChild(o)});
+    ib.onclick=e=>{e.stopPropagation();const was=pop.hidden;document.querySelectorAll('.ipop').forEach(x=>x.hidden=true);pop.hidden=!was};
+    sel.append(ib,pop);
     const lb=document.createElement('input');lb.className='lb';lb.placeholder='Текст кнопки';lb.value=b.label;lb.oninput=()=>{b.label=lb.value;render()};
     const ur=document.createElement('input');ur.className='ur';ur.placeholder='Ссылка или телефон';ur.value=b.url;ur.oninput=()=>{b.url=ur.value};
     const mn=document.createElement('button');mn.type='button';mn.className='ic mn'+(i===0?' on':'');mn.title='Сделать главной';mn.textContent='★';
     mn.onclick=()=>{state.btns.splice(i,1);state.btns.unshift(b);renderBtns();render()};
     const rm=document.createElement('button');rm.type='button';rm.className='ic rm';rm.title='Удалить';rm.textContent='✕';rm.onclick=()=>{state.btns.splice(i,1);renderBtns();render()};
     row.append(sel,lb,ur,mn,rm);w.appendChild(row)});}
-$('addBtn').onclick=()=>{state.btns.push({icon:'🌐',label:'',sub:'',url:''});renderBtns();render();$('btns').lastChild.querySelector('.lb').focus()};
+document.addEventListener('click',e=>{if(!e.target.closest('.icw'))document.querySelectorAll('.ipop').forEach(x=>x.hidden=true)});
+$('addBtn').onclick=()=>{state.btns.push({icon:'🔗',label:'',sub:'',url:''});renderBtns();render();$('btns').lastChild.querySelector('.lb').focus()};
 
 // live preview
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -306,9 +350,9 @@ function render(){
   $('pSub').textContent=[state.kind,city||(state.kind?'Ваш город':'')].filter(Boolean).join(' · ');
   $('pName').textContent=name; $('pTag').textContent=$('tag').value||($('tag').placeholder!=='Слоган'?$('tag').placeholder:'Коротко о том, что вы делаете');
   const L=$('pLinks'); L.innerHTML=state.btns.length?'':'<div class="empty">Добавьте кнопки или выберите шаблон</div>';
-  state.btns.forEach((b,i)=>{L.insertAdjacentHTML('beforeend',`<div class="p-b${i===0?' main':''}"><i>${b.icon}</i><span>${esc(b.label||'Кнопка')}${b.sub?`<small>${esc(b.sub)}</small>`:''}</span>›</div>`)});
+  state.btns.forEach((b,i)=>{L.insertAdjacentHTML('beforeend',`<div class="p-b${i===0?' main':''}"><i>${svg(b.icon)}</i><span>${esc(b.label||'Кнопка')}${b.sub?`<small>${esc(b.sub)}</small>`:''}</span>›</div>`)});
   const a=a0;
-  $('pAddr').innerHTML=a?`<div class="p-h">Как нас найти</div><div class="p-b"><i>📍</i><span>${esc(a)}<small>Открыть на карте</small></span>›</div>`:'';
+  $('pAddr').innerHTML=a?`<div class="p-h">Как нас найти</div><div class="p-b"><i>${svg('📍')}</i><span>${esc(a)}<small>Открыть на карте</small></span>›</div>`:'';
   $('pFoot').textContent='tap-page.ru/'+($('slug').value||'ваше-имя');
 }
 ['name','tag','addr','slug'].forEach(id=>$(id).addEventListener('input',render));
