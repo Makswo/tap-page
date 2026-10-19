@@ -34,7 +34,17 @@ h1 em{font:400 1.18em "Pinyon Script",Georgia,"Times New Roman",serif;color:var(
 /* ask box */
 .ask{border:1px solid var(--line);border-radius:20px;background:var(--cream);padding:4px 4px 10px;transition:.15s}
 .ask:focus-within{border-color:var(--beige);background:#fff;box-shadow:0 0 0 4px rgba(217,194,169,.22)}
-.ask textarea{display:block;width:100%;border:0;outline:0;background:transparent;resize:none;min-height:76px;padding:12px 12px 6px;font-size:16.5px;line-height:1.45}
+.tw{position:relative}
+.ask textarea{display:block;width:100%;border:0;outline:0;background:transparent;resize:none;min-height:76px;padding:12px 58px 6px 12px;font-size:16.5px;line-height:1.45}
+.send{position:absolute;right:6px;bottom:4px;width:42px;height:42px;border-radius:50%;border:0;background:var(--ink);color:#F6EEE6;display:grid;place-items:center;cursor:pointer;transition:transform .15s,background .15s,opacity .15s}
+.send:hover{background:#41342E;transform:translateY(-1px)}
+.send:disabled{opacity:.25;cursor:default;transform:none}
+.send.busy svg{animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.status{display:flex;gap:10px;align-items:center;margin-top:-6px;padding:10px 14px;border-radius:14px;background:#F1F6EE;color:#3F5A37;font-size:14px;line-height:1.35}
+.status.warn{background:#FBF1E6;color:#7A4E26}
+.status b{font-weight:700}
+.status[hidden]{display:none}
 .chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 8px}
 .chips button{border:1px solid var(--line);background:#fff;border-radius:999px;height:30px;padding:0 11px;font-size:13px;color:var(--ink2);cursor:pointer;transition:.15s}
 .chips button:hover{border-color:var(--beige);color:var(--ink)}
@@ -87,9 +97,15 @@ h1 em{font:400 1.18em "Pinyon Script",Georgia,"Times New Roman",serif;color:var(
 .br .ic{height:30px;width:30px;border-radius:9px;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;color:#B9AA9E;font-size:13px}
 .br .ic:hover{background:var(--cream);color:var(--ink)}
 .br .ic.on{color:var(--accent)}
+.br.main{background:color-mix(in srgb,var(--accent) 9%,#fff);box-shadow:inset 3px 0 0 var(--accent)}
+.br.main .icb{background:var(--accent);color:#fff}
+.br.main .lb::placeholder{color:var(--ink2)}
+.p-b{transition:box-shadow .3s,transform .3s}
+.p-b.flash{box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 35%,transparent);transform:scale(1.02)}
 .add{display:block;width:100%;height:42px;border:0;border-top:1px solid #F0E7DD;background:var(--cream);color:var(--gold-d);font-weight:600;cursor:pointer}
-.colors{display:flex;gap:6px;align-items:center;margin-left:auto}
-.colors button{width:20px;height:20px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
+.crow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px;font-size:13.5px;font-weight:600;color:var(--ink2)}
+.colors{display:flex;gap:7px;align-items:center}
+.colors button{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
 .colors button.on{box-shadow:0 0 0 2px var(--ink)}
 .go{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:56px;border:0;border-radius:999px;cursor:pointer;
   background:var(--ink);color:#F6EEE6;font-weight:600;font-size:16.5px;transition:background .2s,transform .2s}
@@ -186,9 +202,13 @@ dialog[open]{animation:pop .28s ease}
   <div class="builder">
     <form class="form" id="form" autocomplete="off">
       <div class="ask">
-        <textarea id="desc" rows="3" placeholder="Опишите дело: я мастер перманента в Красноярске, нужны услуги, цены, работы и запись"></textarea>
+        <div class="tw">
+          <textarea id="desc" rows="3" placeholder="Опишите дело: я мастер перманента в Красноярске, нужны услуги, цены, работы и запись"></textarea>
+          <button type="button" class="send" id="send" aria-label="Собрать страницу по описанию" title="Собрать (Enter)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+        </div>
         <div class="chips" id="tpls"></div>
       </div>
+      <div class="status" id="status" hidden></div>
 
       <div>
         <div class="lbl2">Шапка</div>
@@ -203,8 +223,9 @@ dialog[open]{animation:pop .28s ease}
       </div>
 
       <div>
-        <div class="lbl2">Кнопки <small>первая — главная</small><div class="colors" id="colors" title="Цвет главной кнопки"></div></div>
+        <div class="lbl2">Кнопки <small>★ — главная, она выделена цветом</small></div>
         <div class="btns"><div id="btns"></div><button type="button" class="add" id="addBtn">+ Добавить кнопку</button></div>
+        <div class="crow"><span>Цвет главной кнопки</span><div class="colors" id="colors"></div></div>
       </div>
 
       <div class="grid2">
@@ -306,13 +327,35 @@ const state={color:COLORS[0],cover:'',logo:'',btns:[],kind:''};
 Object.keys(TPL).forEach((k,i)=>{const b=document.createElement('button');b.type='button';b.textContent=k;if(i>=6)b.className='x';b.onclick=()=>applyTpl(k,b);$('tpls').appendChild(b)});
 {const m=document.createElement('button');m.type='button';m.className='more';m.textContent='Ещё шаблоны';
  m.onclick=()=>{const c=$('tpls');c.classList.toggle('all');m.textContent=c.classList.contains('all')?'Свернуть':'Ещё шаблоны';c.appendChild(m)};$('tpls').appendChild(m)}
-function applyTpl(k,el){const t=TPL[k];document.querySelectorAll('#tpls button').forEach(x=>x.classList.toggle('on',x===el));
-  $('desc').value=t.desc; state.kind=t.sub.split('·')[0].trim(); $('tag').placeholder=t.tag; $('name').placeholder=k;
+function applyTpl(k,el,keep){const t=TPL[k];el=el||[...document.querySelectorAll('#tpls button')].find(x=>x.textContent===k);
+  if(el&&el.classList.contains('x')&&!$('tpls').classList.contains('all'))$('tpls').querySelector('.more').click();
+  document.querySelectorAll('#tpls button').forEach(x=>x.classList.toggle('on',x===el));
+  if(!keep)$('desc').value=t.desc; $('status').hidden=true; upd(); state.kind=t.sub.split('·')[0].trim(); $('tag').placeholder=t.tag; $('name').placeholder=k;
   state.btns=t.b.map(([icon,label,sub])=>({icon,label,sub,url:''})); renderBtns(); render();}
+
+// apply description: pick closest template by keywords
+const KW={'Свадебный салон':['свадеб','плать','невест'],'Мастер маникюра':['маникюр','ногт','педикюр','гель-лак'],'Барбершоп':['барбер','стрижк','парикмах','бород'],
+ 'Салон красоты':['салон красот','косметолог','бров','ресниц','перманент','визаж','макияж','эпиляц','массаж','спа'],
+ 'Кофейня':['кофе','кафе','пекарн','круассан','ресторан','выпечк','бар ','завтрак'],'Аренда':['аренд','прокат','сдаю','сдаём'],
+ 'Фотограф':['фотограф','фотосесс','съёмк','съемк'],'Фитнес-тренер':['тренер','фитнес','трениров','йог','пилатес'],
+ 'Кондитер':['торт','кондитер','десерт','капкейк','пряник'],'Ремонт телефонов':['ремонт','телефон','смартфон','айфон','iphone'],
+ 'Репетитор':['репетитор','урок','англий','математ','егэ','огэ','школьн'],'Психолог':['психолог','психотерап','терапевт']};
+const upd=()=>{$('send').disabled=!$('desc').value.trim()};
+function flashMain(){const m=document.querySelector('#pLinks .p-b.main');if(!m)return;m.classList.add('flash');setTimeout(()=>m.classList.remove('flash'),450)}
+function applyDesc(){const t=$('desc').value.toLowerCase().trim();if(!t)return;const btn=$('send');btn.classList.add('busy');btn.disabled=true;
+  setTimeout(()=>{btn.classList.remove('busy');upd();let best=null,sc=0;
+    for(const[k,ws]of Object.entries(KW)){const n=ws.filter(w=>t.includes(w)).length;if(n>sc){sc=n;best=k}}
+    const st=$('status');
+    if(best){applyTpl(best,null,true);st.className='status';st.innerHTML=`<span>✓</span><span>Собрал черновик: <b>${best}</b>. Загрузите фото, проверьте название и вставьте ссылки в кнопки ниже.</span>`}
+    else{st.className='status warn';st.innerHTML='<span>!</span><span>Не понял, какое у вас дело. Выберите похожий шаблон выше или заполните поля ниже.</span>'}
+    st.hidden=false;if(innerWidth<980)document.querySelector('.head').scrollIntoView({behavior:'smooth',block:'center'});},450)}
+$('send').onclick=applyDesc;
+$('desc').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();applyDesc()}});
+$('desc').addEventListener('input',upd);
 
 // colors
 COLORS.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.style.background=c;b.title=c;if(!i)b.classList.add('on');
-  b.onclick=()=>{state.color=c;document.querySelectorAll('#colors button').forEach(x=>x.classList.toggle('on',x===b));render()};$('colors').appendChild(b)});
+  b.onclick=()=>{state.color=c;document.querySelectorAll('#colors button').forEach(x=>x.classList.toggle('on',x===b));render();flashMain()};$('colors').appendChild(b)});
 
 // uploads (preview only, stays in the browser)
 function upl(inp,box,key){inp.addEventListener('change',()=>{const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{state[key]=r.result;
@@ -321,7 +364,7 @@ upl($('cover'),$('coverUp'),'cover'); upl($('logo'),$('logoUp'),'logo');
 
 // buttons editor
 function renderBtns(){const w=$('btns');w.innerHTML='';
-  state.btns.forEach((b,i)=>{const row=document.createElement('div');row.className='br';
+  state.btns.forEach((b,i)=>{const row=document.createElement('div');row.className='br'+(i===0?' main':'');
     const sel=document.createElement('div');sel.className='icw';
     const ib=document.createElement('button');ib.type='button';ib.className='icb';ib.title='Сменить иконку';ib.innerHTML=svg(b.icon);
     const pop=document.createElement('div');pop.className='ipop';pop.hidden=true;
@@ -364,7 +407,7 @@ $('form').addEventListener('submit',e=>{e.preventDefault();dlg.showModal()});
 $('close').onclick=()=>dlg.close(); dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
 
 applyTpl('Свадебный салон',[...document.querySelectorAll('#tpls button')].find(b=>b.textContent==='Свадебный салон'));
-$('desc').value=''; state.kind=''; state.btns=[['📅','Записаться',''],['🏷️','Услуги и цены',''],['💬','Написать',''],['📞','Позвонить','']].map(([icon,label,sub])=>({icon,label,sub,url:''})); renderBtns(); $('name').placeholder='Название'; $('tag').placeholder='Слоган'; document.querySelectorAll('#tpls button').forEach(x=>x.classList.remove('on')); render();
+$('desc').value=''; state.kind=''; state.btns=[['📅','Записаться',''],['🏷️','Услуги и цены',''],['💬','Написать',''],['📞','Позвонить','']].map(([icon,label,sub])=>({icon,label,sub,url:''})); renderBtns(); $('name').placeholder='Название'; $('tag').placeholder='Слоган'; document.querySelectorAll('#tpls button').forEach(x=>x.classList.remove('on')); render(); upd();
 </script>
 </body>
 </html>
