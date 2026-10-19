@@ -156,7 +156,7 @@ dialog[open]{animation:pop .28s ease}
   </header>
 
   <section class="hero">
-    <span class="pill"><i></i>ИИ собирает страницу по вашим ссылкам</span>
+    <span class="pill"><i></i>ИИ собирает страницу по вашему описанию</span>
     <h1>Страница для вашего дела <em>за пару минут</em></h1>
   </section>
 
@@ -169,17 +169,7 @@ dialog[open]{animation:pop .28s ease}
       </div>
 
       <div class="step">
-        <div class="st"><b>2</b>Ссылки для ИИ<small>по желанию</small></div>
-        <div class="grid2">
-          <div class="fld"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>
-            <div><label for="source">Источник информации</label><input id="source" type="url" inputmode="url" placeholder="Ваш сайт или профиль"></div></div>
-          <div class="fld"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M8 14l3 3 5-6"/></svg>
-            <div><label for="ref">Референс дизайна</label><input id="ref" type="url" inputmode="url" placeholder="Сайт, который нравится по стилю"></div></div>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="st"><b>3</b>Шапка страницы</div>
+        <div class="st"><b>2</b>Шапка страницы</div>
         <div class="ups">
           <label class="up" id="coverUp"><input type="file" accept="image/*" id="cover"><span class="t"><b>Фото для обложки</b>Нажмите, чтобы загрузить</span></label>
           <label class="up" id="logoUp"><input type="file" accept="image/*" id="logo"><span class="t"><b>Логотип или фото</b>По желанию</span></label>
@@ -193,18 +183,17 @@ dialog[open]{animation:pop .28s ease}
       </div>
 
       <div class="step">
-        <div class="st"><b>4</b>Кнопки<small>первая — главная</small></div>
+        <div class="st"><b>3</b>Кнопки<small>первая — главная</small></div>
         <div class="btns" id="btns"></div>
         <button type="button" class="add" id="addBtn" style="margin-top:8px;width:100%">+ Добавить кнопку</button>
       </div>
 
       <div class="step">
-        <div class="st"><b>5</b>Адрес и публикация</div>
+        <div class="st"><b>4</b>Адрес и публикация</div>
         <div class="grid2">
           <div class="col"><span class="lbl">Адрес (для карты)</span><input class="inp" id="addr" placeholder="Красноярск, Петра Подзолкова, 6"></div>
-          <div class="col"><span class="lbl">Контакт для правок</span><input class="inp" id="contact" placeholder="Telegram или e-mail"></div>
+          <div class="col"><span class="lbl">Адрес вашей страницы</span><label class="slug"><span>tap-page.ru/</span><input id="slug" placeholder="madam_vualya" pattern="[a-z0-9._-]+"></label></div>
         </div>
-        <div class="col" style="margin-top:10px"><span class="lbl">Адрес вашей страницы</span><label class="slug"><span>tap-page.ru/</span><input id="slug" placeholder="madam_vualya" pattern="[a-z0-9._-]+"></label></div>
         <label class="check"><input type="checkbox" id="own">Фото и тексты принадлежат мне, я разрешаю разместить их на странице</label>
         <button class="go" type="submit">Сделать страницу
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
