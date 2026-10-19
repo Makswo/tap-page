@@ -162,11 +162,25 @@ dialog::backdrop{background:rgba(43,35,32,.45);backdrop-filter:blur(4px)}
 .m .ico{width:64px;height:64px;margin:0 auto 16px;border-radius:50%;display:grid;place-items:center;background:var(--sand);color:var(--gold-d)}
 .m h2{font-weight:600;font-size:24px}
 .m p{color:var(--ink2);margin-top:8px;line-height:1.5}
-.join{display:flex;align-items:center;justify-content:center;height:54px;margin-top:22px;border-radius:999px;background:var(--ink);color:#F6EEE6;font-weight:600;font-size:16.5px;transition:background .2s}
-.join:hover{background:#41342E}
+.m{position:relative}
+.m .x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;border:0;background:var(--cream);color:var(--ink2);font-size:13px;cursor:pointer}
+.m .x:hover{background:var(--sand);color:var(--ink)}
+.join{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:12px;height:60px;margin-top:24px;padding:0 9px 0 12px;border-radius:999px;
+  background:linear-gradient(135deg,#C79C74 0%,#A8774F 55%,#8E6A48 100%);color:#fff;font-weight:700;font-size:clamp(15.5px,4.3vw,17px);letter-spacing:.01em;
+  box-shadow:0 14px 30px -12px rgba(142,106,72,.75),inset 0 1px 0 rgba(255,255,255,.35);transition:transform .2s,box-shadow .2s}
+.join span{flex:1;text-align:center;white-space:nowrap;padding-left:20px}
+.join:focus{outline:none}
+.m .x:focus:not(:focus-visible){outline:none}
+.join i{flex:none;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center;transition:transform .2s}
+.join:hover{transform:translateY(-2px);box-shadow:0 20px 36px -12px rgba(142,106,72,.85),inset 0 1px 0 rgba(255,255,255,.35)}
+.join:hover i{transform:translateX(3px)}
+.join:active{transform:scale(.98)}
+.join:before{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.45) 50%,transparent 65%);transform:translateX(-100%);animation:shine 2.8s ease-in-out 0.6s infinite}
+@keyframes shine{0%{transform:translateX(-100%)}45%,100%{transform:translateX(100%)}}
+.join:after{content:"";position:absolute;inset:-3px;border-radius:inherit;border:2px solid rgba(199,156,116,.5);animation:ring 2.8s ease-out 0.6s infinite;pointer-events:none}
+@keyframes ring{0%{opacity:.9;transform:scale(1)}60%,100%{opacity:0;transform:scale(1.08,1.3)}}
+@media (prefers-reduced-motion:reduce){.join:before,.join:after{animation:none}}
 .join[hidden]{display:none}
-.m .acts{display:flex;gap:10px;justify-content:center;margin-top:10px;flex-wrap:wrap}
-.m .acts a,.m .acts button{height:46px;padding:0 20px;border-radius:999px;font-weight:600;font-size:15px;display:inline-flex;align-items:center;cursor:pointer}
 .m .acts a{background:var(--sand);color:var(--ink)}
 .m .acts button{background:#fff;border:1px solid var(--line)}
 dialog[open]{animation:pop .28s ease}
@@ -277,11 +291,11 @@ dialog[open]{animation:pop .28s ease}
 
 <dialog id="soon" aria-labelledby="soonT">
   <div class="m">
+    <button type="button" class="x" id="close" aria-label="Закрыть">✕</button>
     <div class="ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l2.6 8.4L23 12l-8.4 2.6L12 23l-2.6-8.4L1 12l8.4-2.6z"/></svg></div>
     <h2 id="soonT">Публикация скоро</h2>
     <p id="soonP">Предпросмотр уже работает, а публиковать страницы мы начнём совсем скоро. Встаньте в лист ожидания — одной кнопкой, без регистрации.</p>
-    <a class="join" id="join" href="/spasibo">Встать в лист ожидания</a>
-    <div class="acts"><a href="/madam_vualya">Посмотреть пример</a><button type="button" id="close">Позже</button></div>
+    <a class="join" id="join" href="/spasibo" autofocus><span>Встать в лист ожидания</span><i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></a>
   </div>
 </dialog>
 
@@ -410,7 +424,7 @@ $('slug').addEventListener('input',e=>{const v=e.target.value.toLowerCase().repl
 // submit
 const dlg=$('soon');
 let joined=false;try{joined=localStorage.getItem('tp_wait')==='1'}catch(e){}
-if(joined){$('soonT').textContent='Вы уже в листе ожидания';$('soonP').textContent='Спасибо! Публиковать страницы начнём совсем скоро — загляните на tap-page.ru через пару недель.';$('join').hidden=true;$('close').textContent='Понятно'}
+if(joined){$('soonT').textContent='Вы уже в листе ожидания';$('soonP').textContent='Спасибо! Публиковать страницы начнём совсем скоро — загляните на tap-page.ru через пару недель.';$('join').hidden=true}
 $('join').addEventListener('click',()=>{try{localStorage.setItem('tp_wait','1')}catch(e){}try{window.va&&window.va('event',{name:'waitlist'})}catch(e){}});
 $('form').addEventListener('submit',e=>{e.preventDefault();dlg.showModal()});
 $('close').onclick=()=>dlg.close(); dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
