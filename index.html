@@ -27,56 +27,63 @@ h1 em{font:400 1.18em "Pinyon Script",Georgia,"Times New Roman",serif;color:var(
 
 /* builder */
 .builder{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:28px;align-items:start;margin-top:30px}
-.form{background:#fff;border:1px solid var(--line);border-radius:28px;padding:22px;box-shadow:0 30px 60px -40px rgba(80,55,35,.45)}
-.step{padding:18px 0;border-top:1px solid #F0E7DD}
-.step:first-child{padding-top:0;border-top:0}
-.st{display:flex;align-items:center;gap:10px;font-weight:600;font-size:16px;margin-bottom:12px}
-.st b{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--sand);font-size:13px;color:var(--gold-d)}
-.st small{margin-left:auto;font-weight:500;color:var(--ink2);font-size:12.5px}
-textarea.main{width:100%;border:1px solid var(--line);border-radius:18px;padding:14px 16px;resize:vertical;min-height:96px;font-size:16.5px;line-height:1.45;background:var(--cream);outline:0}
-textarea.main:focus,.inp:focus,.fld:focus-within{border-color:var(--beige);background:#fff;box-shadow:0 0 0 4px rgba(217,194,169,.22)}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.chips button{border:1px solid var(--line);background:#fff;border-radius:999px;height:34px;padding:0 13px;font-size:13.5px;color:var(--ink2);cursor:pointer;transition:.15s}
+.form{background:#fff;border:1px solid var(--line);border-radius:28px;padding:20px;box-shadow:0 30px 60px -40px rgba(80,55,35,.45);display:grid;gap:18px}
+.lbl2{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink2);margin-bottom:8px}
+.lbl2 small{letter-spacing:0;text-transform:none;font-weight:500;font-size:12.5px;color:#A99B91}
+.lbl{display:block;font-size:11.5px;font-weight:600;letter-spacing:.03em;color:var(--ink2);line-height:1.2}
+/* ask box */
+.ask{border:1px solid var(--line);border-radius:20px;background:var(--cream);padding:4px 4px 10px;transition:.15s}
+.ask:focus-within{border-color:var(--beige);background:#fff;box-shadow:0 0 0 4px rgba(217,194,169,.22)}
+.ask textarea{display:block;width:100%;border:0;outline:0;background:transparent;resize:none;min-height:76px;padding:12px 12px 6px;font-size:16.5px;line-height:1.45}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 8px}
+.chips button{border:1px solid var(--line);background:#fff;border-radius:999px;height:30px;padding:0 11px;font-size:13px;color:var(--ink2);cursor:pointer;transition:.15s}
 .chips button:hover{border-color:var(--beige);color:var(--ink)}
 .chips button.on{background:var(--ink);border-color:var(--ink);color:#F6EEE6}
+.chips button.more{border-style:dashed;color:var(--gold-d)}
+.chips:not(.all) button.x{display:none}
+.inp{width:100%;height:44px;border:1px solid var(--line);border-radius:13px;padding:0 13px;background:var(--cream);outline:0;font-size:15px;font-weight:500;min-width:0}
+.inp:focus{border-color:var(--beige);background:#fff;box-shadow:0 0 0 4px rgba(217,194,169,.22)}
+.inp.big{font-weight:600;font-size:16px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.fld{display:flex;align-items:center;gap:10px;background:var(--cream);border:1px solid var(--line);border-radius:16px;padding:0 12px;min-height:54px}
-.fld svg{flex:none;width:20px;height:20px;color:var(--gold)}
-.fld div{flex:1;min-width:0}
-.fld label,.lbl{display:block;font-size:11.5px;font-weight:600;letter-spacing:.03em;color:var(--ink2);line-height:1.2}
-.fld input{width:100%;border:0;outline:0;background:transparent;font-size:15px;font-weight:500;padding:3px 0 0}
-.inp{width:100%;height:46px;border:1px solid var(--line);border-radius:14px;padding:0 13px;background:var(--cream);outline:0;font-size:15px;font-weight:500}
-.slug{display:flex;align-items:center;border:1px solid var(--line);border-radius:14px;background:var(--cream);height:46px;overflow:hidden}
-.slug span{padding:0 4px 0 13px;color:var(--ink2);font-weight:500;white-space:nowrap}
+.col{display:grid;gap:6px;min-width:0}
+.slug{display:flex;align-items:center;border:1px solid var(--line);border-radius:13px;background:var(--cream);height:44px;overflow:hidden}
+.slug span{padding:0 2px 0 13px;color:var(--ink2);font-weight:500;white-space:nowrap}
 .slug input{flex:1;min-width:0;border:0;outline:0;background:transparent;height:100%;font-weight:600}
-.col{display:grid;gap:6px}
-/* uploads */
-.ups{display:grid;grid-template-columns:1.6fr 1fr;gap:10px}
-.up{position:relative;border:1.5px dashed var(--beige);border-radius:18px;min-height:120px;display:grid;place-items:center;text-align:center;cursor:pointer;
-  background:var(--cream) center/cover no-repeat;overflow:hidden;transition:.15s}
+/* header editor: looks like the page itself */
+.head{position:relative}
+.up{position:relative;border:1.5px dashed var(--beige);display:grid;place-items:center;text-align:center;cursor:pointer;background:var(--cream) center/cover no-repeat;overflow:hidden;transition:border-color .15s}
 .up:hover{border-color:var(--gold)}
 .up input{position:absolute;inset:0;opacity:0;cursor:pointer}
-.up .t{font-size:13.5px;color:var(--ink2);padding:10px;line-height:1.35}
-.up .t b{display:block;color:var(--ink);font-size:14.5px}
-.up.has .t{background:rgba(255,255,255,.85);border-radius:999px;padding:6px 12px;font-size:12.5px}
-.up.has .t b{display:none}
-.colors{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.colors button{width:30px;height:30px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer}
-.colors button.on{box-shadow:0 0 0 2px var(--ink)}
+.up .t{font-size:13px;color:var(--ink2);line-height:1.3;padding:6px 10px;border-radius:999px}
+.up .t b{color:var(--ink);font-weight:600}
+.up.has{border-style:solid;border-color:transparent}
+.up.has .t{background:rgba(255,255,255,.88);font-size:12px}
+.cov{height:112px;border-radius:18px;align-items:start;justify-items:end;padding:8px}
+.lg{position:absolute;left:14px;top:66px;width:76px;height:76px;border-radius:50%;border:3px solid #fff;outline:1.5px dashed var(--beige);outline-offset:-4px;background-color:var(--sand);z-index:1}
+.lg.has{outline:0}
+.lg .t{font-size:12px;padding:0}
+.lg.has .t{opacity:0}
+.hf{display:grid;gap:8px;padding-left:104px;margin-top:10px}
 /* buttons editor */
-.btns{display:grid;gap:8px}
-.br{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1.3fr) 36px 36px;gap:6px;align-items:center;background:var(--cream);border:1px solid var(--line);border-radius:16px;padding:6px}
-.br select{height:40px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:0 4px;font-size:16px;text-align:center;cursor:pointer}
-.br input{height:40px;border:1px solid transparent;border-radius:11px;background:#fff;padding:0 10px;font-size:14px;outline:0;min-width:0}
-.br input:focus{border-color:var(--beige)}
-.br .ic{height:36px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer;display:grid;place-items:center;color:var(--ink2)}
-.br .ic.on{background:var(--accent);border-color:var(--accent);color:#fff}
-.add{height:44px;border:1.5px dashed var(--beige);border-radius:14px;background:transparent;color:var(--gold-d);font-weight:600;cursor:pointer}
-.go{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:56px;margin-top:18px;border:0;border-radius:999px;cursor:pointer;
+.btns{border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.br{display:grid;grid-template-columns:46px minmax(0,1fr) minmax(0,1.25fr) 32px 32px;gap:4px;align-items:center;padding:5px 6px;border-top:1px solid #F0E7DD;background:#fff}
+.br:first-child{border-top:0}
+.br select{height:38px;border:0;border-radius:10px;background:var(--cream);padding:0 2px;font-size:16px;text-align:center;cursor:pointer}
+.br input{height:38px;border:0;border-radius:10px;background:transparent;padding:0 8px;font-size:14.5px;outline:0;min-width:0}
+.br input:focus{background:var(--cream)}
+.br .lb{font-weight:600}
+.br .ic{height:30px;width:30px;border-radius:9px;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;color:#B9AA9E;font-size:13px}
+.br .ic:hover{background:var(--cream);color:var(--ink)}
+.br .ic.on{color:var(--accent)}
+.add{display:block;width:100%;height:42px;border:0;border-top:1px solid #F0E7DD;background:var(--cream);color:var(--gold-d);font-weight:600;cursor:pointer}
+.colors{display:flex;gap:6px;align-items:center;margin-left:auto}
+.colors button{width:20px;height:20px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
+.colors button.on{box-shadow:0 0 0 2px var(--ink)}
+.go{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:56px;border:0;border-radius:999px;cursor:pointer;
   background:var(--ink);color:#F6EEE6;font-weight:600;font-size:16.5px;transition:background .2s,transform .2s}
 .go:hover{background:#41342E;transform:translateY(-1px)}
 .note{font-size:12.5px;color:var(--ink2);text-align:center;margin-top:10px}
-.check{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink2);margin-top:14px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink2);margin-bottom:12px}
 .check input{margin-top:2px;accent-color:var(--ink)}
 
 /* preview phone */
@@ -141,8 +148,10 @@ dialog[open]{animation:pop .28s ease}
 @media (max-width:600px){
   .hero{padding:22px 0 8px}
   .form{padding:16px;border-radius:24px}
-  .grid2,.ups{grid-template-columns:1fr}
-  .br{grid-template-columns:44px minmax(0,1fr) 36px 36px;grid-template-areas:"ic lb mn rm" "ur ur ur ur"}
+  .grid2{grid-template-columns:1fr}
+  .lbl2 small{display:none}
+  .ask textarea{min-height:104px}
+  .br{grid-template-columns:46px minmax(0,1fr) 30px 30px;grid-template-areas:"ic lb mn rm" "ic ur ur ur";row-gap:0}
   .br select{grid-area:ic}.br .lb{grid-area:lb}.br .ur{grid-area:ur}.br .mn{grid-area:mn}.br .rm{grid-area:rm}
   .exs{grid-template-columns:1fr}
 }
@@ -162,39 +171,35 @@ dialog[open]{animation:pop .28s ease}
 
   <div class="builder">
     <form class="form" id="form" autocomplete="off">
-      <div class="step">
-        <div class="st"><b>1</b>Опишите дело<small>или выберите шаблон</small></div>
-        <textarea class="main" id="desc" rows="3" placeholder="Сделай мне страницу: я мастер перманента в Красноярске, нужны услуги, цены, работы и запись"></textarea>
+      <div class="ask">
+        <textarea id="desc" rows="3" placeholder="Опишите дело: я мастер перманента в Красноярске, нужны услуги, цены, работы и запись"></textarea>
         <div class="chips" id="tpls"></div>
       </div>
 
-      <div class="step">
-        <div class="st"><b>2</b>Шапка страницы</div>
-        <div class="ups">
-          <label class="up" id="coverUp"><input type="file" accept="image/*" id="cover"><span class="t"><b>Фото для обложки</b>Нажмите, чтобы загрузить</span></label>
-          <label class="up" id="logoUp"><input type="file" accept="image/*" id="logo"><span class="t"><b>Логотип или фото</b>По желанию</span></label>
+      <div>
+        <div class="lbl2">Шапка</div>
+        <div class="head">
+          <label class="up cov" id="coverUp"><input type="file" accept="image/*" id="cover" aria-label="Фото для обложки"><span class="t"><b>+ Обложка</b></span></label>
+          <label class="up lg" id="logoUp"><input type="file" accept="image/*" id="logo" aria-label="Логотип"><span class="t"><b>+ Лого</b></span></label>
+          <div class="hf">
+            <input class="inp big" id="name" placeholder="Название" aria-label="Название">
+            <input class="inp" id="tag" placeholder="Слоган" aria-label="Слоган">
+          </div>
         </div>
-        <div class="grid2" style="margin-top:10px">
-          <div class="col"><span class="lbl">Название</span><input class="inp" id="name" placeholder="Мадам Вуаля"></div>
-          <div class="col"><span class="lbl">Кто вы и где</span><input class="inp" id="sub" placeholder="Свадебный салон · Красноярск"></div>
-        </div>
-        <div class="col" style="margin-top:10px"><span class="lbl">Слоган</span><input class="inp" id="tag" placeholder="Здесь живёт платье твоей мечты"></div>
-        <div class="col" style="margin-top:12px"><span class="lbl">Цвет главной кнопки</span><div class="colors" id="colors"></div></div>
       </div>
 
-      <div class="step">
-        <div class="st"><b>3</b>Кнопки<small>первая — главная</small></div>
-        <div class="btns" id="btns"></div>
-        <button type="button" class="add" id="addBtn" style="margin-top:8px;width:100%">+ Добавить кнопку</button>
+      <div>
+        <div class="lbl2">Кнопки <small>первая — главная</small><div class="colors" id="colors" title="Цвет главной кнопки"></div></div>
+        <div class="btns"><div id="btns"></div><button type="button" class="add" id="addBtn">+ Добавить кнопку</button></div>
       </div>
 
-      <div class="step">
-        <div class="st"><b>4</b>Адрес и публикация</div>
-        <div class="grid2">
-          <div class="col"><span class="lbl">Адрес (для карты)</span><input class="inp" id="addr" placeholder="Красноярск, Петра Подзолкова, 6"></div>
-          <div class="col"><span class="lbl">Адрес вашей страницы</span><label class="slug"><span>tap-page.ru/</span><input id="slug" placeholder="madam_vualya" pattern="[a-z0-9._-]+"></label></div>
-        </div>
-        <label class="check"><input type="checkbox" id="own">Фото и тексты принадлежат мне, я разрешаю разместить их на странице</label>
+      <div class="grid2">
+        <div class="col"><span class="lbl">Адрес для карты</span><input class="inp" id="addr" placeholder="Красноярск, Петра Подзолкова, 6"></div>
+        <div class="col"><span class="lbl">Адрес страницы</span><label class="slug"><span>tap-page.ru/</span><input id="slug" placeholder="ваше-имя" pattern="[a-z0-9._-]+"></label></div>
+      </div>
+
+      <div>
+        <label class="check"><input type="checkbox" id="own">Фото и тексты мои, разрешаю их разместить</label>
         <button class="go" type="submit">Сделать страницу
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
         <p class="note">Без конструктора и ежемесячной подписки</p>
@@ -257,12 +262,14 @@ const TPL={
  'Психолог':{desc:'Сделай страницу для психолога: с чем работаю, формат, стоимость и запись',sub:'Психолог · онлайн и очно',tag:'Бережно и по делу',b:[['📅','Записаться на консультацию',''],['🏷️','С чем работаю и стоимость',''],['🎓','Образование',''],['✈️','Написать в Telegram','']]}
 };
 const $=id=>document.getElementById(id);
-const state={color:COLORS[0],cover:'',logo:'',btns:[]};
+const state={color:COLORS[0],cover:'',logo:'',btns:[],kind:''};
 
 // templates
-Object.keys(TPL).forEach(k=>{const b=document.createElement('button');b.type='button';b.textContent=k;b.onclick=()=>applyTpl(k,b);$('tpls').appendChild(b)});
+Object.keys(TPL).forEach((k,i)=>{const b=document.createElement('button');b.type='button';b.textContent=k;if(i>=6)b.className='x';b.onclick=()=>applyTpl(k,b);$('tpls').appendChild(b)});
+{const m=document.createElement('button');m.type='button';m.className='more';m.textContent='Ещё шаблоны';
+ m.onclick=()=>{const c=$('tpls');c.classList.toggle('all');m.textContent=c.classList.contains('all')?'Свернуть':'Ещё шаблоны';c.appendChild(m)};$('tpls').appendChild(m)}
 function applyTpl(k,el){const t=TPL[k];document.querySelectorAll('#tpls button').forEach(x=>x.classList.toggle('on',x===el));
-  $('desc').value=t.desc; $('sub').placeholder=t.sub; $('tag').placeholder=t.tag; $('name').placeholder=k;
+  $('desc').value=t.desc; state.kind=t.sub.split('·')[0].trim(); $('tag').placeholder=t.tag; $('name').placeholder=k;
   state.btns=t.b.map(([icon,label,sub])=>({icon,label,sub,url:''})); renderBtns(); render();}
 
 // colors
@@ -271,7 +278,7 @@ COLORS.forEach((c,i)=>{const b=document.createElement('button');b.type='button';
 
 // uploads (preview only, stays in the browser)
 function upl(inp,box,key){inp.addEventListener('change',()=>{const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{state[key]=r.result;
-  box.style.backgroundImage=`url(${r.result})`;box.classList.add('has');box.querySelector('.t').lastChild.textContent='Заменить';render()};r.readAsDataURL(f)})}
+  box.style.backgroundImage=`url(${r.result})`;box.classList.add('has');box.querySelector('.t').innerHTML='Заменить';render()};r.readAsDataURL(f)})}
 upl($('cover'),$('coverUp'),'cover'); upl($('logo'),$('logoUp'),'logo');
 
 // buttons editor
@@ -292,18 +299,19 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 function render(){
   document.documentElement.style.setProperty('--accent',state.color);
   $('pCover').style.backgroundImage=state.cover?`url(${state.cover})`:'';
-  const name=$('name').value||$('name').placeholder; const lg=$('pLogo');
+  const name=$('name').value||($('name').placeholder!=='Название'?$('name').placeholder:'Ваше название'); const lg=$('pLogo');
   if(state.logo){lg.className='p-logo';lg.style.backgroundImage=`url(${state.logo})`;lg.textContent=''}
   else{lg.className='p-logo';lg.style.backgroundImage='';lg.textContent=(name.trim()[0]||'T').toUpperCase()}
-  $('pSub').textContent=$('sub').value||$('sub').placeholder;
-  $('pName').textContent=name; $('pTag').textContent=$('tag').value||$('tag').placeholder;
+  const a0=$('addr').value.trim(), city=a0.includes(',')?a0.split(',')[0].trim():'';
+  $('pSub').textContent=[state.kind,city||(state.kind?'Ваш город':'')].filter(Boolean).join(' · ');
+  $('pName').textContent=name; $('pTag').textContent=$('tag').value||($('tag').placeholder!=='Слоган'?$('tag').placeholder:'Коротко о том, что вы делаете');
   const L=$('pLinks'); L.innerHTML=state.btns.length?'':'<div class="empty">Добавьте кнопки или выберите шаблон</div>';
   state.btns.forEach((b,i)=>{L.insertAdjacentHTML('beforeend',`<div class="p-b${i===0?' main':''}"><i>${b.icon}</i><span>${esc(b.label||'Кнопка')}${b.sub?`<small>${esc(b.sub)}</small>`:''}</span>›</div>`)});
-  const a=$('addr').value.trim();
+  const a=a0;
   $('pAddr').innerHTML=a?`<div class="p-h">Как нас найти</div><div class="p-b"><i>📍</i><span>${esc(a)}<small>Открыть на карте</small></span>›</div>`:'';
   $('pFoot').textContent='tap-page.ru/'+($('slug').value||'ваше-имя');
 }
-['name','sub','tag','addr','slug'].forEach(id=>$(id).addEventListener('input',render));
+['name','tag','addr','slug'].forEach(id=>$(id).addEventListener('input',render));
 $('slug').addEventListener('input',e=>{const v=e.target.value.toLowerCase().replace(/[^a-z0-9._-]/g,'');if(v!==e.target.value)e.target.value=v;render()});
 
 // submit
@@ -312,7 +320,7 @@ $('form').addEventListener('submit',e=>{e.preventDefault();dlg.showModal()});
 $('close').onclick=()=>dlg.close(); dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
 
 applyTpl('Свадебный салон',[...document.querySelectorAll('#tpls button')].find(b=>b.textContent==='Свадебный салон'));
-$('desc').value=''; document.querySelectorAll('#tpls button').forEach(x=>x.classList.remove('on'));
+$('desc').value=''; state.kind=''; state.btns=[['📅','Записаться',''],['🏷️','Услуги и цены',''],['💬','Написать',''],['📞','Позвонить','']].map(([icon,label,sub])=>({icon,label,sub,url:''})); renderBtns(); $('name').placeholder='Название'; $('tag').placeholder='Слоган'; document.querySelectorAll('#tpls button').forEach(x=>x.classList.remove('on')); render();
 </script>
 </body>
 </html>
