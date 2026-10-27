@@ -3,8 +3,8 @@
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function price() {
-  const p = Number(process.env.TUTORIAL_PRICE || 99);
-  return Number.isFinite(p) && p > 0 ? p : 99;
+  const p = Number(process.env.TUTORIAL_PRICE || 299);
+  return Number.isFinite(p) && p > 0 ? p : 299;
 }
 
 function site() {

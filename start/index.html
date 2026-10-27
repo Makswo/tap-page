@@ -264,7 +264,7 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
     <label for="code">Промокод из директа</label>
     <div class="prow"><input id="code" class="pin" placeholder="Например, CLAUDE26" maxlength="40" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="go"><button class="btn pri lg" id="go" type="submit">Начать <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
     <div class="perr" id="perr" role="alert"></div>
-    <p class="phint">Нет кода? Напиши <span class="word">СТАРТ</span> в директ <a href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">@makswo</a> — пришлю. Вопросы бесплатно, инструкция — 99 ₽ после них.</p>
+    <p class="phint">Нет кода? Напиши <span class="word">СТАРТ</span> в директ <a href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">@makswo</a> — пришлю. Вопросы бесплатно, инструкция — 299 ₽ после них.</p>
   </form>
   <button class="btn gho lg" id="resume" type="button" hidden>Моя инструкция</button>
   <p class="phint" style="margin-top:14px">Уже покупал? Открой свою личную ссылку — она была на странице инструкции. Потерял — напиши в директ <a href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">@makswo</a>, восстановлю.</p>
@@ -273,7 +273,7 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
     <div><span class="n">02</span><b>Первые запросы</b><span>Готовые тексты под твою работу — скопировал и вставил.</span></div>
     <div><span class="n">03</span><b>Неделя по шагам</b><span>Один маленький шаг в день, сколько у тебя есть времени.</span></div>
   </div>
-  <div class="note"><b>Цена и получение.</b> Персональная инструкция стоит 99 ₽, разовый платёж. Это цифровой товар: после оплаты инструкция сразу открывается на этой странице, её можно сохранить в PDF и открыть по личной ссылке с любого устройства. Доставка не требуется. Условия — в <a href="/oferta" target="_blank" rel="noopener">публичной оферте</a>.</div>
+  <div class="note"><b>Цена и получение.</b> Персональная инструкция стоит 299 ₽, разовый платёж. Это цифровой товар: после оплаты инструкция сразу открывается на этой странице, её можно сохранить в PDF и открыть по личной ссылке с любого устройства. Доставка не требуется. Условия — в <a href="/oferta" target="_blank" rel="noopener">публичной оферте</a>.</div>
   <div class="note"><b>Честно о странах.</b> Claude работает не везде: России и Беларуси нет в списке стран, где он официально доступен. Пользоваться можно, когда ты физически находишься в стране из списка. Обходных путей здесь нет — только официальные. Список стран проверен 27 октября 2026: <a href="https://www.anthropic.com/supported-countries" target="_blank" rel="noopener">anthropic.com/supported-countries</a>.</div>
 </div></main>
 
@@ -302,13 +302,13 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
   <p class="qh">Вот что внутри — всё под твои ответы:</p>
   <div class="paybox">
     <ul class="lst yes" id="incl"></ul>
-    <div class="prc"><span class="price" id="pprice">99 ₽</span><span>разово, доступ остаётся у тебя</span></div>
+    <div class="prc"><span class="price" id="pprice">299 ₽</span><span>разово, доступ остаётся у тебя</span></div>
     <div id="ykbox" hidden>
       <div id="ykemail" hidden>
         <label class="flbl" for="email">Email для чека</label>
         <input id="email" class="tin" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" maxlength="120">
       </div>
-      <button class="btn pri lg ykgo" id="ykpay" type="button">Перейти к оплате · 99 ₽</button>
+      <button class="btn pri lg ykgo" id="ykpay" type="button">Перейти к оплате · 299 ₽</button>
       <div id="ykform"></div>
       <div class="perr" id="ykerr" role="alert"></div>
       <p class="fine secure"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Безопасная оплата через ЮKassa: карта, СБП, SberPay, T-Pay. Данные карты вводятся в защищённой форме ЮKassa — мы их не видим.</p>
@@ -566,7 +566,7 @@ function ykStart(){
     track('tutorial_pay_click',{p:'yookassa'});
   },function(){ ykFail('Не получилось загрузить форму оплаты. Проверь интернет и попробуй ещё раз.') });
 }
-function ykFail(t){ ykReset(); $('ykpay').textContent='Попробовать ещё раз · '+((PAY&&PAY.price)||99)+' ₽'; ykErr(t) }
+function ykFail(t){ ykReset(); $('ykpay').textContent='Попробовать ещё раз · '+((PAY&&PAY.price)||299)+' ₽'; ykErr(t) }
 $('ykpay').onclick=ykStart;
 $('payform').onsubmit=function(){track('tutorial_pay_click',{p:'yoomoney'})};
 $('ipaid').onclick=function(){ykReset();goWait(false)};

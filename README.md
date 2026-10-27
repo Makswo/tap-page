@@ -12,7 +12,7 @@
 
 ## Туториал /start: промокод и оплата ЮMoney
 
-Путь покупателя: промокод из директа → 10 вопросов → экран анализа → оплата 99 ₽ в ЮMoney → инструкция.
+Путь покупателя: промокод из директа → 10 вопросов → экран анализа → оплата 299 ₽ (ЮKassa или ЮMoney) → инструкция.
 Текст инструкции собирается на сервере (`api/_lib/guide.js`) и отдаётся только оплаченным заказам.
 
 | Файл | Что делает |
@@ -24,7 +24,7 @@
 | `supabase/tutorial.sql` | таблицы `promo_codes` и `tutorial_orders` |
 
 Переменные окружения в Vercel (Settings → Environment Variables):
-`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `YOOMONEY_WALLET` (номер кошелька), `YOOMONEY_SECRET` (секрет из настроек HTTP-уведомлений), `PREVIEW_KEY` (любая длинная строка), необязательно `TUTORIAL_PRICE` (по умолчанию 99).
+`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `YOOMONEY_WALLET` (номер кошелька), `YOOMONEY_SECRET` (секрет из настроек HTTP-уведомлений), `PREVIEW_KEY` (любая длинная строка), необязательно `TUTORIAL_PRICE` (по умолчанию 299).
 
 Уведомления ЮMoney: yoomoney.ru/transfer/myservices/http-notification → адрес `https://tap-page.ru/api/yoomoney`.
 
