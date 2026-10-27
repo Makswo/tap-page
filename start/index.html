@@ -22,6 +22,7 @@
   --m:'JetBrains Mono',ui-monospace,Menlo,monospace;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0;padding:0}
 html{background:var(--bg)}
 body{background:radial-gradient(70% 40% at 90% -5%,rgba(212,255,63,.08),transparent 60%),var(--bg);color:var(--tx);font:16px/1.55 var(--f);-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh}
@@ -167,6 +168,44 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;background:var(--s3);border:1px solid var(--line2);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:600;transition:.25s;pointer-events:none;z-index:50}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 
+/* promo */
+.promo{max-width:560px}
+.promo label{display:block;font-family:var(--m);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--tx2);margin-bottom:10px}
+.prow{display:flex;gap:10px}
+.pin{flex:1;min-width:0;height:56px;border-radius:999px;background:var(--s1);border:1px solid var(--line2);padding:0 22px;font:500 17px var(--m);letter-spacing:.08em;text-transform:uppercase;outline:none;color:var(--tx)}
+.pin::placeholder{color:var(--tx3);letter-spacing:.02em;text-transform:none;font-family:var(--f)}
+.pin:focus{border-color:var(--acc)}
+.pin.bad{border-color:var(--bad)}
+.perr{color:var(--bad);font-size:14px;min-height:20px;margin-top:8px}
+.phint{color:var(--tx2);font-size:14.5px;margin:2px 0 0}
+#resume{margin-top:18px}
+/* analysis + wait */
+.anal{padding-block:56px 64px}
+.orb{width:64px;height:64px;border-radius:50%;border:3px solid var(--s3);border-top-color:var(--acc);animation:spin 1s linear infinite;margin-bottom:28px}
+.orb[hidden]{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.alist{list-style:none;padding:0;margin:8px 0 24px;display:grid;gap:14px}
+.alist li{display:flex;gap:12px;align-items:center;color:var(--tx3);transition:color .3s;font-size:16px}
+.alist li .st{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line2);display:grid;place-items:center;flex:none;color:var(--acc-ink)}
+.alist li.on{color:var(--tx)}
+.alist li.on .st{border-color:var(--acc);border-right-color:transparent;animation:spin .7s linear infinite}
+.alist li.ok{color:var(--tx)}
+.alist li.ok .st{background:var(--acc);border-color:var(--acc);animation:none}
+.alist li .st svg{width:14px;height:14px;opacity:0}
+.alist li.ok .st svg{opacity:1}
+/* pay */
+.pay{padding-block:36px 48px}
+.paybox{border-radius:26px;padding:22px;background:radial-gradient(90% 80% at 100% 0%,rgba(212,255,63,.12),transparent 60%),var(--s1);border:1px solid rgba(212,255,63,.35)}
+.prc{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:22px 0 4px;color:var(--tx2);font-size:14px}
+.price{font-size:52px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1}
+.paybtns{display:grid;gap:10px;margin-top:16px}
+.fine{color:var(--tx3);font-size:13.5px;margin:14px 0 0}
+.mono{font-family:var(--m);color:var(--tx2)}
+.paylinks{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px}
+.linkbtn{color:var(--tx2);text-decoration:underline;text-underline-offset:3px;font-size:14.5px;padding:6px 0}
+.linkbtn:hover{color:var(--tx)}
+@media (max-width:640px){.prow{flex-direction:column}.prow .pin{flex:none;width:100%}.prow .btn{width:100%}}
+
 @media (max-width:640px){
   .what{grid-template-columns:1fr}
   .two{grid-template-columns:1fr}
@@ -181,6 +220,7 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
   .card,.pr,.day{break-inside:avoid}
   .screen{display:none!important}
   #s-res{display:block!important}
+  .tools,.res .tools{display:none!important}
 }
 </style>
 </head>
@@ -197,8 +237,13 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
   <h1>Как начать <span class="acc">с Claude</span></h1>
   <p class="lead">Ответь на 10 коротких вопросов — и получишь инструкцию под себя: где установить, какой первый запрос дать и что поручить Claude в первую очередь.</p>
   <div class="meta"><span class="chip">10 вопросов</span><span class="chip">≈ 5 минут</span><span class="chip">план на 7 дней</span></div>
-  <button class="btn pri lg" id="go">Начать <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
-  <button class="btn gho lg" id="resume" hidden style="margin-left:6px">Моя инструкция</button>
+  <form class="promo" id="pf" autocomplete="off" novalidate>
+    <label for="code">Промокод из директа</label>
+    <div class="prow"><input id="code" class="pin" placeholder="Например, CLAUDE26" maxlength="40" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="go"><button class="btn pri lg" id="go" type="submit">Начать <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+    <div class="perr" id="perr" role="alert"></div>
+    <p class="phint">Нет кода? Напиши <span class="word">СТАРТ</span> в директ <a href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">@makswo</a> — пришлю. Вопросы бесплатно, инструкция — 99 ₽ после них.</p>
+  </form>
+  <button class="btn gho lg" id="resume" type="button" hidden>Моя инструкция</button>
   <div class="what">
     <div><span class="n">01</span><b>Установка</b><span>Под твой телефон и компьютер, только официальные способы.</span></div>
     <div><span class="n">02</span><b>Первые запросы</b><span>Готовые тексты под твою работу — скопировал и вставил.</span></div>
@@ -215,6 +260,43 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
     <span class="num" id="pnum">1 / 10</span>
   </div>
   <div id="q"></div>
+</div></main>
+
+<!-- ANALYSIS -->
+<main id="s-anal" class="screen"><div class="wrap anal">
+  <div class="orb"></div>
+  <h2 class="qt" id="atitle">Собираю твою инструкцию</h2>
+  <ul class="alist" id="alist"></ul>
+  <button class="btn pri" id="aretry" type="button" hidden>Попробовать ещё раз</button>
+</div></main>
+
+<!-- PAY -->
+<main id="s-pay" class="screen"><div class="wrap pay">
+  <div class="eyebrow">Готово</div>
+  <h2 class="qt">Твоя инструкция собрана</h2>
+  <p class="qh">Вот что внутри — всё под твои ответы:</p>
+  <div class="paybox">
+    <ul class="lst yes" id="incl"></ul>
+    <div class="prc"><span class="price" id="pprice">99 ₽</span><span>разово, доступ остаётся у тебя</span></div>
+    <form id="payform" method="POST" action="https://yoomoney.ru/quickpay/confirm">
+      <div id="payhidden"></div>
+      <div class="paybtns">
+        <button class="btn pri lg" id="paycard" type="submit" name="paymentType" value="AC">Оплатить картой</button>
+        <button class="btn gho" type="submit" name="paymentType" value="PC">Кошельком ЮMoney</button>
+      </div>
+    </form>
+    <p class="fine">Оплата через ЮMoney. После оплаты вернёшься сюда — инструкция откроется сама и останется на этом устройстве.</p>
+  </div>
+  <div class="paylinks"><button class="linkbtn" id="ipaid" type="button">Я уже оплатил — проверить</button><button class="linkbtn" id="paybackq" type="button">Изменить ответы</button></div>
+</div></main>
+
+<!-- WAIT -->
+<main id="s-wait" class="screen"><div class="wrap anal">
+  <div class="orb" id="worb"></div>
+  <h2 class="qt" id="wtitle">Проверяю оплату</h2>
+  <p class="qh" id="wtext"></p>
+  <p class="fine">Номер заказа: <span class="mono" id="wid"></span></p>
+  <div class="qnext"><button class="btn pri" id="wretry" type="button" hidden>Проверить ещё раз</button><button class="linkbtn" id="wback" type="button">Вернуться к оплате</button></div>
 </div></main>
 
 <!-- RESULT -->
@@ -283,10 +365,21 @@ var SUGG={
  other:['Дом и семья','Хобби','Ищу работу','Ремонт квартиры']
 };
 
-var A={}, i=0;
-try{var saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved&&saved.role){A=saved;$('resume').hidden=false}}catch(e){}
 
-function show(id){['s-intro','s-quiz','s-res'].forEach(function(s){$(s).classList.toggle('on',s===id)});window.scrollTo(0,0)}
+var A={}, i=0, ORDER=null, ORD_KEY='claude_start_order_v1', UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+try{ORDER=localStorage.getItem(ORD_KEY)}catch(e){}
+try{var saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved&&saved.role)A=saved}catch(e){}
+function setOrder(o){ORDER=o;try{o?localStorage.setItem(ORD_KEY,o):localStorage.removeItem(ORD_KEY)}catch(e){}}
+
+function api(method,url,data){
+  return fetch(url,{method:method,headers:data?{'Content-Type':'application/json'}:{},body:data?JSON.stringify(data):undefined,cache:'no-store'})
+    .then(function(r){return r.json().then(function(j){j._s=r.status;return j},function(){return {_s:r.status,error:'server'}})},
+          function(){return {_s:0,error:'network'}});
+}
+function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
+
+var SCREENS=['s-intro','s-quiz','s-anal','s-pay','s-wait','s-res'];
+function show(id){SCREENS.forEach(function(s){$(s).classList.toggle('on',s===id)});window.scrollTo(0,0)}
 
 function renderQ(){
   var q=Q[i]; $('pnum').textContent=(i+1)+' / '+Q.length; $('pbar').style.width=((i)/Q.length*100)+'%';
@@ -326,280 +419,117 @@ function renderQ(){
   }
 }
 function next(){ if(i<Q.length-1){i++;renderQ();window.scrollTo(0,0)} else finish(); }
+function next(){ if(i<Q.length-1){i++;renderQ();window.scrollTo(0,0)} else finish(); }
 $('back').onclick=function(){ if(i>0){i--;renderQ()} else show('s-intro') };
-$('go').onclick=function(){ A={}; i=0; track('tutorial_start'); show('s-quiz'); renderQ(); try{localStorage.removeItem(DAYS_KEY)}catch(e){} };
-$('resume').onclick=function(){ renderResult(); show('s-res') };
-function finish(){ $('pbar').style.width='100%'; try{localStorage.setItem(KEY,JSON.stringify(A))}catch(e){} track('tutorial_finish',{role:A.role,pain:A.pain}); renderResult(); show('s-res'); }
 
-/* ---------- 2. Словари ---------- */
-var ROLE_LBL={biz:'Свой бизнес',emp:'Найм',free:'Фриланс',blog:'Блог',study:'Учёба',other:'Своё дело'};
-var ROLE_SAY={biz:'У меня свой бизнес',emp:'Я работаю в найме',free:'Я фрилансер',blog:'Я веду блог',study:'Я учусь',other:'Я занимаюсь'};
-var PAIN_LBL={mail:'почта и переписки',texts:'тексты и посты',tables:'таблицы и отчёты',plan:'планирование',search:'поиск информации',study:'учёба'};
-var DEV_LBL={iphone:'iPhone',android:'Android',win:'Windows',mac:'Mac'};
-var GOAL_LBL={time:'сэкономить время',write:'писать лучше и быстрее',understand:'разобраться в своей задаче',automate:'скинуть рутину'};
-var STYLE_LINE={steps:'Отвечай по шагам, списком, без лишних объяснений.',ex:'Показывай пример того, что должно получиться.',why:'Коротко объясняй, почему предлагаешь именно так.'};
+/* ---------- промокод ---------- */
+function perr(t){$('perr').textContent=t||'';$('code').classList.toggle('bad',!!t)}
+$('pf').onsubmit=function(e){
+  e.preventDefault();
+  var code=$('code').value.trim(); if(!code){perr('Впиши промокод из директа');$('code').focus();return}
+  var b=$('go'); b.disabled=true; perr('');
+  api('POST','/api/tutorial-start',{code:code}).then(function(d){
+    b.disabled=false;
+    if(d.order){ setOrder(d.order); A={}; i=0; try{localStorage.removeItem(KEY);localStorage.removeItem(DAYS_KEY)}catch(_){}; track('tutorial_start'); show('s-quiz'); renderQ(); return }
+    if(d._s===403||d._s===400) perr('Такого кода нет. Проверь, как написал, или возьми свежий: напиши СТАРТ в директ @makswo.');
+    else perr('Не получилось связаться с сервером. Попробуй ещё раз через минуту.');
+  });
+};
+$('code').oninput=function(){perr('')};
 
-function ctx(a){
-  var s=(a.sphere||'').trim();
-  if(a.role==='other') return s?('Я занимаюсь: '+s+'.'):'';
-  return ROLE_SAY[a.role]+(s?(', сфера — '+s):'')+'.';
+/* ---------- анализ ответов ---------- */
+function finish(){
+  $('pbar').style.width='100%';
+  try{localStorage.setItem(KEY,JSON.stringify(A))}catch(e){}
+  track('tutorial_finish',{role:A.role,pain:A.pain});
+  if(!ORDER){show('s-intro');perr('Сначала впиши промокод');return}
+  var PAIN={mail:'почта и переписки',texts:'тексты и посты',tables:'таблицы и отчёты',plan:'планирование',search:'поиск информации',study:'учёба'};
+  var DV={iphone:'iPhone',android:'Android',win:'Windows',mac:'Mac'};
+  var steps=['Смотрю, чем ты занимаешься',
+    'Подбираю установку: '+(A.dev||[]).map(function(x){return DV[x]}).join(', '),
+    'Собираю запросы про «'+PAIN[A.pain]+'»',
+    'Заполняю шаблон проекта «кто я»',
+    'Расписываю неделю под твоё время'];
+  $('alist').innerHTML=steps.map(function(s){return '<li><span class="st">'+CHECK+'</span><span>'+esc(s)+'</span></li>'}).join('');
+  $('atitle').textContent='Собираю твою инструкцию';
+  show('s-anal');
+  var lis=$('alist').querySelectorAll('li');
+  var anim=steps.reduce(function(p,_,k){return p.then(function(){lis[k].classList.add('on');return wait(650+Math.random()*350)}).then(function(){lis[k].classList.remove('on');lis[k].classList.add('ok')})},Promise.resolve());
+  var req=api('POST','/api/tutorial-answers',{order:ORDER,answers:A});
+  Promise.all([anim,req]).then(function(r){
+    var d=r[1];
+    if(d.paid) return goWait(true);
+    if(d.pay) return renderPay(d);
+    if(d._s===404){setOrder(null);show('s-intro');perr('Сессия устарела. Впиши промокод ещё раз — ответы сохранятся.');return}
+    $('atitle').textContent='Не получилось связаться с сервером';
+    $('alist').innerHTML='<li class="ok"><span>Ответы сохранены на этом устройстве.</span></li>';
+    $('aretry').hidden=false;
+  });
 }
-function lead(a){var c=ctx(a);return c?c+' ':''}
+$('aretry').onclick=function(){$('aretry').hidden=true;finish()};
 
-/* ---------- 3. Промпты: первый запрос под боль ---------- */
-function firstPrompt(a){
-  var L=lead(a);
-  var P={
-   mail:{t:'Ответить на письмо за минуту',
-     p:L+'Мне нужно ответить на сообщение. Ниже текст и то, что я хочу сказать в двух словах. Напиши ответ: вежливо, коротко, без канцелярита. Дай два варианта — помягче и потвёрже.\n\nСообщение: [вставь текст]\nЧто хочу сказать: [например: согласен, но сроки сдвигаем на неделю]',
-     get:'Два готовых ответа, которые можно сразу отправить или чуть поправить.'},
-   texts:{t:'Пост без мук',
-     p:L+'Помоги написать пост. Тема: [о чём]. Читают: [кто твоя аудитория]. Сначала задай мне 3 вопроса, чтобы понять, что важно сказать. Потом напиши пост на 600–800 знаков живым языком, без штампов.',
-     get:'Claude сначала спросит, потом напишет. Пост выйдет про тебя, а не «в общем».'},
-   tables:{t:'Понять таблицу за минуту',
-     p:L+'Ниже кусок таблицы (скопировал прямо из Excel или Google Таблиц). Объясни простыми словами: 3 главных вывода, что выросло, что упало, что выглядит странно. Потом предложи одну формулу или сводную таблицу, которая мне поможет, и напиши её.\n\n[вставь данные]',
-     get:'Выводы человеческим языком и готовая формула, которую можно вставить в ячейку.'},
-   plan:{t:'Разложить неделю',
-     p:L+'Вот всё, что у меня висит на этой неделе, как попало: [вставь список]. Разложи по дням с понедельника по пятницу. Учти, что свободных часов в день у меня [сколько]. Отметь, что можно не делать вовсе, а что отдать другим.',
-     get:'Неделя по дням и честный список того, что можно выкинуть.'},
-   search:{t:'Разобраться в вопросе',
-     p:L+'Мне нужно разобраться: [вопрос, например «какую CRM выбрать на 3 сотрудников»]. Найди в интернете свежую информацию, сравни варианты таблицей — цена, плюсы, минусы — и скажи, с чего бы ты начал на моём месте. Дай ссылки на источники.',
-     get:'Таблица сравнения со ссылками — можно проверить каждый пункт.'},
-   study:{t:'Объясни как другу',
-     p:L+'Я изучаю [тема]. Объясни основу так, будто я умный, но не в теме: сначала суть в 3 предложениях, потом пример из жизни, потом 5 вопросов, чтобы я проверил себя. Ответы не показывай, пока я не отвечу.',
-     get:'Короткое объяснение и мини-тренажёр: Claude проверит твои ответы.'}
-  };
-  return P[a.pain];
+/* ---------- оплата ---------- */
+function renderPay(d){
+  var t=d.teaser, inc=['Установка на '+t.devices.join(' и ')+' — по шагам','Первый запрос: «'+t.first+'»',t.prompts+' готовых запросов под твою работу','Проект «кто я» с заполненным шаблоном','План на 7 дней: '+t.goal];
+  if(t.mail) inc.push('Подключение Gmail и Google Календаря');
+  inc.push('Чек-лист: что отдавать ИИ, а что нет');
+  var ok='<svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  $('incl').innerHTML=inc.map(function(x){return '<li>'+ok+'<span>'+esc(x)+'</span></li>'}).join('');
+  $('pprice').textContent=d.price+' ₽';
+  var f=$('payform'); f.action=d.pay.action; var h='';
+  ['receiver','quickpay-form','sum','label','successURL'].forEach(function(k){h+='<input type="hidden" name="'+k+'" value="'+esc(d.pay[k])+'">'});
+  $('payhidden').innerHTML=h;
+  $('paycard').textContent='Оплатить картой · '+d.price+' ₽';
+  show('s-pay'); track('tutorial_paywall');
 }
+$('payform').onsubmit=function(){track('tutorial_pay_click');try{localStorage.setItem('claude_start_paying','1')}catch(e){}};
+$('ipaid').onclick=function(){goWait(false)};
+$('paybackq').onclick=function(){i=Q.length-1;show('s-quiz');renderQ()};
 
-/* ---------- 4. Что поручить: 4 задачи под боль + 1 под роль ---------- */
-function tasks(a){
-  var L=lead(a);
-  var T={
-   mail:[
-    ['Разобрать завал','Вот последние письма и сообщения (от кого + первая строчка): [вставь]. Разложи на три группы: ответить сегодня, ответить на неделе, можно не отвечать. Для первой группы набросай ответы в 2–3 предложения.','Список приоритетов и черновики самых срочных ответов.'],
-    ['Шаблоны на частые вопросы',L+'Мне постоянно задают одни и те же вопросы: [перечисли 3–5]. Сделай короткие шаблоны ответов, которые я сохраню и буду вставлять. Тон — дружелюбный, без «Уважаемый».','Набор ответов для заметок телефона — экономит часы в месяц.'],
-    ['Неприятное письмо','Мне нужно написать неприятное письмо: [ситуация — отказ, напоминание об оплате, перенос сроков]. Помоги сказать так, чтобы отношения не испортились. Сначала спроси, что для меня важнее сохранить.','Твёрдое, но спокойное письмо вместо часа сомнений.'],
-    ['Выжимка из переписки','Ниже длинная переписка. Сделай выжимку: о чём договорились, кто что делает, какие сроки, что осталось непонятным.\n\n[вставь переписку]','Пять строк вместо пятидесяти сообщений.']],
-   texts:[
-    ['Контент-план на 2 недели',L+'Составь контент-план на 2 недели: 6 публикаций. Для каждой — тема, первая фраза-зацепка и о чём сказать в трёх пунктах. Моя аудитория: [кто].','Таблица тем на две недели вперёд.'],
-    ['Причесать свой текст','Вот мой текст. Сделай его на треть короче и понятнее, но оставь мою интонацию. Потом покажи, что убрал и почему.\n\n[вставь текст]','Твой же текст, только легче читается — и разбор, чему научиться.'],
-    ['Описание услуги или товара',L+'Напиши описание [услуги или товара] для сайта или профиля: что это, кому подходит, сколько стоит, как заказать. Без слов «уникальный», «качественный», «индивидуальный подход».','Готовый текст для профиля, сайта или карточки товара.'],
-    ['10 заголовков','Придумай 10 заголовков для текста про [тема]. Разные: вопрос, цифра, история, спор. Отметь два лучших и объясни выбор.','Выбор вместо ступора перед пустой строкой.']],
-   tables:[
-    ['Формула без мучений','В Google Таблицах (или Excel) у меня колонки: [перечисли]. Мне нужно посчитать [что]. Напиши формулу и объясни, в какую ячейку её вставить.','Рабочая формула и понимание, как она устроена.'],
-    ['Отчёт из сырых цифр',L+'Вот цифры за месяц: [вставь]. Сделай короткий отчёт: что получилось, что нет, 3 вывода и 3 шага на следующий месяц. Чтобы прочитать за минуту.','Отчёт, который не стыдно отправить.'],
-    ['Таблица учёта с нуля',L+'Сделай таблицу для учёта [клиентов / расходов / заказов]: какие колонки нужны, пример 3 строк и какие формулы добавить. Дай так, чтобы можно было скопировать в Google Таблицы.','Готовая структура таблицы — копируешь и пользуешься.'],
-    ['Найти ошибки','Проверь эти данные: дубли, пропуски, странные значения. Перечисли, что нашёл, с номером строки.\n\n[вставь данные]','Список ошибок до того, как их найдёт начальник или налоговая.']],
-   plan:[
-    ['Большую задачу — на шаги',L+'Есть задача, которую я откладываю: [задача]. Разбей её на шаги по 15–30 минут. Первый шаг — такой, чтобы начать прямо сейчас.','План, в котором первый шаг занимает 15 минут.'],
-    ['План на сегодня','Вот что нужно сделать сегодня: [список]. Выбери 3 главных дела, расставь всё по времени с [начало] до [конец], оставь окно на обед и непредвиденное.','Расписание дня с запасом на жизнь.'],
-    ['Чек-лист для повторяющегося дела',L+'Я регулярно делаю [дело, например приём нового клиента или запуск акции]. Составь чек-лист, чтобы ничего не забывать.','Чек-лист, который можно отдать помощнику или себе в будущем.'],
-    ['Разбор перегруза','Вот мои дела и встречи на неделю: [вставь]. Найди, где я себя перегрузил, и предложи, что перенести или отменить. Будь честным.','Где ты переоценил свои силы — до того, как это стало проблемой.']],
-   search:[
-    ['Быстро понять тему','Объясни, как устроено [тема], чтобы прочитать за 5 минут. Потом скажи, какие 3 вопроса мне стоит задать специалисту.','Ты приходишь к специалисту подготовленным.'],
-    ['Разобрать документ','Прикрепляю файл. Выпиши: главное в 5 пунктах, все сроки и суммы, что конкретно нужно сделать мне. Если что-то звучит как риск — отметь.','Выжимка из договора или инструкции. Перед загрузкой убери паспортные данные.'],
-    ['Проверить идею',L+'Я думаю сделать так: [идея]. Найди слабые места: что может пойти не так, что я не учёл, кто уже так делает. Не хвали — критикуй по делу.','Честный взгляд со стороны, без «отличная идея!»'],
-    ['Сравнить варианты','Сравни [варианты] для [задача]. Таблица: цена, плюсы, минусы, кому подходит. Найди свежую информацию в интернете и дай ссылки.','Решение на фактах вместо десяти открытых вкладок.']],
-   study:[
-    ['План подготовки','Мне нужно подготовиться к [экзамен / собеседование / тема] за [сколько дней], по [сколько] минут в день. Составь план по дням.','Понятно, что учить сегодня, а что — в пятницу.'],
-    ['Тренажёр','Задавай мне по одному вопросу по теме [тема], жди ответ и разбирай ошибки. Начни с простого и усложняй.','Живой тренажёр, который подстраивается под твой уровень.'],
-    ['Конспект','Сделай конспект этого текста: главная мысль, 5 тезисов, термины с объяснением простыми словами.\n\n[вставь текст]','Конспект на страницу вместо двадцати.'],
-    ['Объясни иначе','Я не понял [что именно]. Объясни через пример из того, что я хорошо знаю: [готовка, футбол, ремонт — что ближе].','Сложное через знакомое — так запоминается.']]
-  };
-  var R={
-   biz:['Ответы клиентам',L+'Клиент пишет: [сообщение]. Напиши ответ, который снимает его сомнение и приглашает записаться или купить. Без давления и без смайликов в каждой строке.','Ответ, после которого хочется записаться.'],
-   emp:['Отчёт руководителю','Вот что я сделал за неделю, как попало: [список]. Сделай короткий отчёт руководителю: результаты, что в работе, где нужна помощь.','Отчёт за 2 минуты вместо пятничных мучений.'],
-   free:['Коммерческое предложение',L+'Клиент хочет [задача]. Составь коммерческое предложение: что сделаю, этапы, сроки, цена [сумма], что нужно от клиента.','КП, которое можно отправить сегодня.'],
-   blog:['Сценарий ролика',L+'Напиши сценарий ролика на 30 секунд про [тема]: зацепка в первые 2 секунды, 5–6 коротких фраз, призыв в конце. Говорю на «ты», без штампов.','Сценарий, который осталось только снять.'],
-   study:['Курсовая или доклад','Помоги составить план доклада на тему [тема]: структура, что почитать, по какому графику писать. Писать буду сам — мне нужен каркас.','Каркас работы и график — без паники в последнюю ночь.'],
-   other:['Меню и покупки','Составь меню на неделю на [сколько] человек и один общий список покупок. Не едим: [что]. Бюджет — примерно [сумма].','Неделя без вопроса «что приготовить».']
-  };
-  var list=T[a.pain].slice();
-  list.push(R[a.role]||R.other);
-  return list;
+/* ---------- ожидание оплаты и выдача ---------- */
+var polling=0;
+function goWait(fast){
+  var my=++polling, n=0;
+  $('wtitle').textContent='Проверяю оплату';
+  $('wtext').textContent='Обычно это занимает до минуты. Страницу можно не обновлять.';
+  $('wretry').hidden=true; $('worb').hidden=false;
+  $('wid').textContent=ORDER?ORDER.slice(0,8).toUpperCase():'';
+  show('s-wait');
+  (function tick(){
+    if(my!==polling) return;
+    api('GET','/api/tutorial-guide?order='+encodeURIComponent(ORDER||'')).then(function(d){
+      if(my!==polling) return;
+      if(d.status==='paid'&&d.html){track('tutorial_paid');try{localStorage.removeItem('claude_start_paying')}catch(e){};return renderGuide(d)}
+      if(d._s===404||d._s===400){$('worb').hidden=true;$('wtitle').textContent='Заказ не найден';$('wtext').textContent='Начни заново с промокодом.';$('wretry').hidden=false;return}
+      n++;
+      if(n>=(fast?20:60)){$('worb').hidden=true;$('wtitle').textContent='Оплата пока не пришла';$('wtext').textContent='Если деньги уже списались — подожди пару минут и нажми «Проверить ещё раз». Не помогло — напиши в директ @makswo и назови номер заказа ниже.';$('wretry').hidden=false;return}
+      setTimeout(tick,3000);
+    });
+  })();
 }
+$('wretry').onclick=function(){ if(ORDER) goWait(false); else show('s-intro') };
+$('wback').onclick=function(){polling++; if(A&&A.role) finish(); else show('s-intro')};
 
-/* ---------- 5. Сборка блоков ---------- */
-function P(text,label){return '<div class="pr"><pre>'+esc(text)+'</pre>'+(label?'<span class="lbl">'+esc(label)+'</span>':'')+'<button class="cp" type="button">'+'<svg class="ic" viewBox="0 0 24 24" style="width:15px;height:15px"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Скопировать</button></div>'}
-function steps(arr){return '<ol class="steps">'+arr.map(function(s,k){return '<li><span class="k">'+(k+1)+'</span><span>'+s+'</span></li>'}).join('')+'</ol>'}
-function why(t){return '<div class="why"><b>Почему так.</b> '+t+'</div>'}
-function ex(t){return '<div class="ex"><b>Что получишь.</b> '+t+'</div>'}
-function sec(id,n,title,sub,body){return '<section class="blk" id="'+id+'"><div class="eyebrow">'+n+'</div><h2>'+title+'</h2>'+(sub?'<p class="sub">'+sub+'</p>':'')+body+'</section>'}
-function devs(a){return (a.dev&&a.dev.length)?a.dev:['iphone']}
-
-function bCountry(a){
-  if(a.country==='ru') return '<div class="card warn"><h3>Сначала важное: Россия и Беларусь не в списке</h3><p>Claude официально не работает в России и Беларуси. Правило у сервиса простое: пользоваться можно, когда ты физически находишься в стране из списка. VPN это не решает: вход из неподдерживаемой страны через любой VPN нарушает правила сервиса, и такие аккаунты блокируют — вместе с перепиской и проектами. Обходные пути я не показываю.</p><p>Если ездишь за границу, переезжаешь или работаешь из другой страны — всё ниже работает как есть. Сохрани инструкцию: она пригодится в первый же день там.</p><p><a href="https://www.anthropic.com/supported-countries" target="_blank" rel="noopener">Список стран</a> · проверено '+CHECKED+'</p></div>';
-  if(a.country==='cis') return '<div class="card okc"><h3>Твоя страна, скорее всего, в списке</h3><p>Казахстан, Узбекистан, Кыргызстан, Таджикистан, Туркменистан, Армения, Азербайджан, Молдова и Грузия — среди стран, где Claude доступен. Россия и Беларусь — нет. <a href="https://www.anthropic.com/supported-countries" target="_blank" rel="noopener">Полный список</a> · проверено '+CHECKED+'.</p></div>';
-  if(a.country==='world') return '<div class="card okc"><h3>Claude доступен почти везде, где ты можешь быть</h3><p>Страны Евросоюза, Великобритания, США, ОАЭ, Турция, Израиль, Сербия и ещё около 170 стран — в списке. Проверь свою за 10 секунд: <a href="https://www.anthropic.com/supported-countries" target="_blank" rel="noopener">список стран</a> · проверено '+CHECKED+'.</p></div>';
-  return '<div class="card warn"><h3>Проверь страну до регистрации</h3><p>Открой <a href="https://www.anthropic.com/supported-countries" target="_blank" rel="noopener">список стран</a> и найди свою. Важно, где ты находишься физически, а не гражданство. России и Беларуси в списке нет (проверено '+CHECKED+'). Обходные пути не используй — так можно потерять аккаунт.</p></div>';
+function renderGuide(d){
+  LAST=d;
+  document.body.className='st-'+(d.style||'ex');
+  $('res').innerHTML=d.html;
+  var pr=$('pr'); if(pr) pr.onclick=function(){track('tutorial_pdf');window.print()};
+  var rd=$('redo'); if(rd) rd.onclick=function(){A={};i=0;try{localStorage.removeItem(DAYS_KEY)}catch(e){};show('s-quiz');renderQ()};
+  var done={}; try{done=JSON.parse(localStorage.getItem(DAYS_KEY)||'{}')}catch(e){}
+  [].forEach.call($('res').querySelectorAll('.day'),function(b){
+    var k=b.getAttribute('data-k'); if(done[k]) b.classList.add('done');
+    b.onclick=function(){
+      var d2={};try{d2=JSON.parse(localStorage.getItem(DAYS_KEY)||'{}')}catch(e){}
+      d2[k]=!d2[k]; b.classList.toggle('done',!!d2[k]);
+      try{localStorage.setItem(DAYS_KEY,JSON.stringify(d2))}catch(e){}
+    };
+  });
+  $('resume').hidden=false;
+  show('s-res');
 }
-
-function bInstall(a){
-  var d=devs(a), phone=d.some(function(x){return x==='iphone'||x==='android'}), pc=d.some(function(x){return x==='win'||x==='mac'});
-  var h=bCountry(a);
-  h+='<div class="card"><h3>Аккаунт — один на все устройства</h3>'+steps([
-    'Открой в браузере <span class="kbd">claude.ai</span>.',
-    'Зарегистрируйся по почте или через аккаунт Google. Придёт письмо или код — подтверди.',
-    'Тариф выбери <b>Free</b>. Для первой недели его хватит.'
-  ])+why('Один аккаунт — значит, начал на компьютере, продолжил в метро с телефона: чаты и проекты общие.')+'</div>';
-  var DI={
-   iphone:['iPhone',['Открой App Store и найди «Claude».','Проверь разработчика: должно быть <b>Anthropic</b>. Похожих приложений-клонов много.','Нажми «Загрузить», открой и войди тем же аккаунтом.'],'В приложении есть голосовой ввод — удобно надиктовать задачу на ходу.'],
-   android:['Android',['Открой Google Play и найди «Claude».','Проверь разработчика: <b>Anthropic</b>. Клоны с похожей иконкой — мимо.','Установи, открой и войди тем же аккаунтом.'],'Нужен Android 10 или новее. Голосовой ввод тоже есть.'],
-   win:['Windows',['Открой <span class="kbd">claude.com/download</span>.','Нажми «Download for Windows». Если ноутбук на процессоре ARM (например, Snapdragon) — выбери версию arm64.','Запусти установщик и войди тем же аккаунтом.'],'Приложение на компьютере удобнее браузера: свои горячие клавиши и можно перетаскивать файлы прямо в чат.'],
-   mac:['Mac',['Открой <span class="kbd">claude.com/download</span>.','Нажми «Download for macOS», перетащи Claude в «Программы».','Запусти и войди тем же аккаунтом.'],'На Mac можно делиться окном или скриншотом прямо в чат — Claude видит то же, что ты.']
-  };
-  d.forEach(function(k){var x=DI[k];h+='<div class="card"><h3>'+x[0]+'</h3>'+steps(x[1])+'<div class="ex"><b>Фишка.</b> '+x[2]+'</div></div>'});
-  var tip=phone&&pc?'Начни с компьютера: длинные тексты и настройку проекта там делать проще. Телефон — для быстрых вопросов и голоса.'
-         :phone?'Компьютер не обязателен: всё из этой инструкции делается в приложении на телефоне.'
-         :'Телефон необязателен, но приложение пригодится, чтобы задавать вопросы на ходу.';
-  h+='<div class="card"><h3>Деньги</h3><p>Бесплатного тарифа хватит, чтобы пройти всю неделю. Если упрёшься в лимиты — есть Pro: $20 в месяц или $17 при оплате за год (в части стран цена в местной валюте). Оплата картой, только внутри приложения или на claude.ai. Карты российских банков не подойдут — нужна карта банка страны, где ты живёшь. Цены проверены '+CHECKED+' — смотри актуальные на <a href="https://claude.com/pricing" target="_blank" rel="noopener">claude.com/pricing</a>.</p><p>'+tip+'</p></div>';
-  return sec('install','01 · Установка','Ставим Claude','Только официальные способы: сайт и приложения из магазинов.',h);
-}
-
-function bSetup(a){
-  var pref='Отвечай по-русски, на «ты», коротко. Сначала суть, потом детали. '+STYLE_LINE[a.style||'ex']+' Если чего-то не хватает — сначала спроси.';
-  var h='<div class="card"><h3>Расскажи о себе один раз</h3>'+steps([
-    'Нажми на своё имя внизу слева (в телефоне — на значок профиля) и открой <b>Настройки</b>.',
-    'В разделе <b>Профиль</b> впиши, как тебя зовут.',
-    'В поле о предпочтениях в ответах вставь текст ниже и сохрани.'
-  ])+P(pref,'в настройки профиля')+why('Это работает во всех чатах сразу. Без этого Claude каждый раз гадает, как с тобой говорить.')+'</div>';
-  h+='<div class="card"><h3>Память и инкогнито</h3><p>Память у Claude включена по умолчанию на всех тарифах: он запоминает важное из разговоров. Посмотреть и стереть, что он помнит, — <b>Настройки → Память</b>.</p><p>Для личного открывай инкогнито-чат (значок призрака вверху): такой чат не сохраняется и в память не попадает.</p></div>';
-  if(a.exp==='never') h+='<div class="card"><h3>Три правила разговора</h3>'+steps([
-    '<b>Говори как с толковым помощником в первый день:</b> кто ты, что нужно, для кого и в каком виде.',
-    '<b>Первый ответ — черновик.</b> Пиши «короче», «проще», «другим тоном», «убери пафос». Это нормально, так и надо.',
-    '<b>Пусть спрашивает.</b> Добавь в конце: «Если чего-то не хватает — спроси». Ответы станут точнее.'
-  ])+'</div>';
-  if(a.exp==='other') h+='<div class="card"><h3>Если пришёл из ChatGPT</h3><p>Привычки работают и тут. Чтобы не начинать с нуля, перенеси контекст: спроси у старого помощника «Что ты обо мне знаешь? Перечисли списком» — и вставь ответ в инструкцию проекта из шага 03.</p></div>';
-  if(a.exp==='claude') h+='<div class="card"><h3>Почему в прошлый раз не зашло</h3><p>Чаще всего потому, что каждый чат начинался с нуля и приходилось всё объяснять заново. Настройка профиля выше и проект ниже это лечат — после них Claude отвечает по-другому.</p></div>';
-  return sec('setup','02 · Настройка','5 минут на настройку','Один раз — и Claude перестанет отвечать «в общем».',h);
-}
-
-function bFirst(a){
-  var f=firstPrompt(a);
-  var h='<div class="card"><h3>'+esc(f.t)+'</h3><p>Открой новый чат, скопируй текст, замени то, что в [скобках], и отправь.</p>'+P(f.p,'первый запрос')+ex(f.get)+why('Начинаем с того, что отнимает у тебя больше всего времени: '+PAIN_LBL[a.pain]+'. Результат заметишь сразу, а не «когда-нибудь».')+'</div>';
-  h+='<div class="card"><h3>Ответ не понравился?</h3><p>Не начинай заново — продолжай тот же чат:</p>'+steps(['«Короче, в два раза»','«Проще, как для друга»','«Другой тон: [деловой / тёплый / смешной]»','«Ещё 3 варианта, совсем разных»'])+'</div>';
-  return sec('first','03 · Первый запрос','Первый запрос — под твою задачу','',h);
-}
-
-function bProject(a){
-  var who=ROLE_SAY[a.role]==='Я занимаюсь'?(a.sphere?('Я занимаюсь: '+a.sphere):'[кто я и чем занимаюсь]'):(ROLE_SAY[a.role]+(a.sphere?(', сфера — '+a.sphere):''));
-  var tpl='Кто я: '+who+'. [Пара слов конкретно: что продаю, какие услуги, какая должность.]\n'+
-    'Для кого работаю: [кто мои клиенты, аудитория или руководитель].\n'+
-    'Что съедает время: '+PAIN_LBL[a.pain]+'.\n'+
-    'Цель на ближайший месяц: '+GOAL_LBL[a.goal||'time']+'.\n'+
-    'Как со мной говорить: на «ты», по-русски, коротко. '+STYLE_LINE[a.style||'ex']+'\n'+
-    'Чего не делать: не пиши канцеляритом и штампами вроде «уникальный» и «инновационный». Не выдумывай факты и цифры — если не знаешь, так и скажи.\n'+
-    'Пример моего текста, чтобы писать в моём стиле: [вставь 1–2 своих сообщения или поста].';
-  var h='<div class="card"><h3>Проект «Я и моя работа»</h3>'+steps([
-    'В меню слева нажми <b>Проекты</b> → <b>Новый проект</b> (можно сразу открыть <span class="kbd">claude.ai/projects</span>).',
-    'Назови его «Я и моя работа».',
-    'Открой <b>Инструкции</b> проекта, вставь шаблон ниже и допиши то, что в [скобках].',
-    'Внутри проекта открой новый чат и спроси: «Что ты обо мне знаешь?»'
-  ])+P(tpl,'инструкция проекта')+ex('Claude перескажет, кто ты и как с тобой говорить. Пересказал — проект работает. Дальше все рабочие задачи — в чатах этого проекта.')+why('Инструкция проекта читается в каждом чате внутри него. Объяснил один раз — и больше не надо. В проект можно добавить файлы: прайс, примеры текстов, регламент.')+'<p style="margin-top:12px;font-size:14px">На бесплатном тарифе можно до 5 проектов, на платных — без ограничения.</p></div>';
-  return sec('project','04 · Проект','Чтобы Claude помнил, кто ты','Самый полезный шаг из всех. 10 минут — и больше не нужно объяснять заново.',h);
-}
-
-function bTasks(a){
-  var list=tasks(a);
-  var h='<div class="tasks">'+list.map(function(t){return '<div class="card task"><h3>'+esc(t[0])+'</h3>'+P(t[1])+ex(esc(t[2]))+'</div>'}).join('')+'</div>';
-  return sec('tasks','05 · Что поручить','Что отдать Claude в первую очередь','Четыре задачи про '+PAIN_LBL[a.pain]+' и одна под твою работу. Делай их внутри проекта.',h);
-}
-
-function bMail(a){
-  if(a.mail==='none') return '';
-  var h;
-  if(a.mail==='google'){
-    h='<div class="card"><h3>Подключи Gmail и Календарь</h3>'+steps([
-      'Открой <b>Настройки → Подключения</b> (в английском интерфейсе — Connectors).',
-      'Найди <b>Gmail</b>, нажми «Подключить» и войди в свой аккаунт Google. Разреши доступ.',
-      'Так же подключи <b>Google Календарь</b>.',
-      'Отключить можно там же в любой момент.'
-    ])+'<p>По справке Anthropic на '+CHECKED+', подключения Gmail, Календаря и Google Диска доступны на всех тарифах. Claude ищет письма и события сам, письма готовит в черновиках — что и когда отправлять, решаешь ты.</p>'+why('Не нужно копировать письма в чат: Claude сам найдёт нужное, а ты только проверяешь.')+'</div>';
-    h+='<div class="card"><h3>Попробуй сразу</h3>'+P('Что у меня в календаре на завтра? Где окна по 30 минут?')+P('Найди в почте письма за неделю, на которые я не ответил. Отсортируй по важности.')+P('Подготовь черновик ответа на последнее письмо от [кого]. Коротко и по делу.')+'</div>';
-  }else{
-    h='<div class="card"><h3>Почта не Gmail — не страшно</h3><p>Копируй текст письма прямо в чат: шаблоны из раздела 05 работают так же. Для Outlook и Microsoft 365 у Claude есть своё подключение на платных тарифах — его можно включить позже.</p>'+P('Вот письмо: [вставь]. Что от меня хотят, к какому сроку и что ответить? Дай черновик ответа.')+'</div>';
-  }
-  return sec('mail','06 · Почта и календарь','Почта и календарь','',h);
-}
-
-function bWeek(a){
-  var t=tasks(a).map(function(x){return x[0]}), g=a.mail==='google';
-  var W={
-   m5:[['Установить и первый запрос','Шаги 01 и 03. Пять минут — и первый результат.'],
-       ['Профиль','Шаг 02: вставь текст о себе в настройки.'],
-       ['Проект «Я и моя работа»','Шаг 04. Если не успеешь дописать всё — допиши завтра.'],
-       ['Задача: '+t[0],'Внутри проекта.'],
-       [g?'Подключить Gmail':'Задача: '+t[1],g?'Шаг 06 и один вопрос про завтрашний день.':'Внутри проекта.'],
-       ['Покрути руль','Попроси переделать любой ответ трижды: короче, проще, другим тоном.'],
-       ['Итог недели','Спроси: «Что из моей рутины ещё можно отдать тебе?» и перечисли свои дела.']],
-   m30:[['Установка, профиль, первый запрос','Шаги 01–03.'],
-        ['Проект и проверка','Шаг 04 + вопрос «Что ты обо мне знаешь?»'],
-        ['Задачи: '+t[0]+' и '+t[1],'Обе внутри проекта.'],
-        [g?'Подключить почту и календарь':'Задача: '+t[2],g?'Шаг 06 и три пробных вопроса.':'Внутри проекта.'],
-        ['Задачи: '+(g?t[2]+' и ':'')+t[3],'Сравни, сколько времени ушло раньше и сейчас.'],
-        ['Своя библиотека промптов','Собери в заметки 5 запросов, которые сработали лучше всего.'],
-        ['Итог недели','Спроси Claude: «Что из моей рутины ещё можно тебе отдать?» — и выбери одно на следующую неделю.']],
-   eve:[['Вечер старта','Шаги 01–04 за раз: установка, профиль, первый запрос, проект. Около часа.'],
-        ['Задача: '+t[0],'10 минут.'],
-        ['Задача: '+t[1],'10 минут.'],
-        [g?'Почта и календарь':'Задача: '+t[2],g?'Шаг 06: подключить и спросить про завтра.':'10 минут.'],
-        ['Задача: '+t[3],'10 минут.'],
-        ['Задача: '+t[4],'Та, что под твою работу.'],
-        ['Итог недели','Что сработало? Сохрани лучшие запросы в заметки.']]
-  };
-  var plan=W[a.time||'m30'], done={};
-  try{done=JSON.parse(localStorage.getItem(DAYS_KEY)||'{}')}catch(e){}
-  var h='<div class="week">'+plan.map(function(p,k){return '<button type="button" class="day'+(done[k]?' done':'')+'" data-k="'+k+'"><span class="d">День '+(k+1)+'</span><span class="w"><b>'+esc(p[0])+'</b><span>'+esc(p[1])+'</span></span><span class="tick">'+CHECK+'</span></button>'}).join('')+'</div>';
-  var G={time:'Засекай: сколько задача занимала раньше и сколько с Claude. Цифры убеждают лучше слов.',
-         write:'Пиши через Claude хотя бы один текст в день — и смотри, что он правит. Через неделю заметишь это в своих текстах.',
-         understand:'Спрашивай, пока не станет ясно. Глупых вопросов тут нет: Claude не закатывает глаза.',
-         automate:'Ищи повторы: всё, что делаешь второй раз, — кандидат в шаблон. Это первый шаг к тому, чтобы рутина делалась без тебя.'};
-  h+='<div class="card"><h3>Твоя цель: '+GOAL_LBL[a.goal||'time']+'</h3><p>'+G[a.goal||'time']+'</p></div>';
-  return sec('week','07 · Неделя','План на 7 дней','По одному шагу в день. Отмечай сделанное — галочки сохранятся на этом устройстве.',h);
-}
-
-function bSafety(){
-  var Y=['Черновики писем, постов, описаний','Таблицы и отчёты — без личных данных клиентов или с заменёнными именами','Планы, идеи, списки дел','Договоры и документы — убрав паспортные данные и реквизиты','Вопросы, которые стыдно задать человеку'];
-  var N=['Пароли и коды из СМС — никогда и никому','Номера карт, CVV, банковские реквизиты','Паспорт, СНИЛС, ИНН — свои и чужие','Чужие медицинские данные и переписки без спроса','Внутренние документы работодателя, если правила компании это запрещают'];
-  var ok='<svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>', no='<svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-  var h='<div class="two"><div class="card"><h3>Можно отдавать</h3><ul class="lst yes">'+Y.map(function(x){return '<li>'+ok+'<span>'+x+'</span></li>'}).join('')+'</ul></div><div class="card"><h3>Не отдавай</h3><ul class="lst no">'+N.map(function(x){return '<li>'+no+'<span>'+x+'</span></li>'}).join('')+'</ul></div></div>';
-  h+='<div class="card"><h3>И ещё два правила</h3>'+steps(['<b>Проверяй цифры, даты и факты.</b> Claude иногда ошибается уверенным тоном. Решения и подпись — за тобой.','<b>Личное — в инкогнито-чат.</b> Он не сохраняется и не попадает в память.'])+'</div>';
-  return sec('safety','08 · Безопасность','Что отдавать ИИ, а что нет','',h);
-}
-
-function renderResult(){
-  var a=A;
-  document.body.className='st-'+(a.style||'ex');
-  var f=firstPrompt(a);
-  var chips=[ROLE_LBL[a.role]+(a.sphere?' · '+esc(a.sphere):''),devs(a).map(function(x){return DEV_LBL[x]}).join(' + '),'главное: '+PAIN_LBL[a.pain],'цель: '+GOAL_LBL[a.goal||'time']];
-  var h='<div class="eyebrow">Твоя инструкция</div><h1>С чего начать <span class="acc">именно тебе</span></h1>'+
-    '<div class="prof">'+chips.map(function(c){return '<span class="chip">'+c+'</span>'}).join('')+'</div>'+
-    '<div class="tools"><button class="btn gho sm" id="pr">Сохранить в PDF</button><button class="btn gho sm" id="redo">Пройти заново</button></div>'+
-    '<div class="start"><div class="eyebrow">Начни отсюда</div><ol>'+
-      (a.country==='ru'?'<li><span><a href="#install">Прочитай про страны</a> — это важно до регистрации</span></li>':'')+
-      '<li><span><a href="#install">Поставь Claude</a> на '+devs(a).map(function(x){return DEV_LBL[x]}).join(' и ')+'</span></li>'+
-      '<li><span><a href="#first">Первый запрос</a>: «'+esc(f.t)+'»</span></li>'+
-      '<li><span><a href="#project">Создай проект</a>, чтобы Claude помнил, кто ты</span></li>'+
-    '</ol></div>';
-  h+=bInstall(a)+bSetup(a)+bFirst(a)+bProject(a)+bTasks(a)+bMail(a)+bWeek(a)+bSafety();
-  h+='<div class="bridge"><div class="eyebrow">Что дальше</div><h2>Стартовый набор Макса</h2><p>Когда Claude станет привычкой, следующий шаг — чтобы рутина делалась без тебя. В наборе простые инструкции, как скинуть на ИИ базовые дела и оставить время на себя.</p><a class="btn pri" href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">Напиши <span class="word">НАБОР</span> в директ</a></div>';
-  h+='<div class="src">Факты о Claude проверены '+CHECKED+' по официальным страницам. Интерфейс и тарифы меняются — если кнопка называется чуть иначе, ищи по смыслу.<ul>'+
-   '<li><a href="https://www.anthropic.com/supported-countries" target="_blank" rel="noopener">Страны, где доступен Claude</a></li>'+
-   '<li><a href="https://claude.com/pricing" target="_blank" rel="noopener">Тарифы</a></li>'+
-   '<li><a href="https://claude.com/download" target="_blank" rel="noopener">Приложения</a></li>'+
-   '<li><a href="https://support.claude.com/en/articles/9517075-what-are-projects" target="_blank" rel="noopener">Проекты</a></li>'+
-   '<li><a href="https://support.claude.com/en/articles/11817273" target="_blank" rel="noopener">Память и инкогнито</a></li>'+
-   '<li><a href="https://support.claude.com/en/articles/10166901-use-google-workspace-connectors" target="_blank" rel="noopener">Gmail, Календарь и Диск</a></li></ul></div>';
-  $('res').innerHTML=h;
-  $('pr').onclick=function(){track('tutorial_pdf');window.print()};
-  $('redo').onclick=function(){A={};i=0;try{localStorage.removeItem(KEY);localStorage.removeItem(DAYS_KEY)}catch(e){};show('s-quiz');renderQ()};
-  [].forEach.call($('res').querySelectorAll('.day'),function(b){b.onclick=function(){
-    var d={};try{d=JSON.parse(localStorage.getItem(DAYS_KEY)||'{}')}catch(e){}
-    var k=b.getAttribute('data-k'); d[k]=!d[k]; b.classList.toggle('done',!!d[k]);
-    try{localStorage.setItem(DAYS_KEY,JSON.stringify(d))}catch(e){}
-  }});
-}
+var LAST=null;
+$('resume').onclick=function(){ if(LAST) renderGuide(LAST); else goWait(true) };
 
 /* копирование */
 document.addEventListener('click',function(e){
@@ -610,9 +540,25 @@ document.addEventListener('click',function(e){
   function fallback(){var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok()}catch(_){}document.body.removeChild(ta)}
 });
 
-/* для теста: ?p=role,sphere,pain,dev1+dev2,country,exp,goal,time,mail,style */
-var m=location.search.match(/[?&]p=([^&]+)/);
-if(m){var v=decodeURIComponent(m[1]).split(',');A={role:v[0],sphere:v[1],pain:v[2],dev:v[3].split('+'),country:v[4],exp:v[5],goal:v[6],time:v[7],mail:v[8],style:v[9]};renderResult();show('s-res')}
+
+/* ---------- старт страницы ---------- */
+(function boot(){
+  var q=new URLSearchParams(location.search);
+  if(q.get('code')) $('code').value=q.get('code');
+  if(q.get('preview')){
+    api('GET','/api/tutorial-guide?preview='+encodeURIComponent(q.get('preview'))+'&p='+encodeURIComponent(q.get('p')||'')).then(function(d){ if(d.html) renderGuide(d); });
+    return;
+  }
+  var o=q.get('order');
+  if(o&&UUID.test(o)){ setOrder(o); history.replaceState(null,'',location.pathname); goWait(false); return }
+  if(ORDER){
+    api('GET','/api/tutorial-guide?order='+encodeURIComponent(ORDER)).then(function(d){
+      if(d.status==='paid'&&d.html){ LAST=d; $('resume').hidden=false; $('resume').textContent='Моя инструкция'; }
+      else if(d._s===404) setOrder(null);
+      else if(d.status==='new'&&A&&A.role){ $('resume').hidden=false; $('resume').textContent='Продолжить'; $('resume').onclick=function(){finish()}; }
+    });
+  }
+})();
 })();
 </script>
 </body>

@@ -1,0 +1,38 @@
+-- Туториал «Как начать с Claude»: промокоды и заказы.
+-- Выполнить один раз: Supabase → SQL Editor → New query → вставить → Run.
+
+create table if not exists promo_codes (
+  code        text primary key,           -- всегда ЗАГЛАВНЫМИ, без пробелов
+  active      boolean not null default true,
+  uses        integer not null default 0,
+  note        text,
+  created_at  timestamptz not null default now()
+);
+
+create table if not exists tutorial_orders (
+  id              uuid primary key default gen_random_uuid(),
+  promo           text references promo_codes(code),
+  answers         jsonb,
+  status          text not null default 'new',   -- new → paid
+  amount          numeric,                       -- пришло на кошелёк
+  withdraw_amount numeric,                       -- списано у покупателя
+  operation_id    text,
+  paid_at         timestamptz,
+  created_at      timestamptz not null default now()
+);
+
+create index if not exists tutorial_orders_status_idx on tutorial_orders (status);
+
+-- Доступ только с сервера (service role). Публичный ключ ничего не видит.
+alter table promo_codes enable row level security;
+alter table tutorial_orders enable row level security;
+
+-- Первый промокод — тот же, что в автоответе Glocal на СТАРТ.
+-- Поменять код: добавь новый и выключи старый (active = false).
+insert into promo_codes (code, note) values ('CLAUDE26', 'автоответ Glocal на СТАРТ')
+on conflict (code) do nothing;
+
+-- Полезные запросы:
+-- select status, count(*) from tutorial_orders group by status;
+-- select * from tutorial_orders where status = 'paid' order by paid_at desc;
+-- update promo_codes set active = false where code = 'CLAUDE26';
