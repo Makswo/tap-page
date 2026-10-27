@@ -164,6 +164,7 @@ body.st-steps .why,body.st-steps .ex,body.st-ex .why,body.st-why .ex{display:non
 .src{margin-top:40px;border-top:1px solid var(--line);padding-top:20px;font-size:13.5px;color:var(--tx3)}
 .src ul{margin:8px 0 0;padding-left:18px}
 .src a{color:var(--tx2)}
+.freq{display:inline-block;margin-top:6px;font-size:12px;color:var(--tx3)}
 footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);font-size:13px;text-align:center}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;background:var(--s3);border:1px solid var(--line2);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:600;transition:.25s;pointer-events:none;z-index:50}
 .toast.on{opacity:1;transform:translate(-50%,0)}
@@ -272,6 +273,7 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
     <div><span class="n">02</span><b>Первые запросы</b><span>Готовые тексты под твою работу — скопировал и вставил.</span></div>
     <div><span class="n">03</span><b>Неделя по шагам</b><span>Один маленький шаг в день, сколько у тебя есть времени.</span></div>
   </div>
+  <div class="note"><b>Цена и получение.</b> Персональная инструкция стоит 99 ₽, разовый платёж. Это цифровой товар: после оплаты инструкция сразу открывается на этой странице, её можно сохранить в PDF и открыть по личной ссылке с любого устройства. Доставка не требуется. Условия — в <a href="/oferta" target="_blank" rel="noopener">публичной оферте</a>.</div>
   <div class="note"><b>Честно о странах.</b> Claude работает не везде: России и Беларуси нет в списке стран, где он официально доступен. Пользоваться можно, когда ты физически находишься в стране из списка. Обходных путей здесь нет — только официальные. Список стран проверен 27 октября 2026: <a href="https://www.anthropic.com/supported-countries" target="_blank" rel="noopener">anthropic.com/supported-countries</a>.</div>
 </div></main>
 
@@ -337,7 +339,7 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
 <!-- RESULT -->
 <main id="s-res" class="screen"><div class="wrap res" id="res"></div></main>
 
-<footer>Сделал Макс · <a href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">@makswo</a> · <a href="/oferta" target="_blank" rel="noopener">Оферта</a> · Это не официальный материал Anthropic</footer>
+<footer>Сделал Макс · <a href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">@makswo</a> · <a href="/oferta" target="_blank" rel="noopener">Публичная оферта</a> · Это не официальный материал Anthropic<br><span class="freq">ИП Малыгин Максим Валерьевич · ИНН 183512338627 · ОГРНИП 323180000018526 · <a href="mailto:mxmgin@gmail.com">mxmgin@gmail.com</a></span></footer>
 <div class="toast" id="toast">Скопировано</div>
 <button class="btn pri fab" id="fab" type="button" hidden><svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Сохранить PDF</button>
 
