@@ -3,6 +3,7 @@
 // Чеки по 54-ФЗ (для ИП не на НПД): YOOKASSA_RECEIPTS=1 — тогда покупатель
 // вводит email, а ЮKassa отправляет на него чек. YOOKASSA_VAT_CODE — код НДС
 // (по умолчанию 1 — «без НДС»; уточни у бухгалтера под свою систему налогообложения).
+// YOOKASSA_TAX_SYSTEM — код системы налогообложения в чеке (6 — патент, 2 — УСН «доходы»).
 'use strict';
 const crypto = require('crypto');
 
@@ -49,6 +50,8 @@ async function createPayment({ order, price, email }) {
   if (receipts()) {
     body.receipt = {
       customer: { email },
+      // Система налогообложения для чека: 6 — патент (ПСН), 2 — УСН «доходы».
+      ...(process.env.YOOKASSA_TAX_SYSTEM ? { tax_system_code: Number(process.env.YOOKASSA_TAX_SYSTEM) } : {}),
       items: [{
         description: 'Персональная инструкция «Как начать с Claude» (цифровой материал)',
         quantity: '1.00',
