@@ -2,9 +2,21 @@
 // Ключ — service role, поэтому код работает только на сервере.
 'use strict';
 
+// Ищем переменные и без приставки, и с любой приставкой от Vercel
+// Storage (например, STORAGE_SUPABASE_URL).
+function env(names) {
+  for (const n of names) if (process.env[n]) return process.env[n];
+  const keys = Object.keys(process.env);
+  for (const n of names) {
+    const k = keys.find((x) => x.endsWith(`_${n}`) && !x.includes('PUBLIC') && process.env[x]);
+    if (k) return process.env[k];
+  }
+  return '';
+}
+
 function cfg() {
-  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY;
+  const url = env(['SUPABASE_URL']) || env(['NEXT_PUBLIC_SUPABASE_URL']);
+  const key = env(['SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_SECRET_KEY', 'SUPABASE_SERVICE_KEY']);
   if (!url || !key) throw new Error('Supabase env is missing: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
   return { url: url.replace(/\/+$/, ''), key };
 }
@@ -22,7 +34,9 @@ async function call(method, table, filters, body) {
     method,
     headers: {
       apikey: key,
-      Authorization: `Bearer ${key}`,
+      // Новые секретные ключи (sb_secret_...) идут только в apikey,
+      // старый service_role (JWT) — ещё и в Authorization.
+      ...(key.startsWith('sb_') ? {} : { Authorization: `Bearer ${key}` }),
       'Content-Type': 'application/json',
       Prefer: 'return=representation',
     },

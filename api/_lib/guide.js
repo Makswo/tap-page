@@ -246,7 +246,7 @@ function build(a){
   var chips=[ROLE_LBL[a.role]+(a.sphere?' · '+esc(a.sphere):''),devs(a).map(function(x){return DEV_LBL[x]}).join(' + '),'главное: '+PAIN_LBL[a.pain],'цель: '+GOAL_LBL[a.goal||'time']];
   var h='<div class="eyebrow">Твоя инструкция</div><h1>С чего начать <span class="acc">именно тебе</span></h1>'+
     '<div class="prof">'+chips.map(function(c){return '<span class="chip">'+c+'</span>'}).join('')+'</div>'+
-    '<div class="tools"><button class="btn gho sm" id="pr">Сохранить в PDF</button><button class="btn gho sm" id="redo">Пройти заново</button></div>'+
+    '<div id="savebox"></div>'+
     '<div class="start"><div class="eyebrow">Начни отсюда</div><ol>'+
       (a.country==='ru'?'<li><span><a href="#install">Прочитай про страны</a> — это важно до регистрации</span></li>':'')+
       '<li><span><a href="#install">Поставь Claude</a> на '+devs(a).map(function(x){return DEV_LBL[x]}).join(' и ')+'</span></li>'+

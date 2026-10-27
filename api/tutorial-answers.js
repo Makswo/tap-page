@@ -2,6 +2,7 @@
 'use strict';
 const db = require('./_lib/db');
 const guide = require('./_lib/guide');
+const yk = require('./_lib/yookassa');
 const { UUID, price, site, send, body } = require('./_lib/util');
 
 module.exports = async (req, res) => {
@@ -17,19 +18,22 @@ module.exports = async (req, res) => {
     await db.update('tutorial_orders', { id: `eq.${b.order}` }, { answers });
 
     const wallet = process.env.YOOMONEY_WALLET;
-    if (!wallet) throw new Error('YOOMONEY_WALLET is missing');
+    if (!wallet && !yk.enabled()) throw new Error('No payment provider: set YOOKASSA_* or YOOMONEY_WALLET');
     return send(res, 200, {
       paid: rows[0].status === 'paid',
       teaser: guide.teaser(answers),
       price: price(),
-      pay: {
+      provider: yk.enabled() ? 'yookassa' : 'yoomoney',
+      needEmail: yk.enabled() && yk.receipts(),
+      // Кошелёк ЮMoney — запасной способ, если он настроен.
+      pay: wallet ? {
         action: 'https://yoomoney.ru/quickpay/confirm',
         receiver: wallet,
         'quickpay-form': 'button',
         sum: price().toFixed(2),
         label: b.order,
         successURL: `${site()}/start?order=${b.order}`,
-      },
+      } : null,
     });
   } catch (e) {
     console.error(e);

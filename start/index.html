@@ -206,6 +206,26 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
 .linkbtn:hover{color:var(--tx)}
 @media (max-width:640px){.prow{flex-direction:column}.prow .pin{flex:none;width:100%}.prow .btn{width:100%}}
 
+/* yookassa + save */
+.flbl{display:block;font-family:var(--m);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--tx2);margin:18px 0 8px}
+.ykgo{width:100%;margin-top:16px}
+#ykform{margin-top:16px;border-radius:18px;overflow:hidden}
+#ykform:empty{display:none}
+.secure{display:flex;gap:8px;align-items:flex-start}
+.secure svg{width:16px;height:16px;margin-top:2px;color:var(--ok)}
+#ymalt{display:block;margin-top:12px}
+.savecard{margin:6px 0 4px;border-radius:22px;padding:18px;border:1px solid rgba(212,255,63,.45);background:linear-gradient(180deg,rgba(212,255,63,.1),var(--s1) 75%)}
+.savecard h3{margin:6px 0 4px;font-size:19px}
+.savecard p{margin:4px 0 0;color:var(--tx2);font-size:14.5px}
+.savebtns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.pulse{animation:pulse 1.6s ease-out 4}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(212,255,63,.55)}100%{box-shadow:0 0 0 16px rgba(212,255,63,0)}}
+.mylink{display:flex;gap:8px;align-items:center;margin-top:14px;background:var(--bg);border:1px solid var(--line2);border-radius:14px;padding:8px 8px 8px 14px}
+.mylink code{flex:1;min-width:0;font:13px var(--m);color:var(--tx2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fab{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));z-index:30;box-shadow:0 12px 30px rgba(0,0,0,.55);transform:translateY(120px);transition:transform .25s}
+.fab.on{transform:none}
+@media (max-width:640px){.savebtns .btn{flex:1}}
+
 @media (max-width:640px){
   .what{grid-template-columns:1fr}
   .two{grid-template-columns:1fr}
@@ -220,7 +240,9 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
   .card,.pr,.day{break-inside:avoid}
   .screen{display:none!important}
   #s-res{display:block!important}
-  .tools,.res .tools{display:none!important}
+  .tools,.res .tools,#savebox,.fab{display:none!important}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .screen.on{opacity:1!important;transform:none!important}
 }
 </style>
 </head>
@@ -244,6 +266,7 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
     <p class="phint">Нет кода? Напиши <span class="word">СТАРТ</span> в директ <a href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">@makswo</a> — пришлю. Вопросы бесплатно, инструкция — 99 ₽ после них.</p>
   </form>
   <button class="btn gho lg" id="resume" type="button" hidden>Моя инструкция</button>
+  <p class="phint" style="margin-top:14px">Уже покупал? Открой свою личную ссылку — она была на странице инструкции. Потерял — напиши в директ <a href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">@makswo</a>, восстановлю.</p>
   <div class="what">
     <div><span class="n">01</span><b>Установка</b><span>Под твой телефон и компьютер, только официальные способы.</span></div>
     <div><span class="n">02</span><b>Первые запросы</b><span>Готовые тексты под твою работу — скопировал и вставил.</span></div>
@@ -278,14 +301,26 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
   <div class="paybox">
     <ul class="lst yes" id="incl"></ul>
     <div class="prc"><span class="price" id="pprice">99 ₽</span><span>разово, доступ остаётся у тебя</span></div>
-    <form id="payform" method="POST" action="https://yoomoney.ru/quickpay/confirm">
+    <div id="ykbox" hidden>
+      <div id="ykemail" hidden>
+        <label class="flbl" for="email">Email для чека</label>
+        <input id="email" class="tin" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" maxlength="120">
+      </div>
+      <button class="btn pri lg ykgo" id="ykpay" type="button">Перейти к оплате · 99 ₽</button>
+      <div id="ykform"></div>
+      <div class="perr" id="ykerr" role="alert"></div>
+      <p class="fine secure"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Безопасная оплата через ЮKassa: карта, СБП, SberPay, T-Pay. Данные карты вводятся в защищённой форме ЮKassa — мы их не видим.</p>
+    </div>
+    <form id="payform" method="POST" action="https://yoomoney.ru/quickpay/confirm" hidden>
       <div id="payhidden"></div>
-      <div class="paybtns">
+      <div class="paybtns" id="ymbtns">
         <button class="btn pri lg" id="paycard" type="submit" name="paymentType" value="AC">Оплатить картой</button>
         <button class="btn gho" type="submit" name="paymentType" value="PC">Кошельком ЮMoney</button>
       </div>
+      <button class="linkbtn" id="ymalt" type="submit" name="paymentType" value="AC" hidden>Не получается? Оплатить через ЮMoney</button>
+      <p class="fine" id="ymnote">Оплата через ЮMoney. После оплаты вернёшься сюда — инструкция откроется сама.</p>
     </form>
-    <p class="fine">Оплата через ЮMoney. После оплаты вернёшься сюда — инструкция откроется сама и останется на этом устройстве.</p>
+    <p class="fine">Оплачивая, ты принимаешь условия <a href="/oferta" target="_blank" rel="noopener">публичной оферты</a>. Инструкция откроется сразу после оплаты.</p>
   </div>
   <div class="paylinks"><button class="linkbtn" id="ipaid" type="button">Я уже оплатил — проверить</button><button class="linkbtn" id="paybackq" type="button">Изменить ответы</button></div>
 </div></main>
@@ -302,8 +337,9 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
 <!-- RESULT -->
 <main id="s-res" class="screen"><div class="wrap res" id="res"></div></main>
 
-<footer>Сделал Макс · <a href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">@makswo</a> · Это не официальный материал Anthropic</footer>
+<footer>Сделал Макс · <a href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">@makswo</a> · <a href="/oferta" target="_blank" rel="noopener">Оферта</a> · Это не официальный материал Anthropic</footer>
 <div class="toast" id="toast">Скопировано</div>
+<button class="btn pri fab" id="fab" type="button" hidden><svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Сохранить PDF</button>
 
 <script>
 (function(){
@@ -379,7 +415,7 @@ function api(method,url,data){
 function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
 
 var SCREENS=['s-intro','s-quiz','s-anal','s-pay','s-wait','s-res'];
-function show(id){SCREENS.forEach(function(s){$(s).classList.toggle('on',s===id)});window.scrollTo(0,0)}
+function show(id){SCREENS.forEach(function(s){$(s).classList.toggle('on',s===id)});var fb=$('fab');if(fb&&id!=='s-res'){fb.classList.remove('on')}window.scrollTo(0,0)}
 
 function renderQ(){
   var q=Q[i]; $('pnum').textContent=(i+1)+' / '+Q.length; $('pbar').style.width=((i)/Q.length*100)+'%';
@@ -469,22 +505,70 @@ function finish(){
 $('aretry').onclick=function(){$('aretry').hidden=true;finish()};
 
 /* ---------- оплата ---------- */
+var PAY=null, YK=null, ykLoading=null;
 function renderPay(d){
+  PAY=d;
   var t=d.teaser, inc=['Установка на '+t.devices.join(' и ')+' — по шагам','Первый запрос: «'+t.first+'»',t.prompts+' готовых запросов под твою работу','Проект «кто я» с заполненным шаблоном','План на 7 дней: '+t.goal];
   if(t.mail) inc.push('Подключение Gmail и Google Календаря');
   inc.push('Чек-лист: что отдавать ИИ, а что нет');
   var ok='<svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   $('incl').innerHTML=inc.map(function(x){return '<li>'+ok+'<span>'+esc(x)+'</span></li>'}).join('');
   $('pprice').textContent=d.price+' ₽';
-  var f=$('payform'); f.action=d.pay.action; var h='';
-  ['receiver','quickpay-form','sum','label','successURL'].forEach(function(k){h+='<input type="hidden" name="'+k+'" value="'+esc(d.pay[k])+'">'});
-  $('payhidden').innerHTML=h;
-  $('paycard').textContent='Оплатить картой · '+d.price+' ₽';
-  show('s-pay'); track('tutorial_paywall');
+  var yk=d.provider==='yookassa';
+  // форма кошелька ЮMoney: основная или запасная
+  var f=$('payform');
+  if(d.pay){
+    f.action=d.pay.action; var h='';
+    ['receiver','quickpay-form','sum','label','successURL'].forEach(function(k){h+='<input type="hidden" name="'+k+'" value="'+esc(d.pay[k])+'">'});
+    $('payhidden').innerHTML=h; f.hidden=false;
+    $('ymbtns').hidden=yk; $('ymnote').hidden=yk; $('ymalt').hidden=!yk;
+    $('paycard').textContent='Оплатить картой · '+d.price+' ₽';
+  } else f.hidden=true;
+  $('ykbox').hidden=!yk;
+  if(yk){
+    ykReset();
+    $('ykemail').hidden=!d.needEmail;
+    $('ykpay').textContent=(d.needEmail?'Перейти к оплате · ':'Оплатить · ')+d.price+' ₽';
+    show('s-pay'); track('tutorial_paywall',{p:'yookassa'});
+    if(!d.needEmail) ykStart();
+  } else { show('s-pay'); track('tutorial_paywall',{p:'yoomoney'}); }
 }
-$('payform').onsubmit=function(){track('tutorial_pay_click');try{localStorage.setItem('claude_start_paying','1')}catch(e){}};
-$('ipaid').onclick=function(){goWait(false)};
-$('paybackq').onclick=function(){i=Q.length-1;show('s-quiz');renderQ()};
+function ykErr(t){$('ykerr').textContent=t||''}
+function ykReset(){ if(YK){try{YK.destroy()}catch(e){} YK=null} $('ykform').innerHTML=''; $('ykpay').hidden=false; $('ykpay').disabled=false; ykErr('') }
+function loadYK(){
+  if(window.YooMoneyCheckoutWidget) return Promise.resolve();
+  if(ykLoading) return ykLoading;
+  ykLoading=new Promise(function(ok,bad){var sc=document.createElement('script');sc.src='https://yookassa.ru/checkout-widget/v1/checkout-widget.js';sc.onload=ok;sc.onerror=function(){ykLoading=null;bad()};document.head.appendChild(sc)});
+  return ykLoading;
+}
+function ykStart(){
+  var email='';
+  if(PAY&&PAY.needEmail){
+    email=$('email').value.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ykErr('Впиши email — на него придёт чек');$('email').focus();return}
+  }
+  ykErr(''); $('ykpay').disabled=true; $('ykpay').textContent='Загружаю форму оплаты…';
+  Promise.all([api('POST','/api/tutorial-pay',{order:ORDER,email:email}),loadYK()]).then(function(r){
+    var d=r[0];
+    if(d.paid) return goWait(true);
+    if(!d.token){ ykFail(d.error==='email'?'Проверь email — похоже, в нём опечатка.':'Не получилось открыть оплату. Попробуй ещё раз.'); return }
+    $('ykpay').hidden=true;
+    YK=new window.YooMoneyCheckoutWidget({
+      confirmation_token:d.token,
+      customization:{colors:{control_primary:'#D4FF3F',control_primary_content:'#0B0E00',background:'#101214',text:'#F1F4EC',border:'#2B2F33',control_secondary:'#22262A'}},
+      error_callback:function(){ ykFail('Форма оплаты не загрузилась. Обнови страницу или оплати через ЮMoney ниже.') }
+    });
+    YK.on('success',function(){ track('tutorial_pay_success'); ykReset(); goWait(true) });
+    YK.on('fail',function(){ ykReset(); $('ykpay').textContent='Попробовать ещё раз · '+PAY.price+' ₽'; ykErr('Оплата не прошла. Попробуй другой способ или другую карту.') });
+    YK.render('ykform');
+    track('tutorial_pay_click',{p:'yookassa'});
+  },function(){ ykFail('Не получилось загрузить форму оплаты. Проверь интернет и попробуй ещё раз.') });
+}
+function ykFail(t){ ykReset(); $('ykpay').textContent='Попробовать ещё раз · '+((PAY&&PAY.price)||99)+' ₽'; ykErr(t) }
+$('ykpay').onclick=ykStart;
+$('payform').onsubmit=function(){track('tutorial_pay_click',{p:'yoomoney'})};
+$('ipaid').onclick=function(){ykReset();goWait(false)};
+$('paybackq').onclick=function(){ykReset();i=Q.length-1;show('s-quiz');renderQ()};
 
 /* ---------- ожидание оплаты и выдача ---------- */
 var polling=0;
@@ -510,12 +594,28 @@ function goWait(fast){
 $('wretry').onclick=function(){ if(ORDER) goWait(false); else show('s-intro') };
 $('wback').onclick=function(){polling++; if(A&&A.role) finish(); else show('s-intro')};
 
+function pdfHint(){
+  var ua=navigator.userAgent||'';
+  if(/iPhone|iPad|iPod/.test(ua)) return 'На iPhone: нажми «Сохранить PDF» → «Поделиться» → «Сохранить в Файлы».';
+  if(/Android/.test(ua)) return 'На Android: нажми «Сохранить PDF» → в поле принтера выбери «Сохранить как PDF».';
+  return 'В окне печати выбери «Сохранить как PDF» вместо принтера.';
+}
+function savePDF(){ track('tutorial_pdf'); window.print() }
 function renderGuide(d){
   LAST=d;
   document.body.className='st-'+(d.style||'ex');
   $('res').innerHTML=d.html;
-  var pr=$('pr'); if(pr) pr.onclick=function(){track('tutorial_pdf');window.print()};
-  var rd=$('redo'); if(rd) rd.onclick=function(){A={};i=0;try{localStorage.removeItem(DAYS_KEY)}catch(e){};show('s-quiz');renderQ()};
+  var preview=/[?&]preview=/.test(location.search);
+  var link=(!preview&&ORDER)?(location.origin+'/start?order='+ORDER):'';
+  var sb=$('savebox');
+  if(sb) sb.innerHTML='<div class="savecard"><div class="eyebrow">Это твоя инструкция навсегда</div><h3>Сохрани её, чтобы не потерять</h3><p>'+esc(pdfHint())+'</p>'+
+    '<div class="savebtns"><button class="btn pri pulse" id="pr" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Сохранить PDF</button>'+
+    (link?'<button class="btn gho" id="cplink" type="button">Скопировать ссылку</button>':'')+'</div>'+
+    (link?'<div class="mylink"><code>'+esc(link)+'</code></div><p>Личная ссылка открывает инструкцию с любого устройства. Отправь её себе в «Избранное» Telegram или в заметки.</p>':'')+
+    '<p style="margin-top:12px"><button class="linkbtn" id="redo" type="button">Пройти вопросы заново</button></p></div>';
+  var pr=$('pr'); if(pr) pr.onclick=savePDF;
+  var cl=$('cplink'); if(cl) cl.onclick=function(){copyText(link,function(){cl.textContent='Ссылка скопирована';track('tutorial_link_copy')})};
+  var rd=$('redo'); if(rd) rd.onclick=function(){A={};i=0;try{localStorage.removeItem(DAYS_KEY)}catch(e){};$('fab').hidden=true;show('s-quiz');renderQ()};
   var done={}; try{done=JSON.parse(localStorage.getItem(DAYS_KEY)||'{}')}catch(e){}
   [].forEach.call($('res').querySelectorAll('.day'),function(b){
     var k=b.getAttribute('data-k'); if(done[k]) b.classList.add('done');
@@ -525,8 +625,15 @@ function renderGuide(d){
       try{localStorage.setItem(DAYS_KEY,JSON.stringify(d2))}catch(e){}
     };
   });
+  // плавающая кнопка PDF — когда карточка сохранения ушла с экрана
+  var fab=$('fab'); fab.hidden=false; fab.onclick=savePDF; fab.classList.remove('on');
+  if(sb&&'IntersectionObserver' in window){ new IntersectionObserver(function(e){fab.classList.toggle('on',!e[0].isIntersecting&&$('s-res').classList.contains('on'))}).observe(sb) }
   $('resume').hidden=false;
   show('s-res');
+}
+function copyText(txt,ok){
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,fb)}else fb();
+  function fb(){var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok()}catch(_){}document.body.removeChild(ta)}
 }
 var LAST=null;
 $('resume').onclick=function(){ if(LAST) renderGuide(LAST); else goWait(true) };

@@ -31,3 +31,8 @@
 Сменить промокод: в Supabase добавить строку в `promo_codes` (код ЗАГЛАВНЫМИ), у старой поставить `active = false`, поменять текст автоответа в Glocal.
 
 Предпросмотр без оплаты (для записи экрана): `tap-page.ru/start?preview=PREVIEW_KEY&p=biz,Салон,mail,iphone+mac,ru,never,time,m5,google,steps`
+### Встроенная оплата ЮKassa
+Если заданы `YOOKASSA_SHOP_ID` и `YOOKASSA_SECRET_KEY`, на экране оплаты показывается встроенная форма ЮKassa (карта, СБП, SberPay, T-Pay) прямо на странице. Кошелёк ЮMoney остаётся запасной ссылкой.
+- Уведомления ЮKassa: Интеграция → HTTP-уведомления → `https://tap-page.ru/api/yookassa`, событие `payment.succeeded`.
+- Чеки по 54-ФЗ для ИП (не НПД): `YOOKASSA_RECEIPTS=1` (покупатель вводит email), `YOOKASSA_VAT_CODE` — код НДС (по умолчанию 1, «без НДС»).
+- Оферта: `oferta/index.html` → tap-page.ru/oferta.

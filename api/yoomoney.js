@@ -5,7 +5,7 @@
 // Старое поле sha1_hash проверяем, только если sign не пришёл.
 'use strict';
 const crypto = require('crypto');
-const db = require('./_lib/db');
+const { markPaid } = require('./_lib/orders');
 const { UUID, price } = require('./_lib/util');
 
 function enc(v) {
@@ -57,12 +57,11 @@ async function handler(req, res) {
       console.warn('yoomoney: underpaid', label, paid);
       res.statusCode = 200; return res.end('ok: underpaid');
     }
-    await db.update('tutorial_orders', { id: `eq.${label}`, status: 'neq.paid' }, {
-      status: 'paid',
+    await markPaid(label, {
+      provider: 'yoomoney',
       amount: Number(p.amount || 0),
       withdraw_amount: paid,
       operation_id: String(p.operation_id || ''),
-      paid_at: new Date().toISOString(),
     });
     res.statusCode = 200; return res.end('ok');
   } catch (e) {
