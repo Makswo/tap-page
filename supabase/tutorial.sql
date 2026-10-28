@@ -60,3 +60,16 @@ create table if not exists public.waitlist (
   primary key (user_id, course)
 );
 alter table public.waitlist enable row level security;
+
+-- ИИ-поддержка: вопросы и ответы чата, IP только в виде хэша (для лимитов).
+create table if not exists public.support_messages (
+  id bigint generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  ip_hash text not null,
+  user_id uuid references auth.users(id) on delete set null,
+  question text,
+  answer text,
+  blocked boolean not null default false
+);
+create index if not exists support_messages_ip_time_idx on public.support_messages(ip_hash, created_at desc);
+alter table public.support_messages enable row level security;

@@ -106,5 +106,5 @@ var TP=(function(){
   // Привязать оплаченную инструкцию к профилю.
   function claim(order){ return call('POST','/api/account',{action:'claim',order:order}) }
 
-  return {user:user,logout:logout,call:call,claim:claim,loginForm:loginForm,esc:esc};
+  return {user:user,logout:logout,call:call,claim:claim,loginForm:loginForm,esc:esc,token:token};
 })();
