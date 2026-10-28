@@ -1,4 +1,4 @@
-// ИИ-поддержка: отвечает на вопросы о портале через Claude API.
+// ИИ-поддержка: отвечает на вопросы о портале через OpenAI или Claude API.
 'use strict';
 const crypto = require('crypto');
 const db = require('./_lib/db');
@@ -43,11 +43,36 @@ async function context(req, order) {
   return { user: null, text: lines.join('\n') };
 }
 
+// Провайдер ИИ: OpenAI, если задан OPENAI_API_KEY, иначе Claude (ANTHROPIC_API_KEY).
+async function ask(system, msgs) {
+  if (process.env.OPENAI_API_KEY) {
+    const r = await fetch(`${(process.env.OPENAI_API_URL || 'https://api.openai.com').replace(/\/+$/, '')}/v1/chat/completions`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+        max_completion_tokens: 700,
+        messages: [{ role: 'system', content: system }].concat(msgs),
+      }),
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(`openai ${r.status} ${JSON.stringify(d).slice(0, 300)}`);
+    return String((d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content) || '').trim();
+  }
+  const r = await fetch(`${(process.env.ANTHROPIC_API_URL || 'https://api.anthropic.com').replace(/\/+$/, '')}/v1/messages`, {
+    method: 'POST',
+    headers: { 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || 'claude-haiku-5-5', max_tokens: 700, system, messages: msgs }),
+  });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(`anthropic ${r.status} ${JSON.stringify(d).slice(0, 300)}`);
+  return (d.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('\n').trim();
+}
+
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return send(res, 405, { error: 'method' });
   try {
-    const key = process.env.ANTHROPIC_API_KEY;
-    if (!key) return send(res, 503, { error: 'off' });
+    if (!process.env.OPENAI_API_KEY && !process.env.ANTHROPIC_API_KEY) return send(res, 503, { error: 'off' });
     const b = body(req);
     const msgs = (Array.isArray(b.messages) ? b.messages : []).slice(-MAX_TURNS)
       .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string' && m.content.trim())
@@ -63,19 +88,10 @@ module.exports = async (req, res) => {
     if (recent.length >= PER_DAY || recent.filter((r) => r.created_at >= hour).length >= PER_HOUR) return send(res, 429, { error: 'rate' });
 
     const ctx = await context(req, String(b.order || ''));
-    const r = await fetch(`${(process.env.ANTHROPIC_API_URL || 'https://api.anthropic.com').replace(/\/+$/, '')}/v1/messages`, {
-      method: 'POST',
-      headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-      body: JSON.stringify({
-        model: process.env.ANTHROPIC_MODEL || 'claude-haiku-5-5',
-        max_tokens: 700,
-        system: support.system(ctx.text),
-        messages: msgs,
-      }),
-    });
-    const data = await r.json().catch(() => ({}));
-    if (!r.ok) { console.error('anthropic', r.status, JSON.stringify(data).slice(0, 300)); return send(res, 502, { error: 'ai' }); }
-    const answer = (data.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('\n').trim() || 'Не получилось ответить. Напиши, пожалуйста, на mxmgin@gmail.com.';
+    let answer;
+    try { answer = await ask(support.system(ctx.text), msgs); }
+    catch (e) { console.error('ai', e.message); return send(res, 502, { error: 'ai' }); }
+    answer = answer || 'Не получилось ответить. Напиши, пожалуйста, на mxmgin@gmail.com.';
 
     try { await db.insert('support_messages', { ip_hash: ip, user_id: ctx.user ? ctx.user.id : null, question: question.slice(0, 2000), answer: answer.slice(0, 4000) }); }
     catch (e) { console.warn('support log', e.message); }
