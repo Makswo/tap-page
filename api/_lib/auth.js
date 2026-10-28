@@ -42,4 +42,10 @@ async function userFrom(req) {
   return { id: r.data.id, email: r.data.email || '' };
 }
 
-module.exports = { call, session, userFrom };
+// Админы — по почте (ADMIN_EMAILS через запятую).
+function isAdmin(user) {
+  const list = String(process.env.ADMIN_EMAILS || 'mxmgin@gmail.com').toLowerCase().split(/[,\s]+/).filter(Boolean);
+  return !!(user && user.email && list.includes(String(user.email).toLowerCase()));
+}
+
+module.exports = { call, session, userFrom, isAdmin };

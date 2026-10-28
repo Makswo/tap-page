@@ -30,6 +30,7 @@ module.exports = async (req, res) => {
       ]);
       return send(res, 200, {
         user,
+        admin: auth.isAdmin(user),
         certificates: certs,
         guides: orders.map((o) => ({ id: o.id, paid_at: o.paid_at, role: o.answers && o.answers.role, sphere: o.answers && o.answers.sphere })),
         waitlist: wait.map((w) => w.course),

@@ -73,3 +73,17 @@ create table if not exists public.support_messages (
 );
 create index if not exists support_messages_ip_time_idx on public.support_messages(ip_hash, created_at desc);
 alter table public.support_messages enable row level security;
+
+-- Рассылки по листу ожидания: кому уже отправили и история рассылок.
+alter table public.waitlist add column if not exists notified_at timestamptz;
+create table if not exists public.announcements (
+  id bigint generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  course text not null,
+  subject text not null,
+  sent integer not null default 0,
+  failed integer not null default 0,
+  test boolean not null default false,
+  sent_by text
+);
+alter table public.announcements enable row level security;

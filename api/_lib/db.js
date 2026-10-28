@@ -52,6 +52,7 @@ module.exports = {
   insert: (table, row) => call('POST', table, null, row),
   update: (table, filters, row) => call('PATCH', table, filters, row),
   // Вставка без ошибки на дубликат (по первичному или уникальному ключу).
+  remove: (table, filters) => call('DELETE', table, filters),
   insertIgnore: (table, row) => call('POST', table, null, row, 'resolution=ignore-duplicates,return=representation'),
   cfg,
 };

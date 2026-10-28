@@ -21,6 +21,24 @@
 .empty{color:var(--tx2);margin:0}
 .waits{display:flex;gap:8px;flex-wrap:wrap}
 .loading{color:var(--tx3);padding:40px 0}
+.adm{border-radius:22px;padding:18px;background:var(--s1);border:1px solid var(--line);margin-top:12px}
+.adm-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+.adm-h b{font-size:18px}
+.adm-h span{font-family:var(--m);font-size:12.5px;color:var(--tx2)}
+.adm label{display:block;font-family:var(--m);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin:14px 0 6px}
+.adm input,.adm textarea{width:100%;border-radius:14px;background:var(--bg);border:1px solid var(--line2);padding:11px 14px;font:15px/1.45 var(--f);color:var(--tx);outline:none}
+.adm input:focus,.adm textarea:focus{border-color:var(--acc)}
+.adm textarea{min-height:150px;resize:vertical}
+.adm .row2{display:grid;grid-template-columns:1fr 2fr;gap:10px}
+.adm .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.adm .st{font-size:14px;color:var(--tx2)}
+.adm .st.ok{color:var(--ok)}.adm .st.bad{color:var(--bad)}
+.adm details{margin-top:10px;font-size:14px;color:var(--tx2)}
+.adm details ul{margin:8px 0 0;padding-left:18px;max-height:220px;overflow:auto;font-family:var(--m);font-size:12.5px}
+.adm .warn{margin-top:12px;border:1px solid rgba(255,181,74,.4);border-radius:14px;padding:10px 14px;font-size:14px;color:var(--warn)}
+.hist{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:6px;font-size:13.5px;color:var(--tx2)}
+.hist li{display:flex;gap:10px;flex-wrap:wrap}.hist b{color:var(--tx);font-weight:600}
+@media (max-width:640px){.adm .row2{grid-template-columns:1fr}.adm .btns .btn{flex:1}}
 </style>
 </head>
 <body>
@@ -70,6 +88,7 @@ function render(d){
   var waits=(d.waitlist||[]).map(function(id){var c=courseById(id);return c?'<a class="chip" href="/#c-'+id+'">'+esc(c.title)+'</a>':''}).join('');
   app.innerHTML='<div class="top"><div class="eyebrow">Профиль</div><h1>Твоя <span class="acc">коллекция</span></h1>'+
     '<div class="who"><span class="chip">'+esc(d.user.email)+'</span><button class="linkbtn" id="out" type="button">Выйти</button></div></div>'+
+    (d.admin?'<section class="sec" id="admin" style="padding-top:36px"><div class="eyebrow">Админ</div><h2>Рассылки</h2><p class="loading" style="padding:0">Загружаем…</p></section>':'')+
     '<section class="sec" style="padding-top:36px"><div id="coll"></div></section>'+
     '<section class="sec"><div class="eyebrow">Сертификаты</div><h2>Твои кристаллы</h2>'+
       (certs||'<p class="empty">Пока нет ни одного. Пройди <a href="/start">«Как начать с Claude»</a> — первый кристалл придёт вместе с инструкцией.</p>')+'</section>'+
@@ -81,6 +100,46 @@ function render(d){
   $('coll').innerHTML=collectionHTML(owned);
   mountGems(app);
   $('out').onclick=function(){TP.logout();track('auth_logout');guest()};
+  if(d.admin) loadAdmin();
+}
+
+/* ---------- панель админа: рассылка по листу ожидания ---------- */
+function loadAdmin(){
+  TP.call('GET','/api/admin').then(function(d){ if(d.courses) renderAdmin(d); else $('admin').querySelector('.loading').textContent='Не получилось загрузить панель ('+(d.error||d._status)+').' });
+}
+function renderAdmin(d){
+  var box=$('admin');
+  var h='<div class="eyebrow">Админ</div><h2>Рассылки</h2><p class="empty">Письмо «курс открылся» уходит всем из листа ожидания курса, кто ещё не получал его. Каждому — один раз, в письме есть ссылка «Отписаться».</p>'+
+    (d.mail?'':'<div class="warn">Отправка писем не настроена: добавь RESEND_API_KEY в Vercel и сделай Redeploy.</div>');
+  d.courses.forEach(function(c){
+    var sent=c.total-c.pending;
+    h+='<form class="adm" data-c="'+c.id+'"><div class="adm-h"><b>'+esc(c.title)+'</b><span>в листе: '+c.total+' · ждут письма: '+c.pending+' · получили: '+sent+'</span></div>'+
+      (c.total?'<details><summary>Адреса ('+c.total+')</summary><ul>'+c.emails.map(function(e){return '<li>'+esc(e.email)+(e.notified?' ✓':'')+'</li>'}).join('')+'</ul></details>':'')+
+      '<label>Тема письма</label><input name="subject" maxlength="150" value="'+esc('Курс «'+c.title+'» открылся')+'">'+
+      '<label>Текст</label><textarea name="text" maxlength="4000">'+esc('Привет!\n\nТы просил сообщить о старте — курс «'+c.title+'» уже открыт.\n\nВнутри пошаговая инструкция под твою задачу. Начать можно прямо сейчас.\n\nМакс')+'</textarea>'+
+      '<div class="row2"><div><label>Текст кнопки</label><input name="cta" maxlength="40" value="Открыть курс"></div><div><label>Ссылка кнопки</label><input name="link" maxlength="300" value="https://tap-page.ru/#c-'+c.id+'"></div></div>'+
+      '<div class="btns"><button class="btn gho" type="button" data-a="test">Тест себе</button><button class="btn pri" type="button" data-a="send"'+(c.pending&&d.mail?'':' disabled')+'>Разослать ('+c.pending+')</button><span class="st"></span></div></form>';
+  });
+  var NAMES={nabor:'Набор',montage:'Монтаж',assistant:'Помощник'};
+  h+='<div class="adm"><div class="adm-h"><b>История</b></div>'+(d.history&&d.history.length?'<ul class="hist">'+d.history.map(function(x){
+    return '<li><span>'+new Date(x.created_at).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</span><b>'+esc(NAMES[x.course]||x.course)+'</b><span>'+esc(x.subject)+'</span><span>'+(x.test?'тест':'отправлено '+x.sent)+(x.failed?' · ошибок '+x.failed:'')+'</span></li>'}).join('')+'</ul>':'<p class="empty" style="margin-top:8px">Рассылок ещё не было.</p>')+'</div>';
+  box.innerHTML=h;
+  [].forEach.call(box.querySelectorAll('form.adm'),function(f){
+    var st=f.querySelector('.st');
+    f.onsubmit=function(e){e.preventDefault()};
+    [].forEach.call(f.querySelectorAll('[data-a]'),function(b){ b.onclick=function(){
+      var test=b.getAttribute('data-a')==='test', c=f.getAttribute('data-c');
+      var data={action:'send',course:c,test:test,subject:f.subject.value,text:f.text.value,cta:f.cta.value,link:f.link.value};
+      if(!test){ var n=(b.textContent.match(/\d+/)||['0'])[0]; if(!confirm('Разослать письмо '+n+' адресам? Отменить будет нельзя.')) return }
+      st.className='st'; st.textContent=test?'Отправляем тест…':'Рассылаем…'; b.disabled=true;
+      TP.call('POST','/api/admin',data).then(function(r){
+        b.disabled=false;
+        if(r.ok&&test){ st.className='st ok'; st.textContent='Тест отправлен на '+r.to; return }
+        if(r.ok){ st.className='st ok'; st.textContent='Отправлено: '+r.sent+(r.failed?', ошибок: '+r.failed:''); track('admin_announce',{course:c,sent:r.sent}); setTimeout(loadAdmin,1500); return }
+        st.className='st bad'; st.textContent={none:'Некому отправлять: все из листа уже получили письмо',empty:'Заполни тему и текст',link:'Ссылка должна начинаться с https://',mail:'Не настроена отправка писем (RESEND_API_KEY)'}[r.error]||('Ошибка: '+(r.error||r._status));
+      },function(){b.disabled=false;st.className='st bad';st.textContent='Нет связи'});
+    }});
+  });
 }
 
 function load(){

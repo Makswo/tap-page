@@ -20,7 +20,7 @@
   var css=document.createElement('style');
   css.textContent='.sp-btn{position:fixed;left:max(16px,env(safe-area-inset-left));bottom:calc(16px + env(safe-area-inset-bottom));z-index:45;display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 18px 0 14px;border-radius:999px;background:var(--s2);border:1px solid var(--line2);color:var(--tx);font:650 14.5px var(--f);box-shadow:0 12px 30px rgba(0,0,0,.5);cursor:pointer}'+
     '.sp-btn:hover{background:var(--s3)}.sp-btn svg{width:20px;height:20px;color:var(--acc)}.sp-btn i{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(62,224,160,.18)}'+
-    '.sp{position:fixed;left:max(16px,env(safe-area-inset-left));bottom:calc(76px + env(safe-area-inset-bottom));z-index:55;width:380px;height:min(580px,calc(100vh - 110px));display:flex;flex-direction:column;border-radius:22px;background:var(--s1);border:1px solid var(--line2);box-shadow:0 24px 70px rgba(0,0,0,.65);overflow:hidden;animation:spin2 .25s cubic-bezier(.2,.8,.2,1)}'+
+    '.tps{position:fixed;left:max(16px,env(safe-area-inset-left));bottom:calc(76px + env(safe-area-inset-bottom));z-index:55;width:380px;height:min(580px,calc(100vh - 110px));display:flex;flex-direction:column;border-radius:22px;background:var(--s1);border:1px solid var(--line2);box-shadow:0 24px 70px rgba(0,0,0,.65);overflow:hidden;animation:spin2 .25s cubic-bezier(.2,.8,.2,1)}'+
     '@keyframes spin2{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}'+
     '.sp-h{display:flex;align-items:center;gap:10px;padding:14px 14px 12px 16px;border-bottom:1px solid var(--line)}'+
     '.sp-h .av{width:34px;height:34px;border-radius:11px;background:var(--acc);color:var(--acc-ink);display:grid;place-items:center;font-weight:800}'+
@@ -35,8 +35,8 @@
     '.sp-f textarea{flex:1;min-height:44px;max-height:120px;resize:none;border-radius:16px;background:var(--bg);border:1px solid var(--line2);padding:11px 14px;font:15px/1.4 var(--f);color:var(--tx);outline:none}.sp-f textarea:focus{border-color:var(--acc)}'+
     '.sp-f button{width:44px;height:44px;border-radius:50%;background:var(--acc);color:var(--acc-ink);display:grid;place-items:center;flex:none}.sp-f button[disabled]{opacity:.4}'+
     '.sp-n{padding:0 14px 10px;font-size:11.5px;color:var(--tx3)}.sp-n a{color:var(--tx2)}'+
-    '@media (max-width:640px){.sp{left:0;right:0;bottom:0;top:0;width:auto;height:auto;border-radius:0;border:0}.sp-btn{height:44px;padding:0 14px 0 12px;font-size:14px}}'+
-    '@media print{.sp,.sp-btn{display:none!important}}';
+    '@media (max-width:640px){.tps{left:0;right:0;bottom:0;top:0;width:auto;height:auto;border-radius:0;border:0}.sp-btn{height:44px;padding:0 14px 0 12px;font-size:14px}}'+
+    '@media print{.tps,.sp-btn{display:none!important}}';
   document.head.appendChild(css);
 
   var btn=document.createElement('button'); btn.className='sp-btn'; btn.type='button'; btn.setAttribute('aria-label','Помощь');
@@ -75,7 +75,7 @@
   }
   function show(){
     if(open) return; open=true; btn.style.display='none';
-    box=document.createElement('div'); box.className='sp'; box.setAttribute('role','dialog'); box.setAttribute('aria-label','Поддержка');
+    box=document.createElement('div'); box.className='tps'; box.setAttribute('role','dialog'); box.setAttribute('aria-label','Поддержка');
     box.innerHTML='<div class="sp-h"><div class="av">M</div><div><b>Поддержка tap-page</b><span>ИИ-помощник · отвечает сразу</span></div><button class="x" type="button" aria-label="Закрыть"><svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>'+
       '<div class="sp-m"></div><form class="sp-f"><textarea rows="1" maxlength="1500" placeholder="Опиши вопрос…"></textarea><button type="submit" aria-label="Отправить"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>'+
       '<div class="sp-n">ИИ может ошибаться. Сложный случай — <a href="mailto:mxmgin@gmail.com">mxmgin@gmail.com</a></div>';
