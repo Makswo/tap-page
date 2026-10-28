@@ -1,5 +1,5 @@
 /* Видео от Макса в маленьком окне справа внизу (как на сайтах продуктов).
-   Пока видео нет — показываем заглушку. Когда снимешь ролик, положи mp4 в /assets/video/
+   Ролик играет без звука по кругу, кнопка включает звук. Пока видео нет — показываем заглушку. Когда снимешь ролик, положи mp4 в /assets/video/
    и передай путь в src при вызове TPVideo({...}). */
 function TPVideo(o){
   'use strict';
@@ -27,28 +27,37 @@ function TPVideo(o){
       '.vwm .vph .av{width:64px;height:64px;font-size:28px}.vwm .vph b{font-size:20px;max-width:14em}.vwm .vph p{margin:0;color:var(--tx2);font-size:14px;max-width:18em}'+
       '.vwm .vx{top:10px;right:10px;width:34px;height:34px}.vwm .vx svg{width:15px;height:15px}'+
       '@media (max-width:640px){.vw{width:84px;border-radius:16px}.vph .av{width:32px;height:32px;font-size:15px}.vw .vph b{display:none}.vw .vph{justify-content:flex-start;padding-top:34px}.vw .vph small{display:none}.vw .vcap{font-size:0;justify-content:center;padding:16px 7px 9px}.vw .vcap i{width:18px;height:18px}}'+
+      '.vsnd{position:absolute;left:8px;right:8px;bottom:8px;z-index:2;display:flex;align-items:center;justify-content:center;gap:6px;height:32px;border-radius:999px;background:var(--acc);color:var(--acc-ink);font-size:12px;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.4)}'+
+      '.vsnd i{display:grid;place-items:center}.vsnd svg{width:16px;height:16px}.vw.loud .vsnd{background:rgba(0,0,0,.6);color:#fff;backdrop-filter:blur(6px)}'+
+      '.vw:not(.loud) .vsnd{animation:vpulse 2.2s ease-out infinite}'+
+      '@media (max-width:640px){.vsnd{left:6px;right:6px;bottom:6px;height:28px}.vsnd span{display:none}}'+
       '@media print{.vw,.vwm{display:none!important}}';
     document.head.appendChild(st);
   }
   var X='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
   var ph=function(big){return '<div class="vph"><div class="av">M</div><b>'+esc(big?(o.soonTitle||o.title):o.title)+'</b>'+(big?'<p>'+esc(o.soonText||'Видео скоро появится здесь.')+'</p>':'<small>видео скоро</small>')+'</div>'};
+  var MUTE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4z" fill="currentColor"/><path d="M22 9l-6 6M16 9l6 6"/></svg>';
+  var LOUD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
   var el=document.createElement('div'); el.className='vw'; el.setAttribute('role','button'); el.setAttribute('tabindex','0'); el.setAttribute('aria-label',o.title||'Видео');
   el.innerHTML=(o.src?'<video src="'+esc(o.mini||o.src)+'"'+(o.poster?' poster="'+esc(o.poster)+'"':'')+' muted loop playsinline autoplay preload="metadata"></video>':ph(false))+
-    '<div class="vcap"><i><svg viewBox="0 0 10 10"><path d="M0 0l10 5-10 5z"/></svg></i>'+esc(o.label||'Смотреть')+'</div>'+
+    (o.src?'<button class="vsnd" type="button" aria-label="Включить звук"><i>'+MUTE+'</i><span>Включить звук</span></button>':'')+
     '<button class="vx" type="button" aria-label="Скрыть видео">'+X+'</button>';
   document.body.appendChild(el);
   el.querySelector('.vx').onclick=function(e){e.stopPropagation();el.remove();try{sessionStorage.setItem(key,'1')}catch(_){}};
-  function open(){
-    if(typeof track==='function') track('video_open',{v:o.key});
-    var m=document.createElement('div'); m.className='vwm';
-    m.innerHTML='<div class="vbox">'+(o.src?'<video src="'+esc(o.src)+'"'+(o.poster?' poster="'+esc(o.poster)+'"':'')+' controls autoplay playsinline></video>':ph(true))+'<button class="vx" type="button" aria-label="Закрыть">'+X+'</button></div>';
-    document.body.appendChild(m);
-    var mini=el.querySelector('video'); if(mini) mini.pause();
-    function close(){ m.remove(); document.removeEventListener('keydown',onk); if(mini) mini.play().catch(function(){}) }
-    function onk(e){ if(e.key==='Escape') close() }
-    m.querySelector('.vx').onclick=close; m.onclick=function(e){ if(e.target===m) close() };
-    document.addEventListener('keydown',onk);
+  // Звук: маленькая копия без звука играет по кругу; по нажатию включаем полную версию со звуком с начала.
+  var v=el.querySelector('video'), btn=el.querySelector('.vsnd'), loud=false;
+  function setBtn(){ if(!btn) return; btn.querySelector('i').innerHTML=loud?LOUD:MUTE; btn.querySelector('span').textContent=loud?'Без звука':'Включить звук'; btn.setAttribute('aria-label',btn.querySelector('span').textContent); el.classList.toggle('loud',loud) }
+  function toggleSound(){
+    if(!v) return;
+    if(!loud){
+      if(o.mini&&v.getAttribute('src')!==o.src){ v.src=o.src; v.loop=false; v.currentTime=0 }
+      v.muted=false; loud=true; v.play().catch(function(){ v.muted=true; loud=false; setBtn() });
+      if(typeof track==='function') track('video_sound',{v:o.key});
+    } else { v.muted=true; loud=false }
+    setBtn();
   }
+  if(v) v.addEventListener('ended',function(){ loud=false; if(o.mini){ v.src=o.mini } v.loop=true; v.muted=true; v.play().catch(function(){}); setBtn() });
+  if(btn) btn.onclick=function(e){ e.stopPropagation(); if(moved){moved=false;return} toggleSound() };
   // Окно можно зажать и перетащить; отпускаешь — прилипает к ближайшему краю.
   var POS='tp_vw_pos', drag=null, moved=false;
   function place(p){
@@ -83,7 +92,7 @@ function TPVideo(o){
   }
   el.addEventListener('pointerup',end); el.addEventListener('pointercancel',end);
   window.addEventListener('resize',function(){ try{var p=JSON.parse(sessionStorage.getItem(POS)||'null'); if(p) place(p)}catch(_){} });
-  el.onclick=function(e){ if(moved){ moved=false; e.preventDefault(); return } open() };
-  el.onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();open()} };
+  el.onclick=function(e){ if(moved){ moved=false; e.preventDefault(); return } toggleSound() };
+  el.onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleSound()} };
   return el;
 }
