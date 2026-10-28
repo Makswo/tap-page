@@ -23,7 +23,7 @@ function collectionHTML(owned){
   GEMS.forEach(function(g){
     var have=!!owned[g.id], c=g.course&&courseById(g.course);
     var sub=have?'Собран':(g.secret?'Откроется позже':'За курс «'+c.title+'»');
-    h+='<div class="slot'+(have?' have':'')+(g.secret?' secret':'')+'" style="--ch:'+g.hue+'deg">'+gemHTML({size:'md',hue:g.hue,locked:!have})+
+    h+='<div class="slot'+(have?' have':'')+(g.secret?' secret':'')+'" style="--ch:'+g.hue+'deg">'+gemHTML({size:'md',hue:g.hue,locked:!have,secret:g.secret})+
       '<b>'+(have||!g.secret?TP.esc(g.name):'???')+'</b><span>'+TP.esc(sub)+'</span></div>';
   });
   h+='</div><div class="cprog"><div class="bar"><i style="width:'+Math.round(n/GEMS.length*100)+'%"></i></div><span>Собрано '+n+' из '+GEMS.length+'</span></div>';

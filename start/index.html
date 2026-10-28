@@ -223,10 +223,17 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(212,255,63,.55)}100%{box-shadow:0 0 0 16px rgba(212,255,63,0)}}
 .mylink{display:flex;gap:8px;align-items:center;margin-top:14px;background:var(--bg);border:1px solid var(--line2);border-radius:14px;padding:8px 8px 8px 14px}
 .mylink code{flex:1;min-width:0;font:13px var(--m);color:var(--tx2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.acct{margin:0 0 14px;border-radius:22px;padding:18px;border:1px solid rgba(196,148,255,.45);background:linear-gradient(180deg,rgba(168,85,247,.12),var(--s1) 75%)}
-.acct .eyebrow{color:#d8b4fe}
-.acct h3{margin:6px 0 4px;font-size:19px}
-.acct p{margin:4px 0 14px;color:var(--tx2);font-size:14.5px}
+body[data-screen]:not([data-screen="s-intro"]) .vw{display:none}
+.gcard{margin:0 0 6px;border-radius:20px;padding:12px 16px;border:1px solid rgba(196,148,255,.28);background:linear-gradient(90deg,rgba(168,85,247,.11),var(--s1) 55%)}
+.gtop{display:flex;align-items:center;gap:14px}
+.gtop .gem{margin:0 4px 0 2px;flex:none}
+.gt .eyebrow{color:#d8b4fe;font-size:11px}
+.gt b{display:block;font-size:15.5px;margin-top:2px}
+.gt span{display:block;font-size:13px;color:var(--tx2)}
+#acctbox{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.gp{margin:0 0 12px;color:var(--tx2);font-size:14.5px}
+.gp.ok{margin:0;color:var(--tx)}
+.gp a{color:var(--tx)}
 .fab{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));z-index:30;box-shadow:0 12px 30px rgba(0,0,0,.55);transform:translateY(120px);transition:transform .25s}
 .fab.on{transform:none}
 @media (max-width:640px){.savebtns .btn{flex:1}}
@@ -296,13 +303,13 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
   *,*::before,*::after{animation:none!important;transition:none!important}
   .gglow,.gfx,.gshadow,.gshine{display:none!important}
   .gfloat{filter:none!important}
-  .cert{background:#faf7ff!important;border-color:#c9a8f5!important;box-shadow:none!important;break-inside:avoid}
+  .cert,.gcard{background:#faf7ff!important;border-color:#c9a8f5!important;box-shadow:none!important;break-inside:avoid}
   .cert .eyebrow,.cert .cno{color:#6b21a8!important}
   .screen.on{opacity:1!important;transform:none!important}
 }
 </style>
 </head>
-<body class="st-ex">
+<body class="st-ex" data-screen="s-intro">
 <nav class="nav"><div class="wrap">
   <a class="logo" href="/"><i>M</i>makswo</a>
   <span class="sp"></span>
@@ -404,6 +411,7 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
 
 <script src="/assets/gem.js"></script>
 <script src="/assets/account.js"></script>
+<script src="/assets/video.js"></script>
 <script>
 (function(){
 'use strict';
@@ -479,7 +487,7 @@ function api(method,url,data){
 function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
 
 var SCREENS=['s-intro','s-quiz','s-anal','s-pay','s-wait','s-res'];
-function show(id){SCREENS.forEach(function(s){$(s).classList.toggle('on',s===id)});var fb=$('fab');if(fb&&id!=='s-res'){fb.classList.remove('on')}window.scrollTo(0,0)}
+function show(id){document.body.setAttribute('data-screen',id);SCREENS.forEach(function(s){$(s).classList.toggle('on',s===id)});var fb=$('fab');if(fb&&id!=='s-res'){fb.classList.remove('on')}window.scrollTo(0,0)}
 
 function renderQ(){
   var q=Q[i]; $('pnum').textContent=(i+1)+' / '+Q.length; $('pbar').style.width=((i)/Q.length*100)+'%';
@@ -678,23 +686,20 @@ function renderGuide(d){
   var ROLE={biz:'Свой бизнес',emp:'Найм',free:'Фриланс',blog:'Блог',study:'Учёба',other:'Своё дело'};
   var when=d.paid_at?new Date(d.paid_at):new Date();
   var dt=when.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
-  if(sb){
-    var cert=document.createElement('div'); cert.className='cert';
-    cert.innerHTML='<div>'+gemHTML({size:'md',hue:gm.hue})+'</div><div><div class="eyebrow">Сертификат</div><h3>Кристалл старта</h3><dl>'+
-      '<dt>Номер</dt><dd class="cno">№ '+(preview?'DEMO-0000':esc(gm.no.slice(0,4)+'-'+gm.no.slice(4)))+'</dd>'+
-      '<dt>Оттенок</dt><dd>'+esc(gm.name)+'</dd>'+
-      '<dt>Огранка</dt><dd>по 10 твоим ответам</dd>'+
-      '<dt>Для</dt><dd>'+esc((ROLE[a.role]||'')+(a.sphere?' · '+a.sphere:''))+'</dd>'+
-      '<dt>Выдан</dt><dd>'+esc(dt)+'</dd></dl>'+
-      '<p>Единственный в своём роде: оттенок и номер собраны из твоего заказа. Знак того, что ты сделал первый шаг.</p></div>';
-    sb.parentNode.insertBefore(cert,sb); mountGems(cert);
-    if(!preview&&ORDER){ var ac=document.createElement('div'); ac.id='acctbox'; sb.parentNode.insertBefore(ac,sb); renderAcct(ac) }
-  }
   if(sb) sb.innerHTML='<div class="savecard"><div class="eyebrow">Это твоя инструкция навсегда</div><h3>Сохрани её, чтобы не потерять</h3><p>'+esc(pdfHint())+'</p>'+
     '<div class="savebtns"><button class="btn pri pulse" id="pr" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Сохранить PDF</button>'+
     (link?'<button class="btn gho" id="cplink" type="button">Скопировать ссылку</button>':'')+'</div>'+
     (link?'<div class="mylink"><code>'+esc(link)+'</code></div><p>Личная ссылка открывает инструкцию с любого устройства. Отправь её себе в «Избранное» Telegram или в заметки.</p>':'')+
     '<p style="margin-top:12px"><button class="linkbtn" id="redo" type="button">Пройти вопросы заново</button></p></div>';
+  if(sb){
+    var no=preview?'DEMO-0000':gm.no.slice(0,4)+'-'+gm.no.slice(4);
+    var card=document.createElement('div'); card.className='gcard';
+    card.innerHTML='<div class="gtop">'+gemHTML({size:'sm',hue:gm.hue})+'<div class="gt"><div class="eyebrow">Бонус · сертификат № '+esc(no)+'</div>'+
+      '<b>Кристалл старта · '+esc(gm.name)+'</b><span>Выдан '+esc(dt)+' · огранка по 10 твоим ответам</span></div></div>'+
+      ((!preview&&ORDER)?'<div id="acctbox"></div>':'');
+    sb.parentNode.insertBefore(card,sb.nextSibling); mountGems(card);
+    if(!preview&&ORDER) renderAcct($('acctbox'));
+  }
   var pr=$('pr'); if(pr) pr.onclick=savePDF;
   var cl=$('cplink'); if(cl) cl.onclick=function(){copyText(link,function(){cl.textContent='Ссылка скопирована';track('tutorial_link_copy')})};
   var rd=$('redo'); if(rd) rd.onclick=function(){A={};i=0;try{localStorage.removeItem(DAYS_KEY)}catch(e){};$('fab').hidden=true;show('s-quiz');renderQ()};
@@ -717,26 +722,24 @@ function renderGuide(d){
 function renderAcct(box){
   var u=TP.user();
   if(!u){
-    box.innerHTML='<div class="acct"><div class="eyebrow">Профиль на tap-page</div><h3>Сохрани инструкцию и кристалл в профиль</h3>'+
-      '<p>Зарегистрируйся по почте: инструкция и сертификат будут ждать в профиле на любом устройстве. Там же соберёшь остальные 6 кристаллов.</p><div id="acf"></div></div>';
+    box.innerHTML='<p class="gp">Сохрани инструкцию и кристалл в профиль на tap-page — они будут под рукой на любом устройстве.</p><div id="acf"></div>';
     TP.loginForm($('acf'),{cta:'Зарегистрироваться',onDone:function(){track('tutorial_signup');renderAcct(box)}});
     return;
   }
-  box.innerHTML='<div class="acct"><div class="eyebrow">Профиль</div><p>Сохраняем в профиль…</p></div>';
+  box.innerHTML='<p class="gp">Сохраняем в профиль…</p>';
   TP.claim(ORDER).then(function(d){
     if(d.ok){
-      box.innerHTML='<div class="acct"><div class="eyebrow">✓ Сохранено в профиле</div><h3>Инструкция и кристалл теперь в твоём профиле</h3>'+
-        '<p>'+esc(u.email)+' · Остальные 6 кристаллов ждут в каталоге курсов.</p><div class="savebtns"><a class="btn pri" href="/me">Открыть профиль</a><a class="btn gho" href="/">Каталог курсов</a></div></div>';
+      box.innerHTML='<p class="gp ok">✓ Сохранено в профиле '+esc(u.email)+' · <a href="/me">Открыть профиль</a> · <a href="/">Другие курсы</a></p>';
       track('tutorial_claim'); return;
     }
     if(d._status===401){TP.logout();return renderAcct(box)}
     if(d.error==='other'){
-      box.innerHTML='<div class="acct"><div class="eyebrow">Профиль</div><h3>Эта инструкция уже в другом профиле</h3><p>Ты вошёл как '+esc(u.email)+'. Войди в профиль, к которому её привязали.</p><button class="btn gho" id="acsw" type="button">Войти в другой профиль</button></div>';
+      box.innerHTML='<p class="gp">Эта инструкция уже привязана к другому профилю (ты вошёл как '+esc(u.email)+'). <button class="linkbtn" id="acsw" type="button">Войти в другой</button></p>';
       $('acsw').onclick=function(){TP.logout();renderAcct(box)}; return;
     }
-    box.innerHTML='<div class="acct"><div class="eyebrow">Профиль</div><h3>Не получилось сохранить</h3><p>Проверь интернет и попробуй ещё раз.</p><button class="btn gho" id="acre" type="button">Попробовать снова</button></div>';
+    box.innerHTML='<p class="gp">Не получилось сохранить в профиль. <button class="linkbtn" id="acre" type="button">Попробовать снова</button></p>';
     $('acre').onclick=function(){renderAcct(box)};
-  },function(){ box.innerHTML='<div class="acct"><p>Нет связи. <button class="linkbtn" id="acre" type="button">Попробовать снова</button></p></div>'; $('acre').onclick=function(){renderAcct(box)} });
+  },function(){ box.innerHTML='<p class="gp">Нет связи. <button class="linkbtn" id="acre" type="button">Попробовать снова</button></p>'; $('acre').onclick=function(){renderAcct(box)} });
 }
 function copyText(txt,ok){
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,fb)}else fb();
@@ -775,6 +778,11 @@ $('hgem').innerHTML=gemHTML({})+'<div class="gcap">Кристалл старта
   }
 })();
 })();
+</script>
+<script>
+// Видео от Макса о туториале — только на первом экране. Когда снимешь ролик: TPVideo({src:'/assets/video/start.mp4', ...})
+TPVideo({key:'start',src:'',title:'Как устроен туториал',label:'Макс о туториале',
+  soonTitle:'Макс расскажет, как устроен туториал',soonText:'Видео скоро появится здесь: что внутри инструкции и как получить из неё максимум.'});
 </script>
 </body>
 </html>

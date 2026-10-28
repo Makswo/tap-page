@@ -29,7 +29,7 @@ function gemSVG(hue){
 }
 function gemHTML(opts){
   opts=opts||{};
-  return '<div class="gem'+(opts.size?' gem-'+opts.size:'')+(opts.locked?' locked':'')+'" style="--gh:'+(opts.hue||0)+'deg">'+
+  return '<div class="gem'+(opts.size?' gem-'+opts.size:'')+(opts.locked?' locked':'')+(opts.secret?' secret':'')+'" style="--gh:'+(opts.hue||0)+'deg">'+
     '<div class="gglow"></div><canvas class="gfx"></canvas>'+
     '<div class="gfloat">'+gemSVG(opts.hue||0)+'</div><div class="gshadow"></div></div>';
 }
@@ -62,6 +62,9 @@ function gemFX(root){
   }
   function frame(){
     raf=0;
+    // кристалл мог появиться на скрытом экране: пересчитываем размер холста, когда он стал видимым
+    if(cv.offsetWidth!==W||cv.offsetHeight!==H){ var was=W; size(); if(!was&&W){ V=[]; if(!REDUCED) for(var q=0;q<28;q++) V.push(puff(true)) } }
+    if(!W||!H){ return }
     ctx.clearRect(0,0,W,H); ctx.globalCompositeOperation='lighter';
     var ambient=vis&&!REDUCED&&!document.hidden;
     // пар

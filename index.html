@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Курсы по Claude от Макса — tap-page</title>
-<meta name="description" content="Короткие практичные курсы по Claude: от первого запуска до своего ИИ-помощника. За каждый курс — именной сертификат и кристалл в коллекцию.">
+<meta name="description" content="Короткие практичные курсы по Claude: пошаговые инструкции под твою работу — от первого запуска до своего ИИ-помощника.">
 <meta name="theme-color" content="#08090a">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,44 +12,101 @@
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
 <script defer src="/_vercel/insights/script.js"></script>
 <style>
-.hero{padding-block:52px 8px}
-.hero h1{max-width:13em}
-.strip{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:6px}
-.strip .gem{margin:0}
-.strip a{margin-left:10px;color:var(--tx2);font-size:14px}
+.hero{padding-block:64px 8px}
+.hero h1{max-width:12em}
+.hero .lead{max-width:36em}
+.ctas{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 22px}
+.trust{display:flex;gap:8px;flex-wrap:wrap}
+.trust .chip svg{width:14px;height:14px;color:var(--acc)}
+.what{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.what div{background:var(--s1);border:1px solid var(--line);border-radius:20px;padding:18px}
+.what .n{font-family:var(--m);font-size:12px;color:var(--acc)}
+.what b{display:block;font-size:16px;margin-top:8px}
+.what span{display:block;font-size:14px;color:var(--tx2);margin-top:4px}
+
+/* программа: путь из шагов */
+.path{list-style:none;margin:0;padding:0;display:grid;gap:12px;counter-reset:p}
+.step{position:relative;display:grid;grid-template-columns:48px 1fr auto;gap:16px;align-items:start;padding:20px;border-radius:22px;background:var(--s1);border:1px solid var(--line);counter-increment:p;scroll-margin-top:80px}
+.step::before{content:counter(p);width:40px;height:40px;border-radius:14px;display:grid;place-items:center;font:500 16px var(--m);background:var(--s3);color:var(--tx2)}
+.step.open{border-color:rgba(212,255,63,.45);background:radial-gradient(70% 90% at 100% 0%,rgba(212,255,63,.09),transparent 60%),var(--s1)}
+.step.open::before{background:var(--acc);color:var(--acc-ink)}
+.step:not(:last-child)::after{content:"";position:absolute;left:39px;top:64px;bottom:-14px;width:2px;background:var(--line2)}
+.step h3{margin:6px 0 6px;font-size:21px;line-height:1.2;letter-spacing:-.02em}
+.step p{margin:0 0 10px;color:var(--tx2);font-size:15px;max-width:38em}
+.step .items{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;color:var(--tx)}
+.step .items span{display:inline-flex;gap:7px;align-items:center}
+.step .items span::before{content:"";width:6px;height:6px;border-radius:2px;background:var(--acc)}
+.step:not(.open) .items span::before{background:var(--tx3)}
+.step .gift{display:inline-flex;align-items:center;gap:7px;margin-top:12px;font-size:12.5px;color:var(--tx3)}
+.step .gift i{width:9px;height:9px;border-radius:3px;transform:rotate(45deg);background:hsl(calc(264deg + var(--ch,0deg)) 80% 66%);box-shadow:0 0 8px hsl(calc(264deg + var(--ch,0deg)) 90% 60%)}
+.step .act{display:flex;flex-direction:column;align-items:flex-end;gap:10px;min-width:180px}
+.step .prc{font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.step .tag{font-family:var(--m);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3)}
+
+/* бонус: кристаллы */
+.bonus{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-top:56px;padding:20px 22px;border-radius:22px;border:1px solid rgba(196,148,255,.25);background:linear-gradient(90deg,rgba(168,85,247,.09),var(--s1) 60%)}
+.bonus .gems{display:flex;gap:2px}
+.bonus .gems .gem{margin:0}
+.bonus .txt{flex:1;min-width:240px}
+.bonus .txt b{display:block;font-size:16px}
+.bonus .txt span{font-size:14px;color:var(--tx2)}
+.bonus a{color:var(--tx2);font-size:14px}
+
+@media (max-width:760px){
+  .hero{padding-top:40px}
+  .what{grid-template-columns:1fr}
+  .step{grid-template-columns:40px 1fr;padding:16px;gap:12px}
+  .step::before{width:34px;height:34px;border-radius:12px;font-size:14px}
+  .step:not(:last-child)::after{left:32px;top:54px}
+  .step .act{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between;min-width:0}
+  .ctas .btn{flex:1}
+}
 </style>
 </head>
 <body>
 <nav class="nav"><div class="wrap wide">
   <a class="logo" href="/"><i>M</i>makswo</a>
   <span class="sp"></span>
-  <a class="mono" href="#courses" style="text-decoration:none">Курсы</a>
+  <a class="mono" href="#program" style="text-decoration:none">Программа</a>
   <a class="btn gho sm" id="acct" href="/me">Войти</a>
 </div></nav>
 
 <main class="wrap wide">
   <div class="hero">
-    <div class="eyebrow">Обучение · Claude</div>
-    <h1>Учись работать с Claude. <span class="acc">Собирай кристаллы.</span></h1>
-    <p class="lead">Короткие практичные курсы от Макса: от первого запуска Claude до своего ИИ-помощника. За каждый курс — именной сертификат и кристалл в коллекцию.</p>
-    <div class="strip" id="strip"></div>
+    <div class="eyebrow">Курсы по Claude</div>
+    <h1>Научись работать с Claude <span class="acc">на своих задачах</span></h1>
+    <p class="lead">Короткие практичные курсы от Макса. Без лишней теории: отвечаешь на пару вопросов о себе — получаешь пошаговую инструкцию под свою работу, устройства и время.</p>
+    <div class="ctas">
+      <a class="btn pri lg" href="/start">Начать с первого курса <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="btn gho lg" href="#program">Вся программа</a>
+    </div>
+    <div class="trust">
+      <span class="chip"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Под твою работу и устройства</span>
+      <span class="chip"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Готовые запросы — скопировал и вставил</span>
+      <span class="chip"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Только официальные способы</span>
+    </div>
   </div>
 
-  <section class="sec" id="courses">
-    <div class="eyebrow">Курсы</div>
-    <h2>Начни с первого шага</h2>
-    <p class="sub">Первый курс открыт уже сейчас. Остальные скоро: оставь почту, и мы напишем, когда курс откроется.</p>
-    <div class="courses" id="clist"></div>
+  <section class="sec" id="how">
+    <div class="eyebrow">Как проходит обучение</div>
+    <h2>Три шага вместо часов роликов</h2>
+    <div class="what">
+      <div><span class="n">01</span><b>Отвечаешь на вопросы</b><span>10 коротких вопросов о работе, устройствах и целях — около 5 минут.</span></div>
+      <div><span class="n">02</span><b>Получаешь инструкцию под себя</b><span>Установка, первые запросы под твою задачу и план на неделю.</span></div>
+      <div><span class="n">03</span><b>Делаешь по шагам</b><span>5–15 минут в день. Инструкция хранится в профиле и открывается с любого устройства.</span></div>
+    </div>
   </section>
 
-  <section class="sec" id="collection">
-    <div class="eyebrow">Коллекция</div>
-    <h2>Собери все 7 кристаллов</h2>
-    <p class="sub">Каждый курс — свой камень с именным сертификатом в профиле. Три кристалла секретные: они откроются за будущие курсы и успехи.</p>
-    <div id="coll"></div>
+  <section class="sec" id="program">
+    <div class="eyebrow">Программа</div>
+    <h2>От первого запуска до своего помощника</h2>
+    <p class="sub">Проходи по порядку: каждый курс опирается на предыдущий. Первый открыт сейчас, остальные скоро — оставь почту, и мы напишем, когда курс откроется.</p>
+    <ol class="path" id="clist"></ol>
   </section>
 
-  <div class="note" style="margin-top:56px"><b>Честно о странах.</b> Claude работает не везде: России и Беларуси нет в списке стран, где он официально доступен. В курсах только официальные способы, без обходных путей. Список стран: <a href="https://www.anthropic.com/supported-countries" target="_blank" rel="noopener">anthropic.com/supported-countries</a>.</div>
+  <div class="bonus" id="bonus"></div>
+
+  <div class="note" style="margin-top:28px"><b>Честно о странах.</b> Claude работает не везде: России и Беларуси нет в списке стран, где он официально доступен. В курсах только официальные способы, без обходных путей. Список стран: <a href="https://www.anthropic.com/supported-countries" target="_blank" rel="noopener">anthropic.com/supported-countries</a>.</div>
 </main>
 
 <footer>Сделал Макс · <a href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">@makswo</a> · <a href="/oferta" target="_blank" rel="noopener">Публичная оферта</a> · Это не официальный материал Anthropic<br><span class="freq">ИП Малыгин Максим Валерьевич · ИНН 183512338627 · ОГРНИП 323180000018526 · <a href="mailto:mxmgin@gmail.com">mxmgin@gmail.com</a></span></footer>
@@ -58,6 +115,7 @@
 <script src="/assets/gem.js"></script>
 <script src="/assets/account.js"></script>
 <script src="/assets/catalog.js"></script>
+<script src="/assets/video.js"></script>
 <script>
 (function(){
 'use strict';
@@ -68,31 +126,31 @@ var esc=TP.esc, OWNED={}, WAIT={};
 
 function toast(t){var el=$('toast');el.textContent=t;el.classList.add('on');setTimeout(function(){el.classList.remove('on')},1800)}
 
-function renderStrip(){
-  var n=0; GEMS.forEach(function(g){if(OWNED[g.id])n++});
-  $('strip').innerHTML=GEMS.map(function(g){return gemHTML({size:'sm',hue:g.hue,locked:!OWNED[g.id]&&g.id!=='start'})}).join('')+
-    '<a href="#collection">'+(n?'Собрано '+n+' из 7':'7 кристаллов в коллекции')+'</a>';
-  mountGems($('strip'));
-}
 function renderCourses(){
   $('clist').innerHTML=COURSES.map(function(c){
     var g=gemById(c.gem), open=c.status==='open', w=WAIT[c.id], have=OWNED[c.gem];
     var cta=open?'<a class="btn pri" href="'+c.href+'">'+(have?'Открыть':'Начать')+'</a>':
       (w?'<button class="btn done" type="button" disabled>✓ Сообщим на почту</button>':'<button class="btn gho" type="button" data-wait="'+c.id+'">Сообщить о старте</button>');
-    return '<article class="course '+(open?'open':'soon')+'" id="c-'+c.id+'" style="--ch:'+g.hue+'deg">'+
-      '<div class="top">'+gemHTML({size:'sm',hue:g.hue})+(open?'<span class="chip ok">Доступен</span>':'<span class="chip">Скоро</span>')+'</div>'+
-      '<h3>'+esc(c.title)+'</h3><p>'+esc(c.desc)+'</p><ul>'+c.items.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>'+
-      '<div class="foot"><div>'+(c.price?'<div class="prc">'+esc(c.price)+'</div>':'')+'<div class="gift">+ '+esc(g.title)+' · '+esc(g.name)+'</div></div>'+cta+'</div></article>';
+    return '<li class="step '+(open?'open':'soon')+'" id="c-'+c.id+'" style="--ch:'+g.hue+'deg"><div>'+
+      '<div class="tag">'+(open?'Доступен сейчас':'Скоро')+'</div><h3>'+esc(c.title)+'</h3><p>'+esc(c.desc)+'</p>'+
+      '<div class="items">'+c.items.map(function(x){return '<span>'+esc(x)+'</span>'}).join('')+'</div>'+
+      '<div class="gift"><i></i>Сертификат и кристалл «'+esc(g.name)+'»'+(have?' · получен':'')+'</div></div>'+
+      '<div class="act">'+(c.price?'<div class="prc">'+esc(c.price)+'</div>':'')+cta+'</div></li>';
   }).join('');
-  mountGems($('clist'));
   [].forEach.call($('clist').querySelectorAll('[data-wait]'),function(b){b.onclick=function(){wait(b.getAttribute('data-wait'))}});
 }
-function renderColl(){ $('coll').innerHTML=collectionHTML(OWNED); mountGems($('coll')) }
-function render(){ renderStrip(); renderCourses(); renderColl(); var u=TP.user(); $('acct').textContent=u?'Профиль':'Войти' }
+function renderBonus(){
+  var n=0; GEMS.forEach(function(g){if(OWNED[g.id])n++});
+  $('bonus').innerHTML='<div class="gems">'+GEMS.map(function(g){return gemHTML({size:'sm',hue:g.hue,locked:!OWNED[g.id],secret:g.secret})}).join('')+'</div>'+
+    '<div class="txt"><b>Бонус за прогресс: коллекция кристаллов</b><span>За каждый курс — именной сертификат и кристалл в профиль. Всего 7, три из них секретные.'+(n?' Собрано '+n+' из 7.':'')+'</span></div>'+
+    '<a href="/me">'+(TP.user()?'Моя коллекция':'Войти в профиль')+' →</a>';
+  mountGems($('bonus'));
+}
+function render(){ renderCourses(); renderBonus(); $('acct').textContent=TP.user()?'Профиль':'Войти' }
 
 function wait(id){
   var c=courseById(id);
-  if(!TP.user()) return login('Сообщим о старте курса','Войди по почте — напишем, как только «'+c.title+'» откроется. Заодно появится профиль для кристаллов.',function(){wait(id)});
+  if(!TP.user()) return login('Сообщим о старте курса','Войди по почте — напишем, как только «'+c.title+'» откроется.',function(){wait(id)});
   TP.call('POST','/api/account',{action:'waitlist',course:id}).then(function(d){
     if(d.ok){WAIT[id]=true;renderCourses();toast('Готово, сообщим на почту');track('waitlist',{course:id})}
     else if(d._status===401){TP.logout();wait(id)}
@@ -119,6 +177,10 @@ function load(){
   },render);
 }
 render(); load();
+
+// Видео от Макса о курсах. Когда снимешь ролик: src:'/assets/video/home.mp4'
+TPVideo({key:'home',src:'',title:'Макс о курсах',label:'Привет от Макса',
+  soonTitle:'Макс расскажет о курсах',soonText:'Видео скоро появится здесь: кто я, чему научат курсы и с чего начать.'});
 })();
 </script>
 </body>

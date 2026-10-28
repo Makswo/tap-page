@@ -100,7 +100,7 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
 .gem.locked{cursor:default}
 .gem.locked .gglow,.gem.locked .gfx,.gem.locked .gshadow,.gem.locked .gshine,.gem.locked .gstar,.gem.locked .gcore{display:none}
 .gem.locked .gfloat{animation:none;filter:saturate(.45) brightness(.42)}
-.slot.secret .gem.locked .gfloat{filter:grayscale(1) brightness(.28) contrast(1.2)}
+.gem.secret.locked .gfloat{filter:grayscale(1) brightness(.28) contrast(1.2)}
 @media (prefers-reduced-motion:reduce){.gem *,.gem{animation:none!important}}
 
 /* layout */
