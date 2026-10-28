@@ -252,7 +252,7 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
 .gcore{transform-box:fill-box;transform-origin:center;animation:gcore 4.5s ease-in-out infinite}
 @keyframes gbreath{0%,100%{opacity:.7;transform:scale(.94) rotate(0deg)}50%{opacity:1;transform:scale(1.06) rotate(8deg)}}
 @keyframes gfloat{0%,100%{transform:translateY(0) rotate(-1.2deg)}50%{transform:translateY(-7px) rotate(1.2deg)}}
-@keyframes gzap{0%{filter:brightness(2.4) drop-shadow(0 0 24px #fff)}100%{filter:brightness(1) drop-shadow(0 0 10px color-mix(in srgb,var(--gc) 75%,transparent))}}
+@keyframes gzap{0%{filter:brightness(1.6) drop-shadow(0 0 16px var(--gc))}100%{filter:brightness(1) drop-shadow(0 0 10px color-mix(in srgb,var(--gc) 75%,transparent))}}
 @keyframes gshadow{0%,100%{transform:scaleX(1);opacity:.9}50%{transform:scaleX(.82);opacity:.55}}
 @keyframes gshine{0%,35%{transform:translateX(0) skewX(-18deg)}75%,100%{transform:translateX(460px) skewX(-18deg)}}
 @keyframes gcore{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.08)}}
@@ -561,47 +561,31 @@ $('aretry').onclick=function(){$('aretry').hidden=true;finish()};
 
 /* ---------- Кристалл старта ---------- */
 var GEM_N=0;
+// форма «осколок»: неровные сколы, грани освещены сверху-слева
+var SHARD_O='92,14 108,32 124,22 150,58 144,72 170,102 178,140 165,150 172,180 150,214 137,208 118,246 99,231 78,248 62,222 40,208 46,186 24,160 31,128 21,98 44,70 58,66 66,38';
+var SHARD_T='99,231 110,206 118,246|0.32|10;110,206 137,208 118,246|0.14|-4;90,176 58,182 84,150|0.61|-8;99,231 80,212 110,206|0.46|4;80,212 90,176 110,206|0.04|0;90,176 80,212 58,182|0.04|4;80,212 99,231 78,248|0.52|0;58,182 46,186 24,160|0.13|0;82,96 44,70 58,66|0.76|10;82,96 96,58 100,96|1|0;140,118 170,102 178,140|0.04|0;90,176 126,168 110,206|0.04|4;80,212 62,222 58,182|0.04|-8;62,222 80,212 78,248|0.74|-8;137,208 142,196 150,214|0.04|4;142,196 172,180 150,214|0.04|0;142,196 137,208 110,206|0.04|-4;126,168 142,196 110,206|0.05|0;31,128 64,138 24,160|0.9|-4;58,182 64,138 84,150|0.75|0;64,138 58,182 24,160|0.66|0;104,126 82,96 100,96|1|-8;140,118 104,126 100,96|0.26|10;64,138 104,126 84,150|0.56|-8;104,126 64,138 82,96|0.93|4;44,70 40,120 21,98|0.74|4;82,96 40,120 44,70|0.8|0;40,120 31,128 21,98|0.65|0;40,120 64,138 31,128|0.77|10;64,138 40,120 82,96|0.85|0;66,38 74,60 58,66|0.72|4;96,58 74,60 66,38|0.76|0;74,60 82,96 58,66|0.93|4;74,60 96,58 82,96|0.95|0;108,32 66,38 92,14|0.45|-8;108,32 96,58 66,38|0.82|-8;144,72 132,52 150,58|0.04|0;108,32 132,52 96,58|0.93|0;150,58 132,52 124,22|0.09|10;132,52 108,32 124,22|0.92|10;118,80 140,118 100,96|0.24|-8;96,58 118,80 100,96|0.51|-8;118,80 132,52 144,72|0.04|10;132,52 118,80 96,58|0.71|10;142,196 160,160 172,180|0.04|0;160,160 142,196 126,168|0.04|10;40,208 46,186 58,182|0.83|4;62,222 40,208 58,182|0.19|10;118,140 104,126 140,118|0.04|0;118,140 160,160 126,168|0.04|0;104,126 118,140 84,150|0.04|10;118,140 90,176 84,150|0.54|0;118,140 126,168 90,176|0.07|10;148,92 118,80 144,72|0.53|0;118,80 148,92 140,118|0.47|-8;148,92 144,72 170,102|0.25|0;140,118 148,92 170,102|0.11|0;160,160 165,150 172,180|0.04|-4;165,150 140,118 178,140|0.04|4;165,150 118,140 140,118|0.04|-8;118,140 165,150 160,160|0.04|0'.split(';').map(function(x){x=x.split('|');return [x[0],+x[1],+x[2]]});
+var SHARD_R='90,176,58,182,0.46;110,206,80,212,0.33;46,186,58,182,0.56;24,160,58,182,0.42;96,58,100,96,0.4;62,222,80,212,0.56;104,126,100,96,0.59;104,126,64,138,0.3;104,126,84,150,0.41;108,32,66,38,0.29;124,22,132,52,0.66;118,80,132,52,0.53;144,72,118,80,0.39;40,208,58,182,0.51;118,140,84,150,0.4;90,176,118,140,0.38;144,72,148,92,0.23;140,118,148,92,0.29'.split(';').map(function(x){return x.split(',').map(Number)});
 function gemSVG(hue){
   var u='g'+(++GEM_N), h=hue||0;
-  function c(l,s,a){return 'hsla('+(272+h)+','+s+'%,'+l+'%,'+(a==null?1:a)+')'}
-  // вершины кристалла (вытянутая восьмигранная огранка)
-  var T='100,8', UL='40,80', UR='160,80', UC='100,96', ML='30,140', MR='170,140', MC='100,150',
-      LL='56,204', LR='144,204', LC='100,214', B='100,254';
-  function poly(pts,fill,extra){return '<polygon points="'+pts+'" fill="'+fill+'"'+(extra||'')+'/>'}
-  function lg(id,x1,y1,x2,y2,stops){return '<linearGradient id="'+u+id+'" x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'">'+stops.map(function(s){return '<stop offset="'+s[0]+'" stop-color="'+s[1]+'"/>'}).join('')+'</linearGradient>'}
-  var defs='<defs>'+
-    lg('a',0,0,1,1,[[0,c(92,90)],[.45,c(72,92)],[1,c(48,85)]])+
-    lg('b',1,0,0,1,[[0,c(80,95)],[.6,c(56,88)],[1,c(34,80)]])+
-    lg('c',0,0,1,1,[[0,c(62,90)],[1,c(30,78)]])+
-    lg('d',1,0,0,1,[[0,c(46,86)],[1,c(20,74)]])+
-    lg('e',0,0,1,1,[[0,c(70,95)],[.5,c(52,90)],[1,c(26,76)]])+
-    lg('f',1,0,0,1,[[0,c(38,84)],[1,c(16,70)]])+
-    lg('g',0,0,0,1,[[0,c(44,88)],[1,c(14,68)]])+
-    lg('s',0,0,1,0,[[0,'rgba(255,255,255,0)'],[.45,'rgba(255,255,255,0)'],[.5,'rgba(255,255,255,.85)'],[.55,'rgba(255,255,255,0)'],[1,'rgba(255,255,255,0)']])+
-    '<radialGradient id="'+u+'core" cx=".5" cy=".42" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".25" stop-color="'+c(88,100)+'" stop-opacity=".7"/><stop offset="1" stop-color="'+c(60,100)+'" stop-opacity="0"/></radialGradient>'+
-    '<clipPath id="'+u+'clip"><polygon points="'+[T,UR,MR,LR,B,LL,ML,UL].join(' ')+'"/></clipPath>'+
-    '<filter id="'+u+'soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.2"/></filter>'+
-  '</defs>';
-  var body=
-    poly([T,UL,UC].join(' '),'url(#'+u+'a)')+
-    poly([T,UR,UC].join(' '),'url(#'+u+'b)')+
-    poly([UL,UC,MC,ML].join(' '),'url(#'+u+'c)')+
-    poly([UR,UC,MC,MR].join(' '),'url(#'+u+'d)')+
-    poly([ML,MC,LC,LL].join(' '),'url(#'+u+'e)')+
-    poly([MR,MC,LC,LR].join(' '),'url(#'+u+'f)')+
-    poly([LL,LC,B].join(' '),'url(#'+u+'g)')+
-    poly([LR,LC,B].join(' '),'url(#'+u+'f)');
-  var lines='<g fill="none" stroke="rgba(255,255,255,.38)" stroke-width=".9" stroke-linejoin="round">'+
-    '<polyline points="'+[UL,UC,UR].join(' ')+'"/><polyline points="'+[ML,MC,MR].join(' ')+'"/><polyline points="'+[LL,LC,LR].join(' ')+'"/>'+
-    '<polyline points="'+[T,UC,MC,LC,B].join(' ')+'"/></g>'+
-    '<polygon points="'+[T,UR,MR,LR,B,LL,ML,UL].join(' ')+'" fill="none" stroke="'+c(88,100,.75)+'" stroke-width="1.4" stroke-linejoin="round"/>';
+  function c(l,a,dh){return 'hsla('+(272+h+(dh||0))+',92%,'+l+'%,'+(a==null?1:a)+')'}
+  var grads='', body='';
+  SHARD_T.forEach(function(t,k){var l=16+70*t[1], id=u+'f'+k;
+    grads+='<linearGradient id="'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+c(Math.min(96,l+9),1,t[2])+'"/><stop offset="1" stop-color="'+c(Math.max(8,l-12),1,t[2])+'"/></linearGradient>';
+    body+='<polygon points="'+t[0]+'" fill="url(#'+id+')" stroke="'+c(Math.min(90,l+14),.55,t[2])+'" stroke-width=".5" stroke-linejoin="round"/>'});
+  var defs='<defs>'+grads+
+    '<clipPath id="'+u+'clip"><polygon points="'+SHARD_O+'"/></clipPath>'+
+    '<radialGradient id="'+u+'core" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".3" stop-color="'+c(80)+'" stop-opacity=".45"/><stop offset="1" stop-color="'+c(60)+'" stop-opacity="0"/></radialGradient>'+
+    '<linearGradient id="'+u+'s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".7"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'+
+    '<filter id="'+u+'soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.6"/></filter></defs>';
   var inner='<g clip-path="url(#'+u+'clip)">'+
-    '<ellipse cx="100" cy="128" rx="46" ry="62" fill="url(#'+u+'core)" class="gcore"/>'+
-    '<polygon points="70,40 96,24 92,70" fill="rgba(255,255,255,.55)" filter="url(#'+u+'soft)"/>'+
-    '<polygon points="46,92 64,100 52,150" fill="rgba(255,255,255,.22)"/>'+
-    '<rect class="gshine" x="-160" y="-20" width="160" height="300" fill="url(#'+u+'s)" transform="skewX(-18)"/>'+
-  '</g>';
-  return '<svg class="gemsvg" viewBox="0 0 200 262" aria-hidden="true">'+defs+body+inner+lines+'</svg>';
+    '<ellipse cx="96" cy="128" rx="48" ry="70" fill="url(#'+u+'core)" class="gcore"/>'+
+    '<path d="M70 70 L92 104 L86 132 M120 60 L112 92 M60 150 L84 168 L80 196 M140 130 L128 150" fill="none" stroke="rgba(255,255,255,.35)" stroke-width=".7"/>'+
+    '<polygon points="86,24 104,40 80,70" fill="rgba(255,255,255,.55)" filter="url(#'+u+'soft)"/>'+
+    '<rect class="gshine" x="-160" y="-20" width="160" height="300" fill="url(#'+u+'s)" transform="skewX(-18)"/></g>';
+  var ridges=SHARD_R.map(function(r){return '<line x1="'+r[0]+'" y1="'+r[1]+'" x2="'+r[2]+'" y2="'+r[3]+'" stroke="rgba(255,255,255,'+r[4]+')" stroke-width="1" stroke-linecap="round"/>'}).join('');
+  var edge='<polygon points="'+SHARD_O+'" fill="none" stroke="'+c(88,.8)+'" stroke-width="1.2"/>';
+  var chips='<g class="gchips"><polygon points="186,58 196,66 184,74" fill="'+c(70)+'" stroke="'+c(90,.8)+'" stroke-width=".6"/><polygon points="10,214 20,206 18,222" fill="'+c(52)+'" stroke="'+c(85,.7)+'" stroke-width=".6"/><polygon points="182,226 190,236 178,238" fill="'+c(40)+'" stroke="'+c(80,.6)+'" stroke-width=".6"/></g>';
+  return '<svg class="gemsvg" viewBox="0 0 200 262" aria-hidden="true">'+defs+body+inner+ridges+edge+chips+'</svg>';
 }
 function gemHTML(opts){
   opts=opts||{};
@@ -613,7 +597,7 @@ function gemHTML(opts){
 var REDUCED=false; try{REDUCED=window.matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){}
 function gemFX(root){
   var cv=root.querySelector('.gfx'); if(!cv||!cv.getContext) return;
-  var ctx=cv.getContext('2d'), dpr=Math.min(2,window.devicePixelRatio||1), W=0,H=0, S=1, V=[], K=[], R=[], vis=true, raf=0;
+  var ctx=cv.getContext('2d'), dpr=Math.min(2,window.devicePixelRatio||1), W=0,H=0, S=1, V=[], K=[], R=[], F=[], vis=true, raf=0;
   var gh=parseFloat(root.style.getPropertyValue('--gh'))||0;
   function size(){var r=cv.getBoundingClientRect();W=r.width;H=r.height;S=root.offsetWidth/132;cv.width=Math.max(1,W*dpr);cv.height=Math.max(1,H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}
   // клуб пара: большой мягкий, поднимается и расплывается
@@ -632,7 +616,7 @@ function gemFX(root){
         col:c<.34?'255,255,255':c<.78?'216,180,254':'110,255,230'});
     }
     R.push({r:root.offsetWidth*.25,life:0,max:38},{r:root.offsetWidth*.15,life:-8,max:44});
-    for(var j=0;j<10;j++) V.push(puff(false,true));
+    F.push({life:0,max:34});
     root.classList.remove('gzap'); void root.offsetWidth; root.classList.add('gzap');
     go();
   }
@@ -646,9 +630,14 @@ function gemFX(root){
       var t=p.life/p.max; if(t>=1){ if(ambient&&V.length<=30) V[k]=puff(false); else V.splice(k,1); continue }
       var a=Math.sin(Math.PI*t)*p.a, rr=p.r*(1+t*1.6);
       var g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,rr);
-      g.addColorStop(0,'hsla('+p.h+',95%,72%,'+a+')'); g.addColorStop(.45,'hsla('+p.h+',95%,60%,'+(a*.45)+')'); g.addColorStop(1,'hsla('+p.h+',95%,50%,0)');
+      g.addColorStop(0,'hsla('+p.h+',95%,62%,'+a+')'); g.addColorStop(.45,'hsla('+p.h+',95%,60%,'+(a*.45)+')'); g.addColorStop(1,'hsla('+p.h+',95%,50%,0)');
       ctx.fillStyle=g; ctx.beginPath(); ctx.arc(p.x,p.y,rr,0,6.283); ctx.fill();
     }
+    // вспышка по клику: на месте, без подъёма вверх
+    for(k=F.length-1;k>=0;k--){var f=F[k]; f.life++; var ft=f.life/f.max; if(ft>=1){F.splice(k,1);continue}
+      var fa=(ft<.15?ft/.15:1-(ft-.15)/.85)*.32, fr=root.offsetWidth*(.55+ft*.35), fx=W/2, fy=H/2;
+      var fg=ctx.createRadialGradient(fx,fy,0,fx,fy,fr); fg.addColorStop(0,'hsla('+(272+gh)+',100%,70%,'+fa+')'); fg.addColorStop(.5,'hsla('+(272+gh)+',100%,60%,'+(fa*.4)+')'); fg.addColorStop(1,'hsla('+(272+gh)+',100%,55%,0)');
+      ctx.fillStyle=fg; ctx.beginPath(); ctx.arc(fx,fy,fr,0,6.283); ctx.fill()}
     // кольца
     for(k=R.length-1;k>=0;k--){var q=R[k]; q.life++; if(q.life<0) continue; var tt=q.life/q.max; if(tt>=1){R.splice(k,1);continue}
       ctx.strokeStyle='rgba(225,200,255,'+((1-tt)*.55)+')'; ctx.lineWidth=2*(1-tt)*Math.max(.7,S);
@@ -662,7 +651,7 @@ function gemFX(root){
       var gg=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,s.w*4); gg.addColorStop(0,'rgba('+s.col+','+(al*.7)+')'); gg.addColorStop(1,'rgba('+s.col+',0)');
       ctx.fillStyle=gg; ctx.beginPath(); ctx.arc(s.x,s.y,s.w*4,0,6.283); ctx.fill();
     }
-    if(ambient||K.length||R.length||V.length) raf=requestAnimationFrame(frame);
+    if(ambient||K.length||R.length||F.length||V.length) raf=requestAnimationFrame(frame);
   }
   function go(){ if(!raf) raf=requestAnimationFrame(frame) }
   size();
