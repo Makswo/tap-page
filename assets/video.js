@@ -33,7 +33,7 @@ function TPVideo(o){
   var X='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
   var ph=function(big){return '<div class="vph"><div class="av">M</div><b>'+esc(big?(o.soonTitle||o.title):o.title)+'</b>'+(big?'<p>'+esc(o.soonText||'Видео скоро появится здесь.')+'</p>':'<small>видео скоро</small>')+'</div>'};
   var el=document.createElement('div'); el.className='vw'; el.setAttribute('role','button'); el.setAttribute('tabindex','0'); el.setAttribute('aria-label',o.title||'Видео');
-  el.innerHTML=(o.src?'<video src="'+esc(o.src)+'"'+(o.poster?' poster="'+esc(o.poster)+'"':'')+' muted loop playsinline autoplay preload="metadata"></video>':ph(false))+
+  el.innerHTML=(o.src?'<video src="'+esc(o.mini||o.src)+'"'+(o.poster?' poster="'+esc(o.poster)+'"':'')+' muted loop playsinline autoplay preload="metadata"></video>':ph(false))+
     '<div class="vcap"><i><svg viewBox="0 0 10 10"><path d="M0 0l10 5-10 5z"/></svg></i>'+esc(o.label||'Смотреть')+'</div>'+
     '<button class="vx" type="button" aria-label="Скрыть видео">'+X+'</button>';
   document.body.appendChild(el);
