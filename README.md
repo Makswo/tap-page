@@ -36,3 +36,14 @@
 - Уведомления ЮKassa: Интеграция → HTTP-уведомления → `https://tap-page.ru/api/yookassa`, событие `payment.succeeded`.
 - Чеки по 54-ФЗ для ИП (не НПД): `YOOKASSA_RECEIPTS=1` (покупатель вводит email), `YOOKASSA_VAT_CODE` — код НДС (по умолчанию 1, «без НДС»).
 - Оферта: `oferta/index.html` → tap-page.ru/oferta.
+
+## Каталог, профиль и кристаллы
+
+- `/` — каталог курсов и коллекция из 7 кристаллов (`index.html`). Прежняя главная перенесена в `/builder`.
+- `/me` — профиль: вход по коду на почту, сертификаты, инструкции, лист ожидания.
+- `/start` — после инструкции предлагает зарегистрироваться и привязывает инструкцию и «Кристалл старта» к профилю.
+- Общие файлы: `assets/ui.css`, `assets/gem.js` (кристаллы и цвета), `assets/account.js` (вход и сессия), `assets/catalog.js` (курсы).
+- API: `/api/auth` (otp, verify, refresh через Supabase Auth), `/api/account` (GET — профиль; POST claim, waitlist).
+- Таблицы: `certificates`, `waitlist`, колонка `tutorial_orders.user_id` (см. `supabase/tutorial.sql`).
+
+Почта для кодов: Supabase → Authentication → SMTP (Resend). Шаблоны «Magic Link» и «Confirm signup» должны содержать `{{ .Token }}`.

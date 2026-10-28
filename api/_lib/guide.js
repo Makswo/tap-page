@@ -254,7 +254,7 @@ function build(a){
       '<li><span><a href="#project">Создай проект</a>, чтобы Claude помнил, кто ты</span></li>'+
     '</ol></div>';
   h+=bInstall(a)+bSetup(a)+bFirst(a)+bProject(a)+bTasks(a)+bMail(a)+bWeek(a)+bSafety();
-  h+='<div class="bridge"><div class="eyebrow">Что дальше</div><h2>Стартовый набор Макса</h2><p>Когда Claude станет привычкой, следующий шаг — чтобы рутина делалась без тебя. В наборе простые инструкции, как скинуть на ИИ базовые дела и оставить время на себя.</p><a class="btn pri" href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">Напиши <span class="word">НАБОР</span> в директ</a></div>';
+  h+='<div class="bridge"><div class="eyebrow">Что дальше</div><h2>Стартовый набор Макса</h2><p>Когда Claude станет привычкой, следующий шаг — чтобы рутина делалась без тебя. В наборе простые инструкции, как скинуть на ИИ базовые дела и оставить время на себя.</p><a class="btn pri" href="/#c-nabor">Узнать о наборе</a></div>';
   h+='<div class="src">Факты о Claude проверены '+CHECKED+' по официальным страницам. Интерфейс и тарифы меняются — если кнопка называется чуть иначе, ищи по смыслу.<ul>'+
    '<li><a href="https://www.anthropic.com/supported-countries" target="_blank" rel="noopener">Страны, где доступен Claude</a></li>'+
    '<li><a href="https://claude.com/pricing" target="_blank" rel="noopener">Тарифы</a></li>'+

@@ -27,7 +27,7 @@ function qs(filters) {
     .join('&');
 }
 
-async function call(method, table, filters, body) {
+async function call(method, table, filters, body, prefer) {
   const { url, key } = cfg();
   const q = qs(filters);
   const res = await fetch(`${url}/rest/v1/${table}${q ? `?${q}` : ''}`, {
@@ -38,7 +38,7 @@ async function call(method, table, filters, body) {
       // старый service_role (JWT) — ещё и в Authorization.
       ...(key.startsWith('sb_') ? {} : { Authorization: `Bearer ${key}` }),
       'Content-Type': 'application/json',
-      Prefer: 'return=representation',
+      Prefer: prefer || 'return=representation',
     },
     body: body ? JSON.stringify(body) : undefined,
   });
@@ -51,4 +51,7 @@ module.exports = {
   select: (table, filters) => call('GET', table, filters),
   insert: (table, row) => call('POST', table, null, row),
   update: (table, filters, row) => call('PATCH', table, filters, row),
+  // Вставка без ошибки на дубликат (по первичному или уникальному ключу).
+  insertIgnore: (table, row) => call('POST', table, null, row, 'resolution=ignore-duplicates,return=representation'),
+  cfg,
 };

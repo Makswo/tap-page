@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>tap-page — страница для вашего дела за пару минут</title>
+<meta name="description" content="Опишите своё дело, загрузите фото и добавьте кнопки — получите страницу с записью, ценами и контактами на tap-page.ru.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#FBF7F2;--sand:#F1E6DA;--beige:#D9C2A9;--gold:#B58E68;--gold-d:#8E6A48;--ink:#2B2320;--ink2:#6E615A;--line:#E7DACB;--accent:#A8846F}
+*{box-sizing:border-box;margin:0}
+html{background:var(--cream)}
+body{min-height:100vh;font-family:Urbanist,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;
+  background:radial-gradient(80% 45% at 85% 0%,#F1E3D4 0%,rgba(241,227,212,0) 60%),var(--cream)}
+a{color:inherit;text-decoration:none}
+button,input,textarea,select{font:inherit;color:inherit}
+.wrap{max-width:1160px;margin:0 auto;padding:0 max(18px,env(safe-area-inset-left)) 0 max(18px,env(safe-area-inset-right))}
+header{display:flex;align-items:center;height:68px}
+.logo{font-size:13px;letter-spacing:.3em;font-weight:700;color:var(--gold-d)}
+header a.ex{margin-left:auto;font-size:14px;color:var(--ink2)}
+.hero{text-align:center;padding:36px 0 26px}
+.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.6);border-radius:999px;padding:7px 14px;font-size:13px;color:var(--ink2)}
+.pill i{width:7px;height:7px;border-radius:50%;background:#7BC67E;box-shadow:0 0 0 4px rgba(123,198,126,.18)}
+h1{font-weight:500;font-size:clamp(34px,5.6vw,58px);line-height:1.05;letter-spacing:-.02em;margin:18px auto 0;max-width:760px;text-wrap:balance}
+h1 em{font:italic 500 1.12em "Cormorant Garamond",Georgia,"Times New Roman",serif;color:var(--gold);letter-spacing:-.01em;padding:0 .04em}
+
+/* builder */
+.builder{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:28px;align-items:start;margin-top:30px}
+.form{min-width:0;background:#fff;border:1px solid var(--line);border-radius:28px;padding:20px;box-shadow:0 30px 60px -40px rgba(80,55,35,.45);display:grid;gap:18px}
+.lbl2{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink2);margin-bottom:8px}
+.lbl2 small{letter-spacing:0;text-transform:none;font-weight:500;font-size:12.5px;color:#A99B91}
+.lbl{display:block;font-size:11.5px;font-weight:600;letter-spacing:.03em;color:var(--ink2);line-height:1.2}
+/* ask box */
+.ask{border:1px solid var(--line);border-radius:20px;background:var(--cream);padding:4px 4px 8px;transition:.15s}
+.ask:focus-within{border-color:var(--beige);background:#fff;box-shadow:0 0 0 4px rgba(217,194,169,.22)}
+.tw{position:relative}
+.ask textarea{display:block;width:100%;border:0;outline:0;background:transparent;resize:none;min-height:72px;max-height:240px;overflow-y:auto;scrollbar-width:none;padding:12px 12px 8px;font-size:16.5px;line-height:1.45}
+.ask textarea::-webkit-scrollbar{display:none}
+.af{display:flex;align-items:flex-end;gap:8px;padding:0 2px 0 8px}
+.af .chips{flex:1;min-width:0;padding:0}
+.send{flex:none;width:42px;height:42px;border-radius:50%;border:0;background:var(--ink);color:#F6EEE6;display:grid;place-items:center;cursor:pointer;transition:transform .15s,background .15s,opacity .15s}
+.send:hover{background:#41342E;transform:translateY(-1px)}
+.send:disabled{opacity:.25;cursor:default;transform:none}
+.send.busy svg{animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.status{display:flex;gap:10px;align-items:center;margin-top:-6px;padding:10px 14px;border-radius:14px;background:#F1F6EE;color:#3F5A37;font-size:14px;line-height:1.35}
+.status.warn{background:#FBF1E6;color:#7A4E26}
+.status b{font-weight:700}
+.status[hidden]{display:none}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 8px}
+.chips button{border:1px solid var(--line);background:#fff;border-radius:999px;height:30px;padding:0 11px;font-size:13px;color:var(--ink2);cursor:pointer;transition:.15s}
+.chips button:hover{border-color:var(--beige);color:var(--ink)}
+.chips button.on{background:var(--ink);border-color:var(--ink);color:#F6EEE6}
+.chips button.more{border-style:dashed;color:var(--gold-d)}
+.chips:not(.all) button.x{display:none}
+.inp{width:100%;height:44px;border:1px solid var(--line);border-radius:13px;padding:0 13px;background:var(--cream);outline:0;font-size:15px;font-weight:500;min-width:0}
+.inp:focus{border-color:var(--beige);background:#fff;box-shadow:0 0 0 4px rgba(217,194,169,.22)}
+.inp.big{font-weight:600;font-size:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.col{display:grid;gap:6px;min-width:0}
+.slug{display:flex;align-items:center;border:1px solid var(--line);border-radius:13px;background:var(--cream);height:44px;overflow:hidden}
+.slug span{padding:0 2px 0 13px;color:var(--ink2);font-weight:500;white-space:nowrap}
+.slug input{flex:1;min-width:0;border:0;outline:0;background:transparent;height:100%;font-weight:600}
+/* header editor: looks like the page itself */
+.head{position:relative}
+.up{position:relative;border:1.5px dashed var(--beige);display:grid;place-items:center;text-align:center;cursor:pointer;background:var(--cream) center/cover no-repeat;overflow:hidden;transition:border-color .15s}
+.up:hover{border-color:var(--gold)}
+.up input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.up .t{font-size:13px;color:var(--ink2);line-height:1.3;padding:6px 10px;border-radius:999px}
+.up .t b{color:var(--ink);font-weight:600}
+.up.has{border-style:solid;border-color:transparent}
+.up.has .t{background:rgba(255,255,255,.88);font-size:12px}
+.cov{height:112px;border-radius:18px;align-items:start;justify-items:end;padding:8px}
+.lg{position:absolute;left:14px;top:66px;width:76px;height:76px;border-radius:50%;border:3px solid #fff;outline:1.5px dashed var(--beige);outline-offset:-4px;background-color:var(--sand);z-index:1}
+.lg.has{outline:0}
+.lg .t{font-size:12px;padding:0}
+.lg.has .t{opacity:0}
+.hf{display:grid;gap:8px;padding-left:104px;margin-top:10px}
+/* buttons editor */
+.btns{border:1px solid var(--line);border-radius:16px}
+.btns .br:first-child{border-radius:15px 15px 0 0}
+.btns .add{border-radius:0 0 15px 15px}
+.br{display:grid;grid-template-columns:46px minmax(0,1fr) minmax(0,1.25fr) 32px 32px;gap:4px;align-items:center;padding:5px 6px;border-top:1px solid #F0E7DD;background:#fff}
+.br:first-child{border-top:0}
+.icw{position:relative}
+.icb{width:40px;height:38px;border:0;border-radius:11px;background:#F4EDE8;color:var(--gold-d);display:grid;place-items:center;cursor:pointer;transition:background .15s}
+.icb:hover{background:var(--sand)}
+.icb svg{width:20px;height:20px}
+.ipop{position:absolute;z-index:20;top:44px;left:0;width:300px;max-width:calc(100vw - 48px);display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:8px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 24px 50px -24px rgba(62,46,38,.45)}
+.ipop[hidden]{display:none}
+.ipop button{display:grid;justify-items:center;gap:3px;padding:8px 2px 6px;border:0;border-radius:11px;background:transparent;color:var(--gold-d);cursor:pointer;font-size:10.5px}
+.ipop button span{color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.ipop button svg{width:20px;height:20px}
+.ipop button:hover{background:var(--cream)}
+.ipop button.on{background:#F4EDE8}
+.br input{height:38px;border:0;border-radius:10px;background:transparent;padding:0 8px;font-size:14.5px;outline:0;min-width:0}
+.br input:focus{background:var(--cream)}
+.br .lb{font-weight:600}
+.br .ic{height:30px;width:30px;border-radius:9px;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;color:#B9AA9E;font-size:13px}
+.br .ic:hover{background:var(--cream);color:var(--ink)}
+.br .ic.on{color:var(--accent)}
+.br.main{background:color-mix(in srgb,var(--accent) 9%,#fff);box-shadow:inset 3px 0 0 var(--accent)}
+.br.main .icb{background:var(--accent);color:#fff}
+.br.main .lb::placeholder{color:var(--ink2)}
+.p-b{transition:box-shadow .3s,transform .3s}
+.p-b.flash{box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 35%,transparent);transform:scale(1.02)}
+.add{display:block;width:100%;height:42px;border:0;border-top:1px solid #F0E7DD;background:var(--cream);color:var(--gold-d);font-weight:600;cursor:pointer}
+.crow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px;font-size:13.5px;font-weight:600;color:var(--ink2)}
+.colors{display:flex;gap:7px;align-items:center}
+.colors button{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
+.colors button.on{box-shadow:0 0 0 2px var(--ink)}
+.go{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:56px;border:0;border-radius:999px;cursor:pointer;
+  background:var(--ink);color:#F6EEE6;font-weight:600;font-size:16.5px;transition:background .2s,transform .2s}
+.go:hover{background:#41342E;transform:translateY(-1px)}
+.note{font-size:12.5px;color:var(--ink2);text-align:center;margin-top:10px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink2);margin-bottom:12px}
+.check input{margin-top:2px;accent-color:var(--ink)}
+
+/* preview phone */
+.pv{position:sticky;top:18px}
+.pv .cap{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--ink2);text-align:center;margin-bottom:10px}
+.phone{border-radius:42px;padding:10px;background:#1E1916;box-shadow:0 40px 80px -40px rgba(43,35,32,.6)}
+.screen{position:relative;border-radius:33px;overflow:hidden;height:690px;overflow-y:auto;background:#F6F0EC;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.p-cover{height:200px;background:linear-gradient(135deg,#E9D9CB,#D8C3B1) center/cover no-repeat}
+.p-cover:after{content:"";display:block;height:100%;background:linear-gradient(180deg,rgba(246,240,236,0) 40%,#F6F0EC)}
+.p-body{position:relative;margin-top:-100px;padding:0 14px 26px}
+.p-card{background:rgba(255,255,255,.9);border-radius:22px;padding:18px 16px;text-align:center;box-shadow:0 18px 40px -26px rgba(62,46,38,.5)}
+.p-logo{width:64px;height:64px;border-radius:50%;margin:0 auto 8px;background:var(--sand) center/cover no-repeat;display:grid;place-items:center;font-weight:700;color:var(--gold-d);font-size:22px}
+.p-logo.wide{width:auto;height:40px;border-radius:0;background:none}
+.p-logo.wide img{height:40px;width:auto;margin:0 auto}
+.p-sub{font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:#7A6A61}
+.p-name{font-weight:600;font-size:19px;margin-top:6px;line-height:1.15}
+.p-tag{font-size:13px;color:#7A6A61;margin-top:4px}
+.p-links{display:grid;gap:8px;margin-top:12px}
+.p-b{display:flex;align-items:center;gap:10px;min-height:50px;padding:7px 12px 7px 8px;border-radius:15px;background:#fff;border:1px solid #EADFD8;font-weight:500;font-size:13.5px;text-align:left}
+.p-b i{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#F4EDE8;color:#8C6B57}
+.p-b i svg{width:18px;height:18px}
+.p-b.main i{color:#fff}
+.p-b span{flex:1;line-height:1.2;word-break:break-word}
+.p-b small{display:block;font-weight:400;font-size:11px;color:#7A6A61}
+.p-b.main{background:var(--accent);border-color:var(--accent);color:#fff}
+.p-b.main i{background:rgba(255,255,255,.2)}
+.p-b.main small{color:rgba(255,255,255,.85)}
+.p-h{font-weight:600;font-size:14px;margin:16px 4px 8px}
+.p-foot{text-align:center;font-size:10.5px;color:#7A6A61;margin-top:16px}
+.empty{color:#A99B91;font-size:12.5px;text-align:center;padding:10px}
+
+/* examples */
+.examples{margin:56px 0 0}
+.ex-h{font-size:13px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--ink2);text-align:center;margin-bottom:14px}
+.exs{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:860px;margin:0 auto}
+.ex-card{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 22px;border-radius:22px;background:var(--ink);color:#F4ECE4}
+.ex-card small{display:block;color:#BFAFA2;font-size:13px;margin-bottom:2px}
+.ex-card .t{font-weight:600;font-size:17px}
+.ex-card .arr{flex:none;width:40px;height:40px;border-radius:50%;background:var(--beige);color:var(--ink);display:grid;place-items:center;font-size:18px;transition:transform .2s}
+.ex-card:hover .arr{transform:translateX(3px)}
+footer{padding:48px 0 calc(32px + env(safe-area-inset-bottom));text-align:center;font-size:13px;color:var(--ink2)}
+
+/* modal */
+dialog{margin:auto;border:0;border-radius:28px;padding:0;max-width:420px;width:calc(100% - 32px);color:var(--ink);background:#fff;box-shadow:0 40px 80px -30px rgba(43,35,32,.55)}
+dialog::backdrop{background:rgba(43,35,32,.45);backdrop-filter:blur(4px)}
+.m{padding:30px 28px 26px;text-align:center}
+.m .ico{width:64px;height:64px;margin:0 auto 16px;border-radius:50%;display:grid;place-items:center;background:var(--sand);color:var(--gold-d)}
+.m h2{font-weight:600;font-size:24px}
+.m p{color:var(--ink2);margin-top:8px;line-height:1.5}
+.m{position:relative}
+.m .x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;border:0;background:var(--cream);color:var(--ink2);font-size:13px;cursor:pointer}
+.m .x:hover{background:var(--sand);color:var(--ink)}
+.join{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:12px;height:60px;margin-top:24px;padding:0 9px 0 12px;border-radius:999px;
+  background:linear-gradient(135deg,#C79C74 0%,#A8774F 55%,#8E6A48 100%);color:#fff;font-weight:700;font-size:clamp(15.5px,4.3vw,17px);letter-spacing:.01em;
+  box-shadow:0 14px 30px -12px rgba(142,106,72,.75),inset 0 1px 0 rgba(255,255,255,.35);transition:transform .2s,box-shadow .2s}
+.join span{flex:1;text-align:center;white-space:nowrap;padding-left:20px}
+.join:focus{outline:none}
+.m .x:focus:not(:focus-visible){outline:none}
+.join i{flex:none;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center;transition:transform .2s}
+.join:hover{transform:translateY(-2px);box-shadow:0 20px 36px -12px rgba(142,106,72,.85),inset 0 1px 0 rgba(255,255,255,.35)}
+.join:hover i{transform:translateX(3px)}
+.join:active{transform:scale(.98)}
+.join:before{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.45) 50%,transparent 65%);transform:translateX(-100%);animation:shine 2.8s ease-in-out 0.6s infinite}
+@keyframes shine{0%{transform:translateX(-100%)}45%,100%{transform:translateX(100%)}}
+.join:after{content:"";position:absolute;inset:-3px;border-radius:inherit;border:2px solid rgba(199,156,116,.5);animation:ring 2.8s ease-out 0.6s infinite;pointer-events:none}
+@keyframes ring{0%{opacity:.9;transform:scale(1)}60%,100%{opacity:0;transform:scale(1.08,1.3)}}
+@media (prefers-reduced-motion:reduce){.join:before,.join:after{animation:none}}
+.join[hidden]{display:none}
+.m .acts a{background:var(--sand);color:var(--ink)}
+.m .acts button{background:#fff;border:1px solid var(--line)}
+dialog[open]{animation:pop .28s ease}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+
+.pvbtn,.pv .pvx{display:none}
+@media (max-width:980px){
+  .builder{grid-template-columns:minmax(0,1fr);margin-top:18px}
+  .form,.form>*{min-width:0}
+  body{padding-bottom:84px}
+  .pvbtn{display:inline-flex;position:fixed;z-index:40;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));align-items:center;gap:8px;height:48px;padding:0 20px 0 16px;border:0;border-radius:999px;
+    background:var(--ink);color:#F6EEE6;font-weight:600;font-size:15px;box-shadow:0 14px 30px -10px rgba(43,35,32,.6);cursor:pointer}
+  .pvbtn i{display:flex;width:26px;height:26px;border-radius:50%;background:var(--accent);align-items:center;justify-content:center}
+  .pv{position:fixed;inset:0;z-index:60;display:none;place-items:center;align-content:center;gap:12px;padding:calc(12px + env(safe-area-inset-top)) 16px calc(12px + env(safe-area-inset-bottom));
+    background:rgba(43,35,32,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+  .pv.open{display:grid;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0}}
+  .pv .cap{display:none}
+  .pv .phone{width:min(360px,100%);border-radius:38px;padding:8px}
+  .screen{height:min(680px,calc(100dvh - 120px));border-radius:31px}
+  .pv .pvx{display:flex;align-items:center;justify-content:center;height:46px;padding:0 22px;border:0;border-radius:999px;background:#fff;color:var(--ink);font-weight:600;font-size:15px;cursor:pointer}
+}
+@media (max-width:600px){
+  .wrap{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+  header{height:56px}
+  .hero{padding:10px 0 4px}
+  .pill{font-size:12px;padding:6px 12px}
+  h1{font-size:clamp(30px,8.6vw,38px);margin-top:14px}
+  .form{background:transparent;border:0;box-shadow:none;padding:0;border-radius:0;gap:22px}
+  .ask{background:#fff;box-shadow:0 18px 40px -30px rgba(80,55,35,.5)}
+  .ask textarea{font-size:16px;min-height:66px}
+  .af{padding:0 2px 0 0;align-items:center}
+  .af .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:2px 8px;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 10px,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(90deg,transparent 0,#000 10px,#000 calc(100% - 22px),transparent)}
+  .af .chips::-webkit-scrollbar{display:none}
+  .chips button{flex:none;white-space:nowrap}
+  .chips:not(.all) button.x{display:inline-block}
+  .chips button.more{display:none}
+  .inp,.slug{background:#fff}
+  .cov{height:96px;background-color:#fff}
+  .lg{width:66px;height:66px;top:58px;left:12px}
+  .hf{padding-left:88px;margin-top:8px}
+  .grid2{grid-template-columns:1fr}
+  .lbl2 small{display:none}
+  .br{grid-template-columns:44px minmax(0,1fr) 30px 30px;grid-template-areas:"ic lb mn rm" "ic ur ur ur";row-gap:0;padding:6px}
+  .br .icw{grid-area:ic}.br .lb{grid-area:lb}.br .ur{grid-area:ur}.br .mn{grid-area:mn}.br .rm{grid-area:rm}
+  .br .ur{height:32px;font-size:14px;color:var(--ink2)}
+  .br .lb{height:34px}
+  .crow{gap:10px}
+  .colors{gap:6px}
+  .examples{margin-top:40px}
+  .exs{grid-template-columns:1fr}
+}
+</style>
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="logo" href="/">TAP-PAGE</a>
+    <a class="ex" href="#examples">Примеры →</a>
+  </header>
+
+  <section class="hero">
+    <span class="pill"><i></i>ИИ собирает страницу по вашему описанию</span>
+    <h1>Страница для вашего дела <em>за пару минут</em></h1>
+  </section>
+
+  <div class="builder">
+    <form class="form" id="form" autocomplete="off">
+      <div class="ask">
+        <textarea id="desc" rows="2" placeholder="Опишите дело: я мастер перманента в Красноярске, нужны услуги, цены, работы и запись"></textarea>
+
+        <div class="af"><div class="chips" id="tpls"></div><button type="button" class="send" id="send" aria-label="Собрать страницу по описанию" title="Собрать (Enter)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button></div>
+      </div>
+      <div class="status" id="status" hidden></div>
+
+      <div>
+        <div class="lbl2">Шапка</div>
+        <div class="head">
+          <label class="up cov" id="coverUp"><input type="file" accept="image/*" id="cover" aria-label="Фото для обложки"><span class="t"><b>+ Обложка</b></span></label>
+          <label class="up lg" id="logoUp"><input type="file" accept="image/*" id="logo" aria-label="Логотип"><span class="t"><b>+ Лого</b></span></label>
+          <div class="hf">
+            <input class="inp big" id="name" placeholder="Название" aria-label="Название">
+            <input class="inp" id="tag" placeholder="Слоган" aria-label="Слоган">
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="lbl2">Кнопки <small>★ — главная, она выделена цветом</small></div>
+        <div class="btns"><div id="btns"></div><button type="button" class="add" id="addBtn">+ Добавить кнопку</button></div>
+        <div class="crow"><span>Цвет главной кнопки</span><div class="colors" id="colors"></div></div>
+      </div>
+
+      <div class="grid2">
+        <div class="col"><span class="lbl">Адрес для карты</span><input class="inp" id="addr" placeholder="Красноярск, Петра Подзолкова, 6"></div>
+        <div class="col"><span class="lbl">Адрес страницы</span><label class="slug"><span>tap-page.ru/</span><input id="slug" placeholder="ваше-имя" pattern="[a-z0-9._-]+"></label></div>
+      </div>
+
+      <div>
+        <label class="check"><input type="checkbox" id="own">Фото и тексты мои, разрешаю их разместить</label>
+        <button class="go" type="submit">Сделать страницу
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <p class="note">Без конструктора и ежемесячной подписки</p>
+      </div>
+    </form>
+
+    <aside class="pv" id="pv">
+      <div class="cap">Предпросмотр</div>
+      <div class="phone"><div class="screen" id="screen">
+        <div class="p-cover" id="pCover"></div>
+        <div class="p-body">
+          <div class="p-card">
+            <div class="p-logo" id="pLogo"></div>
+            <div class="p-sub" id="pSub"></div>
+            <div class="p-name" id="pName"></div>
+            <div class="p-tag" id="pTag"></div>
+          </div>
+          <div class="p-links" id="pLinks"></div>
+          <div id="pAddr"></div>
+          <div class="p-foot" id="pFoot">tap-page.ru/</div>
+        </div>
+      </div></div>
+      <button type="button" class="pvx" id="pvx">Вернуться к форме</button>
+    </aside>
+    <button type="button" class="pvbtn" id="pvbtn"><i><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></i>Предпросмотр</button>
+  </div>
+
+  <section class="examples" id="examples">
+    <h2 class="ex-h">Примеры работ</h2>
+    <div class="exs">
+      <a class="ex-card" href="/madam_vualya"><span><small>Свадебный салон · Красноярск</small><span class="t">Мадам Вуаля</span></span><span class="arr">→</span></a>
+      <a class="ex-card" href="/anastasia.gurieva"><span><small>Перманентный макияж · Красноярск</small><span class="t">Анастасия Гурьева</span></span><span class="arr">→</span></a>
+    </div>
+  </section>
+  <footer>tap-page.ru · страницы для мастеров и малого бизнеса</footer>
+</div>
+
+<dialog id="soon" aria-labelledby="soonT">
+  <div class="m">
+    <button type="button" class="x" id="close" aria-label="Закрыть">✕</button>
+    <div class="ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l2.6 8.4L23 12l-8.4 2.6L12 23l-2.6-8.4L1 12l8.4-2.6z"/></svg></div>
+    <h2 id="soonT">Публикация скоро</h2>
+    <p id="soonP">Предпросмотр уже работает, а публиковать страницы мы начнём совсем скоро. Встаньте в лист ожидания — одной кнопкой, без регистрации.</p>
+    <a class="join" id="join" href="/spasibo" autofocus><span>Встать в лист ожидания</span><i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></a>
+  </div>
+</dialog>
+
+<script>
+const ICONS={
+ '📅':['Запись','<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>'],
+ '👗':['Платья','<path d="M12 3c-1.7 0-2.6 1.2-2.6 2.6h5.2C14.6 4.2 13.7 3 12 3zM9.4 5.6L6 21h12L14.6 5.6"/>'],
+ '📖':['Каталог','<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5M9 8h7"/>'],
+ '📞':['Телефон','<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>'],
+ '💬':['Написать','<path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.2A8 8 0 1 1 20 12z"/>'],
+ '✈️':['Telegram','<path d="M21 4L3 11l6.5 2.2L12 20l3.2-4.3L19 19z"/><path d="M9.5 13.2L21 4"/>'],
+ '📍':['Карта','<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>'],
+ '🏷️':['Цены','<path d="M3 4h8l10 10-7 7L4 11z"/><circle cx="8" cy="8.5" r="1.5"/>'],
+ '⭐':['Отзывы','<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>'],
+ '🛍️':['Магазин','<path d="M5 8h14l-1 13H6z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/>'],
+ '☕':['Меню','<path d="M4 9h13v4a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6z"/><path d="M17 10.5h1.5a2.5 2.5 0 0 1 0 5H16.5M8 3v3M12 3v3"/>'],
+ '✂️':['Услуги','<circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="M8.5 8.8L20 19M8.5 15.2L20 5"/>'],
+ '📷':['Портфолио','<path d="M3 8.5A2.5 2.5 0 0 1 5.5 6H7l1.5-2h7L17 6h1.5A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="3.5"/>'],
+ '🎓':['Обучение','<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v4.5c0 1.6 2.7 3.5 6 3.5s6-1.9 6-3.5V11M22 9v5"/>'],
+ '🍂':['Акция','<path d="M5 19C5 10 10 5 20 4c0 10-5 15-14 15z"/><path d="M5 19l8.5-8.5"/>'],
+ '🌐':['Сайт','<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/>'],
+ '🎁':['Подарок','<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v9h14v-9M12 8v13M12 8c-2-4-5.5-3.5-4.5-1 .4 1 2.5 1 4.5 1zM12 8c2-4 5.5-3.5 4.5-1-.4 1-2.5 1-4.5 1z"/>'],
+ '🏋️':['Тренировки','<path d="M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12"/>'],
+ '🧁':['Торты','<path d="M4 21h16M5 21v-7h14v7M5 17.5c2.3 1.3 4.7 1.3 7 0s4.7-1.3 7 0M12 14v-3M12 8.5c-1.2-1-1.2-2.3 0-3.5 1.2 1.2 1.2 2.5 0 3.5"/>'],
+ '🔧':['Ремонт','<path d="M15 3.5a5 5 0 0 0-4.6 6.9l-6.7 6.7a1.9 1.9 0 0 0 2.7 2.7l6.7-6.7A5 5 0 0 0 20.5 9l-3 .9L15 7.4l.9-3z"/>'],
+ '🚚':['Доставка','<path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>'],
+ '🔗':['Ссылка','<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>']
+};
+const svg=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${(ICONS[k]||ICONS['🔗'])[1]}</svg>`;
+const COLORS=['#A8846F','#2B2320','#B5452B','#C8642B','#6B7F5E','#3E6A8A','#8A5A83','#D19A3A'];
+const TPL={
+ 'Салон красоты':{desc:'Сделай страницу для салона красоты: услуги, цены, мастера и онлайн-запись',sub:'Салон красоты · Ваш город',tag:'Красота без лишних слов',b:[['📅','Записаться онлайн','Выберите время и мастера'],['🏷️','Услуги и цены',''],['💬','Написать в WhatsApp',''],['📞','Позвонить нам','']]},
+ 'Кофейня':{desc:'Сделай страницу для кофейни: меню, фото, адрес и часы работы',sub:'Кофейня · Ваш город',tag:'Свежая выпечка и кофе каждый день',b:[['☕','Меню','Кофе, десерты, завтраки'],['🚚','Заказать доставку',''],['🎁','Акции дня',''],['📍','Как нас найти','']]},
+ 'Аренда':{desc:'Сделай страницу для аренды техники: каталог, цены за сутки и кнопка заявки',sub:'Аренда техники · Ваш город',tag:'Берите то, что нужно, на сколько нужно',b:[['📖','Каталог техники','Цены за сутки'],['💬','Оставить заявку',''],['🏷️','Условия аренды',''],['📞','Позвонить','']]},
+ 'Мастер маникюра':{desc:'Сделай страницу для мастера маникюра: прайс, работы и онлайн-запись',sub:'Мастер маникюра · Ваш город',tag:'Маникюр, который держится',b:[['📅','Записаться','Свободные окошки онлайн'],['🏷️','Прайс',''],['📷','Мои работы',''],['💬','Написать','']]},
+ 'Барбершоп':{desc:'Сделай страницу для барбершопа: услуги, мастера, запись и адрес',sub:'Барбершоп · Ваш город',tag:'Стрижка, после которой хочется вернуться',b:[['📅','Записаться к барберу',''],['✂️','Услуги и цены',''],['🎁','Подарочный сертификат',''],['📍','Как добраться','']]},
+ 'Фотограф':{desc:'Сделай страницу для фотографа: портфолио, пакеты съёмок и запись на дату',sub:'Фотограф · Ваш город',tag:'Снимаю так, что хочется пересматривать',b:[['📷','Портфолио',''],['🏷️','Пакеты и цены',''],['📅','Забронировать дату',''],['✈️','Написать в Telegram','']]},
+ 'Фитнес-тренер':{desc:'Сделай страницу для фитнес-тренера: программы, результаты учеников и запись на тренировку',sub:'Персональный тренер · Ваш город',tag:'Результат без жёстких диет',b:[['🏋️','Записаться на тренировку','Первое занятие — знакомство'],['🏷️','Программы и цены',''],['⭐','Результаты учеников',''],['✈️','Написать в Telegram','']]},
+ 'Кондитер':{desc:'Сделай страницу для кондитера: торты на заказ, начинки, цены и заказ',sub:'Торты на заказ · Ваш город',tag:'Торт, который запомнят',b:[['🧁','Каталог тортов',''],['🏷️','Начинки и цены','за 1 кг'],['💬','Заказать торт',''],['🚚','Доставка','']]},
+ 'Ремонт телефонов':{desc:'Сделай страницу для мастерской по ремонту телефонов: услуги, цены, сроки и запись',sub:'Ремонт телефонов · Ваш город',tag:'Чиним быстро и с гарантией',b:[['🔧','Узнать стоимость ремонта',''],['🏷️','Цены на услуги',''],['📞','Позвонить',''],['📍','Как нас найти','']]},
+ 'Репетитор':{desc:'Сделай страницу для репетитора: предметы, формат занятий, отзывы и запись',sub:'Репетитор · онлайн',tag:'Объясняю так, что становится понятно',b:[['🎓','Записаться на пробное занятие',''],['🏷️','Формат и цены',''],['⭐','Отзывы учеников',''],['✈️','Написать в Telegram','']]},
+ 'Свадебный салон':{desc:'Сделай страницу для свадебного салона: каталог платьев, акции и запись на примерку',sub:'Свадебный салон · Ваш город',tag:'Здесь живёт платье твоей мечты',b:[['📅','Записаться на примерку','Выберите удобные дату и время'],['👗','Каталог платьев',''],['🍂','Распродажа',''],['📞','Позвонить нам','']]},
+ 'Психолог':{desc:'Сделай страницу для психолога: с чем работаю, формат, стоимость и запись',sub:'Психолог · онлайн и очно',tag:'Бережно и по делу',b:[['📅','Записаться на консультацию',''],['🏷️','С чем работаю и стоимость',''],['🎓','Образование',''],['✈️','Написать в Telegram','']]}
+};
+const $=id=>document.getElementById(id);
+const state={color:COLORS[0],cover:'',logo:'',btns:[],kind:''};
+
+// templates
+Object.keys(TPL).forEach((k,i)=>{const b=document.createElement('button');b.type='button';b.textContent=k;if(i>=6)b.className='x';b.onclick=()=>applyTpl(k,b);$('tpls').appendChild(b)});
+{const m=document.createElement('button');m.type='button';m.className='more';m.textContent='Ещё шаблоны';
+ m.onclick=()=>{const c=$('tpls');c.classList.toggle('all');m.textContent=c.classList.contains('all')?'Свернуть':'Ещё шаблоны';c.appendChild(m)};$('tpls').appendChild(m)}
+function applyTpl(k,el,keep){const t=TPL[k];el=el||[...document.querySelectorAll('#tpls button')].find(x=>x.textContent===k);
+  if(el&&el.classList.contains('x')&&!$('tpls').classList.contains('all'))$('tpls').querySelector('.more').click();
+  document.querySelectorAll('#tpls button').forEach(x=>x.classList.toggle('on',x===el));
+  if(el&&innerWidth<=600){const c=$('tpls');c.scrollTo({left:el.offsetLeft-c.clientWidth/2+el.offsetWidth/2,behavior:'smooth'})}
+  if(!keep)$('desc').value=t.desc; requestAnimationFrame(()=>typeof grow==='function'&&grow()); $('status').hidden=true; upd(); state.kind=t.sub.split('·')[0].trim(); $('tag').placeholder=t.tag; $('name').placeholder=k;
+  state.btns=t.b.map(([icon,label,sub])=>({icon,label,sub,url:''})); renderBtns(); render();}
+
+// apply description: pick closest template by keywords
+const KW={'Свадебный салон':['свадеб','плать','невест'],'Мастер маникюра':['маникюр','ногт','педикюр','гель-лак'],'Барбершоп':['барбер','стрижк','парикмах','бород'],
+ 'Салон красоты':['салон красот','косметолог','бров','ресниц','перманент','визаж','макияж','эпиляц','массаж','спа'],
+ 'Кофейня':['кофе','кафе','пекарн','круассан','ресторан','выпечк','бар ','завтрак'],'Аренда':['аренд','прокат','сдаю','сдаём'],
+ 'Фотограф':['фотограф','фотосесс','съёмк','съемк'],'Фитнес-тренер':['тренер','фитнес','трениров','йог','пилатес'],
+ 'Кондитер':['торт','кондитер','десерт','капкейк','пряник'],'Ремонт телефонов':['ремонт','телефон','смартфон','айфон','iphone'],
+ 'Репетитор':['репетитор','урок','англий','математ','егэ','огэ','школьн'],'Психолог':['психолог','психотерап','терапевт']};
+const upd=()=>{$('send').disabled=!$('desc').value.trim()};
+function flashMain(){const m=document.querySelector('#pLinks .p-b.main');if(!m)return;m.classList.add('flash');setTimeout(()=>m.classList.remove('flash'),450)}
+function applyDesc(){const t=$('desc').value.toLowerCase().trim();if(!t)return;const btn=$('send');btn.classList.add('busy');btn.disabled=true;
+  setTimeout(()=>{btn.classList.remove('busy');upd();let best=null,sc=0;
+    for(const[k,ws]of Object.entries(KW)){const n=ws.filter(w=>t.includes(w)).length;if(n>sc){sc=n;best=k}}
+    const st=$('status');
+    if(best){applyTpl(best,null,true);st.className='status';st.innerHTML=`<span>✓</span><span>Собрал черновик: <b>${best}</b>. Загрузите фото, проверьте название и вставьте ссылки в кнопки ниже.</span>`}
+    else{st.className='status warn';st.innerHTML='<span>!</span><span>Не понял, какое у вас дело. Выберите похожий шаблон выше или заполните поля ниже.</span>'}
+    st.hidden=false;if(innerWidth<980)document.querySelector('.head').scrollIntoView({behavior:'smooth',block:'center'});},450)}
+$('send').onclick=applyDesc;
+$('desc').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();applyDesc()}});
+$('desc').addEventListener('input',upd);
+const grow=()=>{const t=$('desc');t.style.height='auto';t.style.height=Math.min(t.scrollHeight+2,240)+'px'};
+$('desc').addEventListener('input',grow);
+const pv=$('pv');$('pvbtn').onclick=()=>{pv.classList.add('open');document.body.style.overflow='hidden'};
+const pvClose=()=>{pv.classList.remove('open');document.body.style.overflow=''};
+$('pvx').onclick=pvClose;pv.addEventListener('click',e=>{if(e.target===pv)pvClose()});
+
+// colors
+COLORS.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.style.background=c;b.title=c;if(!i)b.classList.add('on');
+  b.onclick=()=>{state.color=c;document.querySelectorAll('#colors button').forEach(x=>x.classList.toggle('on',x===b));render();flashMain()};$('colors').appendChild(b)});
+
+// uploads (preview only, stays in the browser)
+function upl(inp,box,key){inp.addEventListener('change',()=>{const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{state[key]=r.result;
+  box.style.backgroundImage=`url(${r.result})`;box.classList.add('has');box.querySelector('.t').innerHTML='Заменить';render()};r.readAsDataURL(f)})}
+upl($('cover'),$('coverUp'),'cover'); upl($('logo'),$('logoUp'),'logo');
+
+// buttons editor
+function renderBtns(){const w=$('btns');w.innerHTML='';
+  state.btns.forEach((b,i)=>{const row=document.createElement('div');row.className='br'+(i===0?' main':'');
+    const sel=document.createElement('div');sel.className='icw';
+    const ib=document.createElement('button');ib.type='button';ib.className='icb';ib.title='Сменить иконку';ib.innerHTML=svg(b.icon);
+    const pop=document.createElement('div');pop.className='ipop';pop.hidden=true;
+    Object.entries(ICONS).forEach(([k,[n]])=>{const o=document.createElement('button');o.type='button';o.title=n;o.innerHTML=svg(k)+`<span>${n}</span>`;if(k===b.icon)o.className='on';
+      o.onclick=()=>{b.icon=k;ib.innerHTML=svg(k);pop.hidden=true;pop.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===o));render()};pop.appendChild(o)});
+    ib.onclick=e=>{e.stopPropagation();const was=pop.hidden;document.querySelectorAll('.ipop').forEach(x=>x.hidden=true);pop.hidden=!was};
+    sel.append(ib,pop);
+    const lb=document.createElement('input');lb.className='lb';lb.placeholder='Текст кнопки';lb.value=b.label;lb.oninput=()=>{b.label=lb.value;render()};
+    const ur=document.createElement('input');ur.className='ur';ur.placeholder='Ссылка или телефон';ur.value=b.url;ur.oninput=()=>{b.url=ur.value};
+    const mn=document.createElement('button');mn.type='button';mn.className='ic mn'+(i===0?' on':'');mn.title='Сделать главной';mn.textContent='★';
+    mn.onclick=()=>{state.btns.splice(i,1);state.btns.unshift(b);renderBtns();render()};
+    const rm=document.createElement('button');rm.type='button';rm.className='ic rm';rm.title='Удалить';rm.textContent='✕';rm.onclick=()=>{state.btns.splice(i,1);renderBtns();render()};
+    row.append(sel,lb,ur,mn,rm);w.appendChild(row)});}
+document.addEventListener('click',e=>{if(!e.target.closest('.icw'))document.querySelectorAll('.ipop').forEach(x=>x.hidden=true)});
+$('addBtn').onclick=()=>{state.btns.push({icon:'🔗',label:'',sub:'',url:''});renderBtns();render();$('btns').lastChild.querySelector('.lb').focus()};
+
+// live preview
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function render(){
+  document.documentElement.style.setProperty('--accent',state.color);
+  $('pCover').style.backgroundImage=state.cover?`url(${state.cover})`:'';
+  const name=$('name').value||($('name').placeholder!=='Название'?$('name').placeholder:'Ваше название'); const lg=$('pLogo');
+  if(state.logo){lg.className='p-logo';lg.style.backgroundImage=`url(${state.logo})`;lg.textContent=''}
+  else{lg.className='p-logo';lg.style.backgroundImage='';lg.textContent=(name.trim()[0]||'T').toUpperCase()}
+  const a0=$('addr').value.trim(), city=a0.includes(',')?a0.split(',')[0].trim():'';
+  $('pSub').textContent=[state.kind,city||(state.kind?'Ваш город':'')].filter(Boolean).join(' · ');
+  $('pName').textContent=name; $('pTag').textContent=$('tag').value||($('tag').placeholder!=='Слоган'?$('tag').placeholder:'Коротко о том, что вы делаете');
+  const L=$('pLinks'); L.innerHTML=state.btns.length?'':'<div class="empty">Добавьте кнопки или выберите шаблон</div>';
+  state.btns.forEach((b,i)=>{L.insertAdjacentHTML('beforeend',`<div class="p-b${i===0?' main':''}"><i>${svg(b.icon)}</i><span>${esc(b.label||'Кнопка')}${b.sub?`<small>${esc(b.sub)}</small>`:''}</span>›</div>`)});
+  const a=a0;
+  $('pAddr').innerHTML=a?`<div class="p-h">Как нас найти</div><div class="p-b"><i>${svg('📍')}</i><span>${esc(a)}<small>Открыть на карте</small></span>›</div>`:'';
+  $('pFoot').textContent='tap-page.ru/'+($('slug').value||'ваше-имя');
+}
+['name','tag','addr','slug'].forEach(id=>$(id).addEventListener('input',render));
+$('slug').addEventListener('input',e=>{const v=e.target.value.toLowerCase().replace(/[^a-z0-9._-]/g,'');if(v!==e.target.value)e.target.value=v;render()});
+
+// submit
+const dlg=$('soon');
+let joined=false;try{joined=localStorage.getItem('tp_wait')==='1'}catch(e){}
+if(joined){$('soonT').textContent='Вы уже в листе ожидания';$('soonP').textContent='Спасибо! Публиковать страницы начнём совсем скоро — загляните на tap-page.ru через пару недель.';$('join').hidden=true}
+$('join').addEventListener('click',()=>{try{localStorage.setItem('tp_wait','1')}catch(e){}try{window.va&&window.va('event',{name:'waitlist'})}catch(e){}});
+$('form').addEventListener('submit',e=>{e.preventDefault();dlg.showModal()});
+$('close').onclick=()=>dlg.close(); dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
+
+applyTpl('Свадебный салон',[...document.querySelectorAll('#tpls button')].find(b=>b.textContent==='Свадебный салон'));
+$('desc').value=''; state.kind=''; state.btns=[['📅','Записаться',''],['🏷️','Услуги и цены',''],['💬','Написать',''],['📞','Позвонить','']].map(([icon,label,sub])=>({icon,label,sub,url:''})); renderBtns(); $('name').placeholder='Название'; $('tag').placeholder='Слоган'; document.querySelectorAll('#tpls button').forEach(x=>x.classList.remove('on')); render(); upd();
+</script>
+</body>
+</html>

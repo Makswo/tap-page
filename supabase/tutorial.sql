@@ -36,3 +36,27 @@ on conflict (code) do nothing;
 -- select status, count(*) from tutorial_orders group by status;
 -- select * from tutorial_orders where status = 'paid' order by paid_at desc;
 -- update promo_codes set active = false where code = 'CLAUDE26';
+
+-- Профили (Supabase Auth, вход по коду на почту): привязка инструкций,
+-- сертификаты на кристаллы и лист ожидания курсов. Доступ только с сервера.
+alter table public.tutorial_orders add column if not exists user_id uuid references auth.users(id) on delete set null;
+create index if not exists tutorial_orders_user_id_idx on public.tutorial_orders(user_id);
+
+create table if not exists public.certificates (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  course text not null,
+  order_id uuid unique references public.tutorial_orders(id) on delete set null,
+  created_at timestamptz not null default now(),
+  unique (user_id, course)
+);
+alter table public.certificates enable row level security;
+
+create table if not exists public.waitlist (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  course text not null,
+  email text,
+  created_at timestamptz not null default now(),
+  primary key (user_id, course)
+);
+alter table public.waitlist enable row level security;
