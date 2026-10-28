@@ -14,8 +14,8 @@ function same(a, b) {
   return x.length === y.length && crypto.timingSafeEqual(x, y);
 }
 
-function payload(answers) {
-  return { status: 'paid', html: guide.build(answers), style: answers.style, answers };
+function payload(answers, paidAt) {
+  return { status: 'paid', html: guide.build(answers), style: answers.style, answers, paid_at: paidAt || null };
 }
 
 module.exports = async (req, res) => {
@@ -33,7 +33,7 @@ module.exports = async (req, res) => {
     }
 
     if (!UUID.test(String(q.order || ''))) return send(res, 400, { error: 'order' });
-    const rows = await db.select('tutorial_orders', { select: 'status,answers,payment_id,provider', id: `eq.${q.order}` });
+    const rows = await db.select('tutorial_orders', { select: 'status,answers,payment_id,provider,paid_at', id: `eq.${q.order}` });
     if (!rows.length) return send(res, 404, { error: 'order' });
     const o = rows[0];
     // Не ждём уведомления ЮKassa: сами спрашиваем статус платежа.
@@ -49,7 +49,7 @@ module.exports = async (req, res) => {
     if (o.status !== 'paid') return send(res, 200, { status: o.status, hasAnswers: !!o.answers });
     const a = guide.clean(o.answers);
     if (!a) return send(res, 200, { status: 'paid', html: null });
-    return send(res, 200, payload(a));
+    return send(res, 200, payload(a, o.paid_at));
   } catch (e) {
     console.error(e);
     return send(res, 500, { error: 'server' });

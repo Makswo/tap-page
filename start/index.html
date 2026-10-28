@@ -227,6 +227,44 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
 .fab.on{transform:none}
 @media (max-width:640px){.savebtns .btn{flex:1}}
 
+/* crystal */
+.hero{display:grid;grid-template-columns:1fr 250px;gap:20px;align-items:center}
+.hgem{text-align:center}
+.hgem .gcap{font-family:var(--m);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#d8b4fe;margin-top:4px}
+.hgem .gsub{font-size:13.5px;color:var(--tx2);margin-top:4px;line-height:1.35}
+.gem{--gc:hsl(calc(272deg + var(--gh,0deg)) 100% 66%);position:relative;width:210px;height:270px;margin:0 auto;isolation:isolate}
+.gem-sm{width:84px;height:108px}
+.gem-md{width:150px;height:194px}
+.gglow{position:absolute;inset:-22%;z-index:-1;background:radial-gradient(closest-side,color-mix(in srgb,var(--gc) 70%,transparent),color-mix(in srgb,var(--gc) 22%,transparent) 55%,transparent 75%);filter:blur(12px);animation:gpulse 4.5s ease-in-out infinite}
+.grays{position:absolute;inset:-40%;z-index:-1;background:repeating-conic-gradient(from 0deg,transparent 0deg 14deg,color-mix(in srgb,var(--gc) 26%,transparent) 17deg,transparent 21deg 30deg);-webkit-mask:radial-gradient(closest-side,#000 22%,transparent 70%);mask:radial-gradient(closest-side,#000 22%,transparent 70%);animation:spin 40s linear infinite;opacity:.9}
+.gspark{position:absolute;left:-20%;top:-15%;width:140%;height:130%;pointer-events:none}
+.gfloat{position:absolute;inset:0;animation:gfloat 6s ease-in-out infinite;filter:drop-shadow(0 0 14px color-mix(in srgb,var(--gc) 80%,transparent)) drop-shadow(0 0 40px color-mix(in srgb,var(--gc) 45%,transparent))}
+.gemsvg{display:block;width:100%;height:100%;overflow:visible}
+.gshadow{position:absolute;left:24%;right:24%;bottom:-7%;height:16px;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--gc) 55%,transparent),transparent);filter:blur(5px);animation:gshadow 6s ease-in-out infinite}
+.gshine{animation:gshine 6s ease-in-out infinite}
+.gcore{transform-box:fill-box;transform-origin:center;animation:gcore 4.5s ease-in-out infinite}
+@keyframes gpulse{0%,100%{opacity:.75;transform:scale(.96)}50%{opacity:1;transform:scale(1.05)}}
+@keyframes gfloat{0%,100%{transform:translateY(0) rotate(-1.2deg)}50%{transform:translateY(-9px) rotate(1.2deg)}}
+@keyframes gshadow{0%,100%{transform:scaleX(1);opacity:.9}50%{transform:scaleX(.82);opacity:.55}}
+@keyframes gshine{0%,35%{transform:translateX(0) skewX(-18deg)}75%,100%{transform:translateX(460px) skewX(-18deg)}}
+@keyframes gcore{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.08)}}
+@keyframes gpop{0%{transform:scale(.4);opacity:0;filter:brightness(3)}60%{transform:scale(1.08);opacity:1;filter:brightness(1.6)}100%{transform:none;filter:none}}
+.paygem{display:flex;gap:14px;align-items:center;margin:0 0 14px;padding:10px 14px 10px 6px;border-radius:18px;background:linear-gradient(90deg,rgba(168,85,247,.16),rgba(168,85,247,0));border:1px solid rgba(168,85,247,.3)}
+.paygem b{display:block;font-size:15.5px}
+.paygem span{font-size:13.5px;color:var(--tx2)}
+.cert{position:relative;display:grid;grid-template-columns:170px 1fr;gap:18px;align-items:center;margin:4px 0 14px;padding:20px;border-radius:24px;overflow:hidden;
+  background:radial-gradient(80% 120% at 0% 50%,rgba(168,85,247,.24),transparent 60%),linear-gradient(180deg,#140d1f,#0e0b14);border:1px solid rgba(196,148,255,.45);box-shadow:inset 0 0 0 4px rgba(10,6,16,.9),inset 0 0 0 5px rgba(196,148,255,.18)}
+.cert .gem{animation:gpop 1.1s cubic-bezier(.2,.8,.2,1) both}
+.cert .eyebrow{color:#d8b4fe}
+.cert h3{margin:6px 0 10px;font-size:24px;letter-spacing:-.02em}
+.cert dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0;font-size:14px}
+.cert dt{color:var(--tx3);font-family:var(--m);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding-top:2px}
+.cert dd{margin:0;color:var(--tx)}
+.cert .cno{font-family:var(--m);letter-spacing:.08em;color:#e9d5ff}
+.cert p{margin:12px 0 0;font-size:13.5px;color:var(--tx2)}
+@media (max-width:640px){.hero{grid-template-columns:1fr}.hgem{order:-1;margin:-12px 0 6px}.hgem .gem{width:150px;height:194px}.cert{grid-template-columns:1fr;text-align:center}.cert dl{text-align:left;max-width:300px;margin:0 auto}}
+@media (prefers-reduced-motion:reduce){.gem *,.gem{animation:none!important}}
+
 @media (max-width:640px){
   .what{grid-template-columns:1fr}
   .two{grid-template-columns:1fr}
@@ -243,6 +281,10 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
   #s-res{display:block!important}
   .tools,.res .tools,#savebox,.fab{display:none!important}
   *,*::before,*::after{animation:none!important;transition:none!important}
+  .gglow,.grays,.gspark,.gshadow,.gshine{display:none!important}
+  .gfloat{filter:none!important}
+  .cert{background:#faf7ff!important;border-color:#c9a8f5!important;box-shadow:none!important;break-inside:avoid}
+  .cert .eyebrow,.cert .cno{color:#6b21a8!important}
   .screen.on{opacity:1!important;transform:none!important}
 }
 </style>
@@ -256,10 +298,12 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
 
 <!-- INTRO -->
 <main id="s-intro" class="screen on"><div class="wrap intro">
+<div class="hero"><div class="htext">
   <div class="eyebrow">Личный туториал</div>
   <h1>Как начать <span class="acc">с Claude</span></h1>
   <p class="lead">Ответь на 10 коротких вопросов — и получишь инструкцию под себя: где установить, какой первый запрос дать и что поручить Claude в первую очередь.</p>
-  <div class="meta"><span class="chip">10 вопросов</span><span class="chip">≈ 5 минут</span><span class="chip">план на 7 дней</span></div>
+  <div class="meta"><span class="chip">10 вопросов</span><span class="chip">≈ 5 минут</span><span class="chip">план на 7 дней</span><span class="chip" style="color:#d8b4fe;border-color:rgba(168,85,247,.4)">+ Кристалл старта</span></div>
+  </div><div class="hgem" id="hgem"></div></div>
   <form class="promo" id="pf" autocomplete="off" novalidate>
     <label for="code">Промокод из директа</label>
     <div class="prow"><input id="code" class="pin" placeholder="Например, CLAUDE26" maxlength="40" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="go"><button class="btn pri lg" id="go" type="submit">Начать <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
@@ -301,6 +345,7 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
   <h2 class="qt">Твоя инструкция собрана</h2>
   <p class="qh">Вот что внутри — всё под твои ответы:</p>
   <div class="paybox">
+    <div class="paygem" id="paygem"></div>
     <ul class="lst yes" id="incl"></ul>
     <div class="prc"><span class="price" id="pprice">299 ₽</span><span>разово, доступ остаётся у тебя</span></div>
     <div id="ykbox" hidden>
@@ -506,6 +551,90 @@ function finish(){
 }
 $('aretry').onclick=function(){$('aretry').hidden=true;finish()};
 
+/* ---------- Кристалл старта ---------- */
+var GEM_N=0;
+function gemSVG(hue){
+  var u='g'+(++GEM_N), h=hue||0;
+  function c(l,s,a){return 'hsla('+(272+h)+','+s+'%,'+l+'%,'+(a==null?1:a)+')'}
+  // вершины кристалла (вытянутая восьмигранная огранка)
+  var T='100,8', UL='40,80', UR='160,80', UC='100,96', ML='30,140', MR='170,140', MC='100,150',
+      LL='56,204', LR='144,204', LC='100,214', B='100,254';
+  function poly(pts,fill,extra){return '<polygon points="'+pts+'" fill="'+fill+'"'+(extra||'')+'/>'}
+  function lg(id,x1,y1,x2,y2,stops){return '<linearGradient id="'+u+id+'" x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'">'+stops.map(function(s){return '<stop offset="'+s[0]+'" stop-color="'+s[1]+'"/>'}).join('')+'</linearGradient>'}
+  var defs='<defs>'+
+    lg('a',0,0,1,1,[[0,c(92,90)],[.45,c(72,92)],[1,c(48,85)]])+
+    lg('b',1,0,0,1,[[0,c(80,95)],[.6,c(56,88)],[1,c(34,80)]])+
+    lg('c',0,0,1,1,[[0,c(62,90)],[1,c(30,78)]])+
+    lg('d',1,0,0,1,[[0,c(46,86)],[1,c(20,74)]])+
+    lg('e',0,0,1,1,[[0,c(70,95)],[.5,c(52,90)],[1,c(26,76)]])+
+    lg('f',1,0,0,1,[[0,c(38,84)],[1,c(16,70)]])+
+    lg('g',0,0,0,1,[[0,c(44,88)],[1,c(14,68)]])+
+    lg('s',0,0,1,0,[[0,'rgba(255,255,255,0)'],[.45,'rgba(255,255,255,0)'],[.5,'rgba(255,255,255,.85)'],[.55,'rgba(255,255,255,0)'],[1,'rgba(255,255,255,0)']])+
+    '<radialGradient id="'+u+'core" cx=".5" cy=".42" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".25" stop-color="'+c(88,100)+'" stop-opacity=".7"/><stop offset="1" stop-color="'+c(60,100)+'" stop-opacity="0"/></radialGradient>'+
+    '<clipPath id="'+u+'clip"><polygon points="'+[T,UR,MR,LR,B,LL,ML,UL].join(' ')+'"/></clipPath>'+
+    '<filter id="'+u+'soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.2"/></filter>'+
+  '</defs>';
+  var body=
+    poly([T,UL,UC].join(' '),'url(#'+u+'a)')+
+    poly([T,UR,UC].join(' '),'url(#'+u+'b)')+
+    poly([UL,UC,MC,ML].join(' '),'url(#'+u+'c)')+
+    poly([UR,UC,MC,MR].join(' '),'url(#'+u+'d)')+
+    poly([ML,MC,LC,LL].join(' '),'url(#'+u+'e)')+
+    poly([MR,MC,LC,LR].join(' '),'url(#'+u+'f)')+
+    poly([LL,LC,B].join(' '),'url(#'+u+'g)')+
+    poly([LR,LC,B].join(' '),'url(#'+u+'f)');
+  var lines='<g fill="none" stroke="rgba(255,255,255,.38)" stroke-width=".9" stroke-linejoin="round">'+
+    '<polyline points="'+[UL,UC,UR].join(' ')+'"/><polyline points="'+[ML,MC,MR].join(' ')+'"/><polyline points="'+[LL,LC,LR].join(' ')+'"/>'+
+    '<polyline points="'+[T,UC,MC,LC,B].join(' ')+'"/></g>'+
+    '<polygon points="'+[T,UR,MR,LR,B,LL,ML,UL].join(' ')+'" fill="none" stroke="'+c(88,100,.75)+'" stroke-width="1.4" stroke-linejoin="round"/>';
+  var inner='<g clip-path="url(#'+u+'clip)">'+
+    '<ellipse cx="100" cy="128" rx="46" ry="62" fill="url(#'+u+'core)" class="gcore"/>'+
+    '<polygon points="70,40 96,24 92,70" fill="rgba(255,255,255,.55)" filter="url(#'+u+'soft)"/>'+
+    '<polygon points="46,92 64,100 52,150" fill="rgba(255,255,255,.22)"/>'+
+    '<rect class="gshine" x="-160" y="-20" width="160" height="300" fill="url(#'+u+'s)" transform="skewX(-18)"/>'+
+  '</g>';
+  return '<svg class="gemsvg" viewBox="0 0 200 262" aria-hidden="true">'+defs+body+inner+lines+'</svg>';
+}
+function gemHTML(opts){
+  opts=opts||{};
+  return '<div class="gem'+(opts.size?' gem-'+opts.size:'')+'" style="--gh:'+(opts.hue||0)+'deg">'+
+    '<div class="gglow"></div><div class="grays"></div><canvas class="gspark"></canvas>'+
+    '<div class="gfloat">'+gemSVG(opts.hue||0)+'</div><div class="gshadow"></div></div>';
+}
+// искры вокруг кристалла
+var REDUCED=false; try{REDUCED=window.matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){}
+function sparkle(root){
+  var cv=root.querySelector('.gspark'); if(!cv||!cv.getContext||REDUCED) return;
+  var ctx=cv.getContext('2d'), dpr=Math.min(2,window.devicePixelRatio||1), W=0,H=0, P=[], on=true, raf=0, hue=272+(parseFloat(root.style.getPropertyValue('--gh'))||0);
+  function size(){var r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
+  function spawn(init){var a=Math.random()*Math.PI*2,rad=(.18+Math.random()*.3)*Math.min(W,H);return {x:W/2+Math.cos(a)*rad,y:H*.5+Math.sin(a)*rad*1.2+(init?0:H*.15),vy:-(.15+Math.random()*.45),vx:(Math.random()-.5)*.25,r:.6+Math.random()*1.8,life:0,max:120+Math.random()*160,tw:Math.random()*6,w:Math.random()<.25}}
+  size(); for(var k=0;k<46;k++){var s=spawn(true);s.life=Math.random()*s.max;P.push(s)}
+  function frame(){
+    if(!on){raf=0;return}
+    ctx.clearRect(0,0,W,H); ctx.globalCompositeOperation='lighter';
+    for(var k=0;k<P.length;k++){var p=P[k];p.life++;p.x+=p.vx;p.y+=p.vy;p.tw+=.12;
+      var t=p.life/p.max, a=Math.sin(Math.PI*t)*(.55+.45*Math.sin(p.tw));
+      if(p.life>=p.max){P[k]=spawn(false);continue}
+      var g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*5);
+      g.addColorStop(0,p.w?'rgba(255,255,255,'+a+')':'hsla('+hue+',100%,82%,'+a+')');g.addColorStop(1,'hsla('+hue+',100%,60%,0)');
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,p.r*5,0,Math.PI*2);ctx.fill();
+      if(p.w&&a>.6){ctx.strokeStyle='rgba(255,255,255,'+(a*.6)+')';ctx.lineWidth=.8;ctx.beginPath();ctx.moveTo(p.x-p.r*4,p.y);ctx.lineTo(p.x+p.r*4,p.y);ctx.moveTo(p.x,p.y-p.r*4);ctx.lineTo(p.x,p.y+p.r*4);ctx.stroke()}
+    }
+    raf=requestAnimationFrame(frame);
+  }
+  function go(v){on=v&&!document.hidden;if(on&&!raf)raf=requestAnimationFrame(frame)}
+  if('IntersectionObserver' in window) new IntersectionObserver(function(e){go(e[0].isIntersecting)}).observe(root); else go(true);
+  document.addEventListener('visibilitychange',function(){go(!document.hidden)});
+  window.addEventListener('resize',size);
+}
+function mountGems(scope){[].forEach.call((scope||document).querySelectorAll('.gem'),function(g){if(!g._s){g._s=1;sparkle(g)}})}
+// уникальный оттенок и «порода» кристалла по номеру заказа
+function gemFromOrder(id){
+  var h=0,s=String(id||'start');for(var k=0;k<s.length;k++)h=(h*31+s.charCodeAt(k))>>>0;
+  var names=['Аметист','Фиалка','Ирис','Сумеречный','Аврора','Полночь'];
+  return {hue:(h%41)-20, name:names[(h>>>8)%names.length], no:String(id||'').replace(/-/g,'').slice(0,8).toUpperCase()||'DEMO0000', facets:8+((h>>>4)%5)*2};
+}
+
 /* ---------- оплата ---------- */
 var PAY=null, YK=null, ykLoading=null;
 function renderPay(d){
@@ -516,6 +645,7 @@ function renderPay(d){
   var ok='<svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   $('incl').innerHTML=inc.map(function(x){return '<li>'+ok+'<span>'+esc(x)+'</span></li>'}).join('');
   $('pprice').textContent=d.price+' ₽';
+  $('paygem').innerHTML=gemHTML({size:'sm',hue:gemFromOrder(ORDER).hue})+'<div><b>+ Кристалл старта</b><span>Именной сертификат с номером — твой знак того, что ты начал.</span></div>'; mountGems($('paygem'));
   var yk=d.provider==='yookassa';
   // форма кошелька ЮMoney: основная или запасная
   var f=$('payform');
@@ -610,6 +740,21 @@ function renderGuide(d){
   var preview=/[?&]preview=/.test(location.search);
   var link=(!preview&&ORDER)?(location.origin+'/start?order='+ORDER):'';
   var sb=$('savebox');
+  var gm=gemFromOrder(preview?'preview':ORDER), a=d.answers||{};
+  var ROLE={biz:'Свой бизнес',emp:'Найм',free:'Фриланс',blog:'Блог',study:'Учёба',other:'Своё дело'};
+  var when=d.paid_at?new Date(d.paid_at):new Date();
+  var dt=when.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+  if(sb){
+    var cert=document.createElement('div'); cert.className='cert';
+    cert.innerHTML='<div>'+gemHTML({size:'md',hue:gm.hue})+'</div><div><div class="eyebrow">Сертификат</div><h3>Кристалл старта</h3><dl>'+
+      '<dt>Номер</dt><dd class="cno">№ '+(preview?'DEMO-0000':esc(gm.no.slice(0,4)+'-'+gm.no.slice(4)))+'</dd>'+
+      '<dt>Оттенок</dt><dd>'+esc(gm.name)+'</dd>'+
+      '<dt>Огранка</dt><dd>по 10 твоим ответам</dd>'+
+      '<dt>Для</dt><dd>'+esc((ROLE[a.role]||'')+(a.sphere?' · '+a.sphere:''))+'</dd>'+
+      '<dt>Выдан</dt><dd>'+esc(dt)+'</dd></dl>'+
+      '<p>Единственный в своём роде: оттенок и номер собраны из твоего заказа. Знак того, что ты сделал первый шаг.</p></div>';
+    sb.parentNode.insertBefore(cert,sb); mountGems(cert);
+  }
   if(sb) sb.innerHTML='<div class="savecard"><div class="eyebrow">Это твоя инструкция навсегда</div><h3>Сохрани её, чтобы не потерять</h3><p>'+esc(pdfHint())+'</p>'+
     '<div class="savebtns"><button class="btn pri pulse" id="pr" type="button"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Сохранить PDF</button>'+
     (link?'<button class="btn gho" id="cplink" type="button">Скопировать ссылку</button>':'')+'</div>'+
@@ -629,7 +774,7 @@ function renderGuide(d){
   });
   // плавающая кнопка PDF — когда карточка сохранения ушла с экрана
   var fab=$('fab'); fab.hidden=false; fab.onclick=savePDF; fab.classList.remove('on');
-  if(sb&&'IntersectionObserver' in window){ new IntersectionObserver(function(e){fab.classList.toggle('on',!e[0].isIntersecting&&$('s-res').classList.contains('on'))}).observe(sb) }
+  if(sb&&'IntersectionObserver' in window){ new IntersectionObserver(function(e){fab.classList.toggle('on',!e[0].isIntersecting&&e[0].boundingClientRect.top<0&&$('s-res').classList.contains('on'))}).observe(sb) }
   $('resume').hidden=false;
   show('s-res');
 }
@@ -651,6 +796,7 @@ document.addEventListener('click',function(e){
 
 
 /* ---------- старт страницы ---------- */
+$('hgem').innerHTML=gemHTML({})+'<div class="gcap">Кристалл старта</div><div class="gsub">в подарок к инструкции — именной, с сертификатом</div>'; mountGems($('hgem'));
 (function boot(){
   var q=new URLSearchParams(location.search);
   if(q.get('code')) $('code').value=q.get('code');
