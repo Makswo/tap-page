@@ -9,9 +9,11 @@ function TPVideo(o){
   var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
   if(!document.getElementById('tpvw-css')){
     var st=document.createElement('style'); st.id='tpvw-css';
-    st.textContent='.vw{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));z-index:40;width:132px;aspect-ratio:9/16;border-radius:20px;overflow:hidden;cursor:pointer;'+
+    st.textContent='.vw{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));z-index:40;width:132px;aspect-ratio:9/16;border-radius:20px;overflow:hidden;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;'+
       'background:#0d0f11;border:1px solid var(--line2);box-shadow:0 18px 50px rgba(0,0,0,.6);transition:transform .2s,opacity .3s;animation:vwin .5s .6s cubic-bezier(.2,.8,.2,1) both}'+
-      '.vw:hover{transform:translateY(-3px) scale(1.02)}@keyframes vwin{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}'+
+      '.vw.drag{cursor:grabbing;box-shadow:0 24px 70px rgba(0,0,0,.75);transition:none}.vw.snap{transition:left .28s cubic-bezier(.2,.8,.2,1),top .28s cubic-bezier(.2,.8,.2,1)}'+
+      '.vph .av{animation:vpulse 2.2s ease-out infinite}@keyframes vpulse{0%{box-shadow:0 0 0 0 rgba(212,255,63,.45)}100%{box-shadow:0 0 0 16px rgba(212,255,63,0)}}'+
+      '@keyframes vwin{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}'+
       '.vw video,.vwm video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}'+
       '.vph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:12px;'+
       'background:radial-gradient(80% 50% at 50% 30%,rgba(212,255,63,.16),transparent 70%),radial-gradient(80% 50% at 50% 100%,rgba(168,85,247,.28),transparent 70%),#0d0f11}'+
@@ -47,7 +49,41 @@ function TPVideo(o){
     m.querySelector('.vx').onclick=close; m.onclick=function(e){ if(e.target===m) close() };
     document.addEventListener('keydown',onk);
   }
-  el.onclick=open;
+  // Окно можно зажать и перетащить; отпускаешь — прилипает к ближайшему краю.
+  var POS='tp_vw_pos', drag=null, moved=false;
+  function place(p){
+    var w=el.offsetWidth, h=el.offsetHeight, m=12;
+    var top=Math.max(m+56, Math.min(innerHeight-h-m, p.top));
+    el.style.right='auto'; el.style.bottom='auto';
+    el.style.left=(p.side==='l'?m:innerWidth-w-m)+'px'; el.style.top=top+'px';
+  }
+  try{ var saved=JSON.parse(sessionStorage.getItem(POS)||'null'); if(saved) requestAnimationFrame(function(){place(saved)}) }catch(e){}
+  el.addEventListener('pointerdown',function(e){
+    if(e.target.closest('.vx')) return;
+    var r=el.getBoundingClientRect(); drag={x:e.clientX,y:e.clientY,l:r.left,t:r.top}; moved=false;
+    el.classList.remove('snap'); try{el.setPointerCapture(e.pointerId)}catch(_){}
+  });
+  el.addEventListener('pointermove',function(e){
+    if(!drag) return;
+    var dx=e.clientX-drag.x, dy=e.clientY-drag.y;
+    if(!moved&&Math.abs(dx)+Math.abs(dy)<7) return;
+    moved=true; el.classList.add('drag'); el.style.animation='none';
+    var w=el.offsetWidth, h=el.offsetHeight;
+    el.style.right='auto'; el.style.bottom='auto';
+    el.style.left=Math.max(4,Math.min(innerWidth-w-4,drag.l+dx))+'px';
+    el.style.top=Math.max(4,Math.min(innerHeight-h-4,drag.t+dy))+'px';
+  });
+  function end(){
+    if(!drag) return; drag=null; el.classList.remove('drag');
+    if(!moved) return;
+    var r=el.getBoundingClientRect(), p={side:(r.left+r.width/2<innerWidth/2)?'l':'r', top:r.top};
+    el.classList.add('snap'); place(p);
+    try{sessionStorage.setItem(POS,JSON.stringify(p))}catch(_){}
+    if(typeof track==='function') track('video_drag');
+  }
+  el.addEventListener('pointerup',end); el.addEventListener('pointercancel',end);
+  window.addEventListener('resize',function(){ try{var p=JSON.parse(sessionStorage.getItem(POS)||'null'); if(p) place(p)}catch(_){} });
+  el.onclick=function(e){ if(moved){ moved=false; e.preventDefault(); return } open() };
   el.onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();open()} };
   return el;
 }

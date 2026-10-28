@@ -67,7 +67,10 @@
   .step{grid-template-columns:40px 1fr;padding:16px;gap:12px}
   .step::before{width:34px;height:34px;border-radius:12px;font-size:14px}
   .step:not(:last-child)::after{left:32px;top:54px}
-  .step .act{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between;min-width:0}
+  .step .act{grid-column:2;flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;min-width:0}
+  .bonus{gap:14px;padding:18px}
+  .bonus .gems{flex-wrap:wrap;gap:0}
+  .bonus .gems .gem{width:38px;height:50px}
   .ctas .btn{flex:1}
 }
 </style>
