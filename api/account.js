@@ -8,12 +8,17 @@ const { UUID, send, body } = require('./_lib/util');
 // Курсы, которые пока «скоро» (на них можно подписаться).
 const SOON = ['nabor', 'montage', 'assistant'];
 
-async function certFor(user, order) {
-  const have = await db.select('certificates', { select: 'id,course,order_id,created_at', user_id: `eq.${user.id}`, course: 'eq.start' });
+// Выдать сертификат на кристалл курса (один на курс) и сообщить об этом в общий чат.
+async function certFor(user, order, course = 'start') {
+  const q = { select: 'id,course,order_id,created_at', user_id: `eq.${user.id}`, course: `eq.${course}` };
+  const have = await db.select('certificates', q);
   if (have.length) return have[0];
-  const ins = await db.insertIgnore('certificates', { user_id: user.id, course: 'start', order_id: order });
-  if (ins.length) return ins[0];
-  const again = await db.select('certificates', { select: 'id,course,order_id,created_at', user_id: `eq.${user.id}`, course: 'eq.start' });
+  const ins = await db.insertIgnore('certificates', { user_id: user.id, course, order_id: order });
+  if (ins.length) {
+    try { await db.insert('chat_messages', { user_id: user.id, kind: 'crystal', course }); } catch (e) { console.warn('chat crystal', e.message); }
+    return ins[0];
+  }
+  const again = await db.select('certificates', q);
   return again[0] || null;
 }
 

@@ -87,3 +87,36 @@ create table if not exists public.announcements (
   sent_by text
 );
 alter table public.announcements enable row level security;
+
+-- Общий чат: ники участников, сообщения и события «получил кристалл», журнал заблокированных сообщений.
+create table if not exists public.profiles (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  nick text unique,
+  role text not null default 'user',
+  banned boolean not null default false,
+  created_at timestamptz not null default now()
+);
+create unique index if not exists profiles_nick_lower_idx on public.profiles (lower(nick));
+alter table public.profiles enable row level security;
+
+create table if not exists public.chat_messages (
+  id bigint generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  user_id uuid references auth.users(id) on delete set null,
+  kind text not null default 'msg',
+  text text,
+  course text,
+  deleted boolean not null default false
+);
+create index if not exists chat_messages_id_desc_idx on public.chat_messages(id desc);
+create index if not exists chat_messages_user_time_idx on public.chat_messages(user_id, created_at desc);
+alter table public.chat_messages enable row level security;
+
+create table if not exists public.chat_blocked (
+  id bigint generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  user_id uuid references auth.users(id) on delete set null,
+  text text,
+  reason text
+);
+alter table public.chat_blocked enable row level security;
