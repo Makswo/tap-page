@@ -747,7 +747,7 @@ $('ykpay').onclick=function(){ykStart()};
 $('ykother').onclick=function(){ykReset()};
 $('payform').onsubmit=function(){track('tutorial_pay_click',{p:'yoomoney'});try{localStorage.setItem('claude_start_paying',ORDER)}catch(e){}};
 $('ipaid').onclick=function(){ykReset();goWait(false)};
-$('paybackq').onclick=function(){ykReset();i=Q.length-1;show('s-quiz');renderQ()};
+$('paybackq').onclick=function(){ykReset();i=0;show('s-quiz');renderQ()};
 
 /* ---------- ожидание оплаты и выдача ---------- */
 var polling=0;
