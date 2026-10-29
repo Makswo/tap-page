@@ -242,6 +242,8 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
 /* yookassa + save */
 .flbl{display:block;font-family:var(--m);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--tx2);margin:18px 0 8px}
 .ykgo{width:100%;margin-top:16px}
+.ykgo.sbp{margin-top:10px}
+#ykother{display:block;margin-top:10px}
 #ykform{margin-top:16px;border-radius:18px;overflow:hidden}
 #ykform:empty{display:none}
 .secure{display:flex;gap:8px;align-items:flex-start}
@@ -405,10 +407,12 @@ body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
         <label class="flbl" for="email">Email для чека</label>
         <input id="email" class="tin" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" maxlength="120">
       </div>
-      <button class="btn pri lg ykgo" id="ykpay" type="button">Перейти к оплате · 299 ₽</button>
+      <button class="btn pri lg ykgo" id="ykpay" data-m="bank_card" type="button">Оплатить картой · 299 ₽</button>
+      <button class="btn gho lg ykgo sbp" id="ykpaysbp" data-m="sbp" type="button">Оплатить по СБП</button>
+      <button class="linkbtn" id="ykother" type="button" hidden>Выбрать другой способ</button>
       <div id="ykform"></div>
       <div class="perr" id="ykerr" role="alert"></div>
-      <p class="fine secure"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Безопасная оплата через ЮKassa: карта, СБП, SberPay, T-Pay. Данные карты вводятся в защищённой форме ЮKassa — мы их не видим.</p>
+      <p class="fine secure"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Безопасная оплата через ЮKassa — картой или по СБП. Данные карты вводятся в защищённой форме ЮKassa, мы их не видим.</p>
     </div>
     <form id="payform" method="POST" action="https://yoomoney.ru/quickpay/confirm" hidden>
       <div id="payhidden"></div>
@@ -639,67 +643,55 @@ function renderPay(d){
   if(yk){
     ykReset();
     $('ykemail').hidden=!d.needEmail;
-    $('ykpay').textContent=(d.needEmail?'Перейти к оплате · ':'Оплатить · ')+d.price+' ₽';
     show('s-pay'); track('tutorial_paywall',{p:'yookassa'});
-    if(!d.needEmail) ykStart();
   } else { show('s-pay'); track('tutorial_paywall',{p:'yoomoney'}); }
 }
 function ykErr(t){$('ykerr').textContent=t||''}
-function ykReset(){ ykWatchN++; if(YK){try{YK.destroy()}catch(e){} YK=null} $('ykform').innerHTML=''; $('ykpay').hidden=false; $('ykpay').disabled=false; ykErr('') }
+function ykLabels(){ var pr=((PAY&&PAY.price)||299)+' ₽'; $('ykpay').textContent='Оплатить картой · '+pr; $('ykpaysbp').textContent='Оплатить по СБП · '+pr }
+function ykReset(){ ykWatchN++; if(YK){try{YK.destroy()}catch(e){} YK=null} $('ykform').innerHTML=''; ['ykpay','ykpaysbp'].forEach(function(id){$(id).hidden=false;$(id).disabled=false}); $('ykother').hidden=true; ykLabels(); ykErr('') }
 function loadYK(){
   if(window.YooMoneyCheckoutWidget) return Promise.resolve();
   if(ykLoading) return ykLoading;
   ykLoading=new Promise(function(ok,bad){var sc=document.createElement('script');sc.src='https://yookassa.ru/checkout-widget/v1/checkout-widget.js';sc.onload=ok;sc.onerror=function(){ykLoading=null;bad()};document.head.appendChild(sc)});
   return ykLoading;
 }
-function ykStart(){
+// Способ выбирается на нашей странице (карта или СБП), а форма ЮKassa показывает только его.
+// Так в форме нет T-Pay и других способов, которые уводят со страницы в приложение банка и не возвращают.
+function ykStart(method){
+  method=method==='sbp'?'sbp':'bank_card';
   var email='';
   if(PAY&&PAY.needEmail){
     email=$('email').value.trim();
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ykErr('Впиши email — на него придёт чек');$('email').focus();return}
   }
-  ykErr(''); $('ykpay').disabled=true; $('ykpay').textContent='Загружаю форму оплаты…';
-  // Телефон: оплата на странице ЮKassa. После оплаты в приложении банка она сама вернёт на сайт.
-  if(PAY_REDIRECT){
-    api('POST','/api/tutorial-pay',{order:ORDER,email:email,mode:'redirect'}).then(function(d){
-      if(d.paid) return goWait(true);
-      if(!d.url){ ykFail(d.error==='email'?'Проверь email — похоже, в нём опечатка.':'Не получилось открыть оплату. Попробуй ещё раз.'); return }
-      try{localStorage.setItem('claude_start_paying',ORDER)}catch(e){}
-      track('tutorial_pay_click',{p:'yookassa_redirect'});
-      $('ykpay').textContent='Открываю оплату…';
-      location.href=d.url;
-    },function(){ ykFail('Не получилось открыть оплату. Проверь интернет и попробуй ещё раз.') });
-    return;
-  }
-  Promise.all([api('POST','/api/tutorial-pay',{order:ORDER,email:email}),loadYK()]).then(function(r){
+  var b=$(method==='sbp'?'ykpaysbp':'ykpay');
+  ykErr(''); $('ykpay').disabled=true; $('ykpaysbp').disabled=true; b.textContent='Загружаю форму оплаты…';
+  Promise.all([api('POST','/api/tutorial-pay',{order:ORDER,email:email,method:method}),loadYK()]).then(function(r){
     var d=r[0];
     if(d.paid) return goWait(true);
     if(!d.token){ ykFail(d.error==='email'?'Проверь email — похоже, в нём опечатка.':'Не получилось открыть оплату. Попробуй ещё раз.'); return }
-    $('ykpay').hidden=true;
-    ykMount(d.token,true);
-    track('tutorial_pay_click',{p:'yookassa'});
+    $('ykpay').hidden=true; $('ykpaysbp').hidden=true; $('ykother').hidden=false;
+    try{localStorage.setItem('claude_start_paying',ORDER)}catch(e){}
+    ykMount(d.token);
+    track('tutorial_pay_click',{p:'yookassa',m:method});
   },function(){ ykFail('Не получилось загрузить форму оплаты. Проверь интернет и попробуй ещё раз.') });
 }
-// Форма ЮKassa: светлая, в фирменных акцентах; сначала пробуем показать только карту, СБП и SberPay
-// (без кнопки «Другие способы»). Если магазину нельзя выбирать способы — показываем все.
-var PAY_REDIRECT=(function(){ try{ return /iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent)) }catch(e){ return false } })();
+// Форма ЮKassa: светлая, в фирменных акцентах.
 var YK_COLORS={control_primary:'#D4FF3F',control_primary_content:'#0B0E00',background:'#F3F4EF',text:'#0B0E00',border:'#E1E4DA',control_secondary:'#E7EAE1'};
 var ykWatchN=0;
-function ykMount(token,pick){
+function ykMount(token){
   if(YK){try{YK.destroy()}catch(e){}} $('ykform').innerHTML='';
-  var c={colors:YK_COLORS}; if(pick) c.payment_methods=['bank_card','sbp','sberbank'];
+  var c={colors:YK_COLORS};
   YK=new window.YooMoneyCheckoutWidget({
     // Куда вернуть после оплаты в приложении банка (T-Pay, SberPay, СБП) и после экрана «Успешно»:
     // по личной ссылке страница сама проверит оплату и откроет инструкцию.
     confirmation_token:token, customization:c, return_url:location.origin+'/start?order='+encodeURIComponent(ORDER),
-    error_callback:function(err){
-      var code=err&&(err.error||err.code||err);
-      if(pick&&/payment_methods|combination/.test(String(code))) return ykMount(token,false);
+    error_callback:function(){
       ykFail('Форма оплаты не загрузилась. Обнови страницу или оплати через ЮMoney ниже.');
     }
   });
   YK.on('success',function(){ track('tutorial_pay_success'); ykReset(); goWait(true) });
-  YK.on('fail',function(){ ykReset(); $('ykpay').textContent='Попробовать ещё раз · '+PAY.price+' ₽'; ykErr('Оплата не прошла. Попробуй другой способ или другую карту.') });
+  YK.on('fail',function(){ ykReset(); ykErr('Оплата не прошла. Попробуй ещё раз или выбери другой способ.') });
   YK.render('ykform');
   ykWatch();
 }
@@ -726,8 +718,10 @@ function payCheckNow(){
 document.addEventListener('visibilitychange',function(){ if(!document.hidden) payCheckNow() });
 window.addEventListener('pageshow',function(e){ if(e.persisted) payCheckNow() });
 window.addEventListener('focus',payCheckNow);
-function ykFail(t){ ykReset(); $('ykpay').textContent='Попробовать ещё раз · '+((PAY&&PAY.price)||299)+' ₽'; ykErr(t) }
-$('ykpay').onclick=ykStart;
+function ykFail(t){ ykReset(); ykErr(t) }
+$('ykpay').onclick=function(){ykStart('bank_card')};
+$('ykpaysbp').onclick=function(){ykStart('sbp')};
+$('ykother').onclick=function(){ykReset()};
 $('payform').onsubmit=function(){track('tutorial_pay_click',{p:'yoomoney'})};
 $('ipaid').onclick=function(){ykReset();goWait(false)};
 $('paybackq').onclick=function(){ykReset();i=Q.length-1;show('s-quiz');renderQ()};

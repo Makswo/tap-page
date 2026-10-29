@@ -39,7 +39,8 @@ module.exports = async (req, res) => {
     }
 
     const redirect = b.mode === 'redirect';
-    const p = await yk.createPayment({ order, price: price(), email, returnUrl: redirect ? `${site()}/start?order=${order}` : null });
+    const method = ['bank_card', 'sbp'].includes(b.method) ? b.method : null;
+    const p = await yk.createPayment({ order, price: price(), email, method, returnUrl: redirect ? `${site()}/start?order=${order}` : null });
     await db.update('tutorial_orders', { id: `eq.${order}` }, { provider: 'yookassa', payment_id: p.id });
     if (redirect) return send(res, 200, { url: p.confirmation && p.confirmation.confirmation_url });
     return send(res, 200, { token: p.confirmation && p.confirmation.confirmation_token });

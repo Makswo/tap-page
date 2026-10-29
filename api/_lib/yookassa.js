@@ -39,12 +39,14 @@ async function call(method, path, body) {
 
 // Платёж: на компьютере — встроенный виджет (embedded), на телефоне — страница ЮKassa (redirect)
 // с возвратом на return_url: так приложения банков (T-Pay, SberPay, СБП) надёжно возвращают на сайт.
-async function createPayment({ order, price, email, returnUrl }) {
+async function createPayment({ order, price, email, returnUrl, method }) {
   const value = Number(price).toFixed(2);
   const body = {
     amount: { value, currency: 'RUB' },
     confirmation: returnUrl ? { type: 'redirect', return_url: returnUrl, locale: 'ru_RU' } : { type: 'embedded', locale: 'ru_RU' },
     capture: true,
+    // Один способ оплаты (карта или СБП): форма покажет только его.
+    ...(method === 'bank_card' || method === 'sbp' ? { payment_method_data: { type: method } } : {}),
     description: `Туториал «Как начать с Claude», заказ ${order.slice(0, 8).toUpperCase()}`,
     metadata: { order_id: order },
   };
