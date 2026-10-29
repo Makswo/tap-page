@@ -659,6 +659,18 @@ function ykStart(){
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ykErr('Впиши email — на него придёт чек');$('email').focus();return}
   }
   ykErr(''); $('ykpay').disabled=true; $('ykpay').textContent='Загружаю форму оплаты…';
+  // Телефон: оплата на странице ЮKassa. После оплаты в приложении банка она сама вернёт на сайт.
+  if(PAY_REDIRECT){
+    api('POST','/api/tutorial-pay',{order:ORDER,email:email,mode:'redirect'}).then(function(d){
+      if(d.paid) return goWait(true);
+      if(!d.url){ ykFail(d.error==='email'?'Проверь email — похоже, в нём опечатка.':'Не получилось открыть оплату. Попробуй ещё раз.'); return }
+      try{localStorage.setItem('claude_start_paying',ORDER)}catch(e){}
+      track('tutorial_pay_click',{p:'yookassa_redirect'});
+      $('ykpay').textContent='Открываю оплату…';
+      location.href=d.url;
+    },function(){ ykFail('Не получилось открыть оплату. Проверь интернет и попробуй ещё раз.') });
+    return;
+  }
   Promise.all([api('POST','/api/tutorial-pay',{order:ORDER,email:email}),loadYK()]).then(function(r){
     var d=r[0];
     if(d.paid) return goWait(true);
@@ -670,6 +682,7 @@ function ykStart(){
 }
 // Форма ЮKassa: светлая, в фирменных акцентах; сначала пробуем показать только карту, СБП и SberPay
 // (без кнопки «Другие способы»). Если магазину нельзя выбирать способы — показываем все.
+var PAY_REDIRECT=(function(){ try{ return /iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent)) }catch(e){ return false } })();
 var YK_COLORS={control_primary:'#D4FF3F',control_primary_content:'#0B0E00',background:'#F3F4EF',text:'#0B0E00',border:'#E1E4DA',control_secondary:'#E7EAE1'};
 var ykWatchN=0;
 function ykMount(token,pick){
@@ -845,7 +858,9 @@ $('hgem').innerHTML=gemHTML({})+'<div class="gcap">Кристалл старта
   var o=q.get('order');
   if(o&&UUID.test(o)){ setOrder(o); history.replaceState(null,'',location.pathname); goWait(false); return }
   if(ORDER){
+    var paying=null; try{paying=localStorage.getItem('claude_start_paying')}catch(e){}
     api('GET','/api/tutorial-guide?order='+encodeURIComponent(ORDER)).then(function(d){
+      if(d.status==='paid'&&d.html&&paying===ORDER){ try{localStorage.removeItem('claude_start_paying')}catch(e){}; track('tutorial_paid'); return renderGuide(d) }
       if(d.status==='paid'&&d.html){ LAST=d; $('resume').hidden=false; $('resume').textContent='Моя инструкция'; }
       else if(d._s===404) setOrder(null);
       else if(d.status==='new'&&A&&A.role){ $('resume').hidden=false; $('resume').textContent='Продолжить'; $('resume').onclick=function(){finish()}; }

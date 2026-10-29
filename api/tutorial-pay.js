@@ -1,9 +1,9 @@
-// Создаёт платёж в ЮKassa и отдаёт токен для встроенного виджета.
+// Создаёт платёж в ЮKassa: токен для встроенного виджета или ссылку на страницу оплаты (mode=redirect, телефоны).
 'use strict';
 const db = require('./_lib/db');
 const yk = require('./_lib/yookassa');
 const { markPaid } = require('./_lib/orders');
-const { UUID, price, send, body } = require('./_lib/util');
+const { UUID, price, site, send, body } = require('./_lib/util');
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -38,8 +38,10 @@ module.exports = async (req, res) => {
       if (!EMAIL.test(email)) return send(res, 400, { error: 'email' });
     }
 
-    const p = await yk.createPayment({ order, price: price(), email });
+    const redirect = b.mode === 'redirect';
+    const p = await yk.createPayment({ order, price: price(), email, returnUrl: redirect ? `${site()}/start?order=${order}` : null });
     await db.update('tutorial_orders', { id: `eq.${order}` }, { provider: 'yookassa', payment_id: p.id });
+    if (redirect) return send(res, 200, { url: p.confirmation && p.confirmation.confirmation_url });
     return send(res, 200, { token: p.confirmation && p.confirmation.confirmation_token });
   } catch (e) {
     console.error(e);

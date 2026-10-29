@@ -37,12 +37,13 @@ async function call(method, path, body) {
   return data;
 }
 
-// Платёж с подтверждением через виджет (confirmation.type = embedded).
-async function createPayment({ order, price, email }) {
+// Платёж: на компьютере — встроенный виджет (embedded), на телефоне — страница ЮKassa (redirect)
+// с возвратом на return_url: так приложения банков (T-Pay, SberPay, СБП) надёжно возвращают на сайт.
+async function createPayment({ order, price, email, returnUrl }) {
   const value = Number(price).toFixed(2);
   const body = {
     amount: { value, currency: 'RUB' },
-    confirmation: { type: 'embedded', locale: 'ru_RU' },
+    confirmation: returnUrl ? { type: 'redirect', return_url: returnUrl, locale: 'ru_RU' } : { type: 'embedded', locale: 'ru_RU' },
     capture: true,
     description: `Туториал «Как начать с Claude», заказ ${order.slice(0, 8).toUpperCase()}`,
     metadata: { order_id: order },
