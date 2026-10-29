@@ -259,6 +259,16 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
 .mylink code{flex:1;min-width:0;font:13px var(--m);color:var(--tx2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* на вопросах и инструкции окно видео прячем, но если ролик идёт со звуком — оставляем, пока его не выключат */
 body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
+.rdy{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:16px;background:rgba(4,5,6,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:fade .25s ease}
+.rdy.out{opacity:0;transition:opacity .2s}
+.rdy-box{width:100%;max-width:380px;text-align:center;border-radius:26px;padding:28px 22px 22px;background:radial-gradient(90% 70% at 50% 0%,rgba(212,255,63,.14),transparent 60%),var(--s1);border:1px solid rgba(212,255,63,.4);box-shadow:0 30px 80px rgba(0,0,0,.6);animation:rdyin .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes rdyin{from{transform:translateY(16px) scale(.96);opacity:0}to{transform:none;opacity:1}}
+.rdy-ok{width:60px;height:60px;margin:0 auto 14px;border-radius:50%;background:var(--acc);display:grid;place-items:center;box-shadow:0 0 0 8px rgba(212,255,63,.14)}
+.rdy-ok svg{width:30px;height:30px;fill:none;stroke:var(--acc-ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.rdy h3{margin:0 0 8px;font-size:24px;letter-spacing:-.02em}
+.rdy p{margin:0 0 20px;color:var(--tx2);font-size:15px}
+.rdy .btn{width:100%}
+@media print{.rdy{display:none!important}}
 .gcard{margin:0 0 6px;border-radius:20px;padding:12px 16px;border:1px solid rgba(196,148,255,.28);background:linear-gradient(90deg,rgba(168,85,247,.11),var(--s1) 55%)}
 .gtop{display:flex;align-items:center;gap:14px}
 .gtop .gem{margin:0 4px 0 2px;flex:none}
@@ -607,7 +617,7 @@ function finish(){
   var req=api('POST','/api/tutorial-answers',{order:ORDER,answers:A});
   Promise.all([anim,req]).then(function(r){
     var d=r[1];
-    if(d.paid) return goWait(true);
+    if(d.paid){ try{localStorage.setItem('claude_start_paying',ORDER)}catch(e){}; return goWait(true) }
     if(d.pay) return renderPay(d);
     if(d._s===404){setOrder(null);show('s-intro');perr('Сессия устарела. Впиши промокод ещё раз — ответы сохранятся.');return}
     $('atitle').textContent='Не получилось связаться с сервером';
@@ -705,7 +715,7 @@ function ykWatch(){
     if(my!==ykWatchN||!YK) return;
     api('GET','/api/tutorial-guide?order='+encodeURIComponent(ORDER||'')).then(function(d){
       if(my!==ykWatchN||!YK) return;
-      if(d.status==='paid'&&d.html){ track('tutorial_pay_success'); track('tutorial_paid'); ykReset(); try{localStorage.removeItem('claude_start_paying')}catch(e){}; renderGuide(d); return }
+      if(d.status==='paid'&&d.html){ track('tutorial_pay_success'); track('tutorial_paid'); ykReset(); renderGuide(d); return }
       setTimeout(tick,2500);
     },function(){ setTimeout(tick,4000) });
   })();
@@ -714,7 +724,7 @@ function ykWatch(){
 function payCheckNow(){
   if(!ORDER||!$('s-pay').classList.contains('on')) return;
   api('GET','/api/tutorial-guide?order='+encodeURIComponent(ORDER)).then(function(d){
-    if(d.status==='paid'&&d.html&&$('s-pay').classList.contains('on')){ track('tutorial_paid'); ykReset(); try{localStorage.removeItem('claude_start_paying')}catch(e){}; renderGuide(d) }
+    if(d.status==='paid'&&d.html&&$('s-pay').classList.contains('on')){ track('tutorial_paid'); ykReset(); renderGuide(d) }
   });
 }
 document.addEventListener('visibilitychange',function(){ if(!document.hidden) payCheckNow() });
@@ -724,7 +734,7 @@ function ykFail(t){ ykReset(); ykErr(t) }
 $('ykpay').onclick=function(){ykStart('bank_card')};
 $('ykpaysbp').onclick=function(){ykStart('sbp')};
 $('ykother').onclick=function(){ykReset()};
-$('payform').onsubmit=function(){track('tutorial_pay_click',{p:'yoomoney'})};
+$('payform').onsubmit=function(){track('tutorial_pay_click',{p:'yoomoney'});try{localStorage.setItem('claude_start_paying',ORDER)}catch(e){}};
 $('ipaid').onclick=function(){ykReset();goWait(false)};
 $('paybackq').onclick=function(){ykReset();i=Q.length-1;show('s-quiz');renderQ()};
 
@@ -741,7 +751,7 @@ function goWait(fast){
     if(my!==polling) return;
     api('GET','/api/tutorial-guide?order='+encodeURIComponent(ORDER||'')).then(function(d){
       if(my!==polling) return;
-      if(d.status==='paid'&&d.html){track('tutorial_paid');try{localStorage.removeItem('claude_start_paying')}catch(e){};return renderGuide(d)}
+      if(d.status==='paid'&&d.html){track('tutorial_paid');return renderGuide(d)}
       if(d._s===404||d._s===400){$('worb').hidden=true;$('wtitle').textContent='Заказ не найден';$('wtext').textContent='Начни заново с промокодом.';$('wretry').hidden=false;return}
       n++;
       if(n>=(fast?20:60)){$('worb').hidden=true;$('wtitle').textContent='Оплата пока не пришла';$('wtext').textContent='Если деньги уже списались — подожди пару минут и нажми «Проверить ещё раз». Не помогло — напиши в директ @makswo и назови номер заказа ниже.';$('wretry').hidden=false;return}
@@ -759,7 +769,20 @@ function pdfHint(){
   return 'В окне печати выбери «Сохранить как PDF» вместо принтера.';
 }
 function savePDF(){ track('tutorial_pdf'); window.print() }
+// Окно «Инструкция готова» — один раз, сразу после оплаты (или бесплатного промокода).
+function readyModal(){
+  var m=document.createElement('div'); m.className='rdy'; m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true');
+  m.innerHTML='<div class="rdy-box"><div class="rdy-ok"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>'+
+    '<h3>Твоя инструкция готова</h3><p>Она собрана по твоим ответам. Сохрани PDF или личную ссылку — и начинай с первого шага.</p>'+
+    '<button class="btn pri lg" type="button">Окей</button></div>';
+  document.body.appendChild(m);
+  var b=m.querySelector('button'); b.focus();
+  function close(){ m.classList.add('out'); setTimeout(function(){m.remove()},200); track('tutorial_ready_ok') }
+  b.onclick=close; m.onclick=function(e){ if(e.target===m) close() };
+  document.addEventListener('keydown',function k(e){ if(e.key==='Escape'||e.key==='Enter'){ document.removeEventListener('keydown',k); if(m.parentNode) close() } });
+}
 function renderGuide(d){
+  var fresh=false; try{ fresh=!!ORDER&&localStorage.getItem('claude_start_paying')===ORDER&&!/[?&]preview=/.test(location.search); if(fresh) localStorage.removeItem('claude_start_paying') }catch(e){}
   LAST=d;
   document.body.className='st-'+(d.style||'ex');
   $('res').innerHTML=d.html;
@@ -801,6 +824,7 @@ function renderGuide(d){
   if(sb&&'IntersectionObserver' in window){ new IntersectionObserver(function(e){fab.classList.toggle('on',!e[0].isIntersecting&&e[0].boundingClientRect.top<0&&$('s-res').classList.contains('on'))}).observe(sb) }
   $('resume').hidden=false;
   show('s-res');
+  if(fresh) setTimeout(readyModal,350);
 }
 // Профиль: предлагаем зарегистрироваться и привязываем инструкцию с кристаллом.
 function renderAcct(box){
@@ -856,7 +880,7 @@ $('hgem').innerHTML=gemHTML({})+'<div class="gcap">Кристалл старта
   if(ORDER){
     var paying=null; try{paying=localStorage.getItem('claude_start_paying')}catch(e){}
     api('GET','/api/tutorial-guide?order='+encodeURIComponent(ORDER)).then(function(d){
-      if(d.status==='paid'&&d.html&&paying===ORDER){ try{localStorage.removeItem('claude_start_paying')}catch(e){}; track('tutorial_paid'); return renderGuide(d) }
+      if(d.status==='paid'&&d.html&&paying===ORDER){ track('tutorial_paid'); return renderGuide(d) }
       if(d.status==='paid'&&d.html){ LAST=d; $('resume').hidden=false; $('resume').textContent='Моя инструкция'; }
       else if(d._s===404) setOrder(null);
       else if(d.status==='new'&&A&&A.role){ $('resume').hidden=false; $('resume').textContent='Продолжить'; $('resume').onclick=function(){finish()}; }
