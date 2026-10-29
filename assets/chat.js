@@ -23,7 +23,11 @@
   css.textContent='.ch-btn{position:fixed;left:max(16px,env(safe-area-inset-left));bottom:calc(16px + env(safe-area-inset-bottom));z-index:45;display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 18px 0 14px;border-radius:999px;background:var(--s2);border:1px solid var(--line2);color:var(--tx);font:650 14.5px var(--f);box-shadow:0 12px 30px rgba(0,0,0,.5);cursor:pointer}'+
     '.ch-btn:hover{background:var(--s3)}.ch-btn svg{width:20px;height:20px;color:var(--acc)}.ch-btn .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(62,224,160,.18)}'+
     '.ch-btn .cnt{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--acc);color:var(--acc-ink);font-size:12px;font-weight:800;display:grid;place-items:center}'+
-    '.ch-toast{position:fixed;left:max(16px,env(safe-area-inset-left));bottom:calc(74px + env(safe-area-inset-bottom));z-index:46;max-width:min(340px,calc(100vw - 32px));display:flex;gap:10px;align-items:center;padding:10px 14px;border-radius:16px;background:var(--s2);border:1px solid hsl(calc(268deg + var(--ch,0deg)) 100% 79% / .45);box-shadow:0 14px 34px rgba(0,0,0,.55);font-size:14px;cursor:pointer;animation:chin .35s cubic-bezier(.2,.8,.2,1)}'+
+    '.ch-toast{position:fixed;left:max(16px,env(safe-area-inset-left));bottom:calc(72px + env(safe-area-inset-bottom));z-index:46;max-width:min(190px,calc(100vw - 32px));display:flex;gap:9px;align-items:center;padding:8px 12px 8px 10px;border-radius:14px;background:var(--s2);border:1px solid hsl(calc(268deg + var(--ch,0deg)) 100% 79% / .45);box-shadow:0 12px 30px rgba(0,0,0,.55);cursor:pointer;animation:chin .35s cubic-bezier(.2,.8,.2,1)}'+
+    '.ch-toast .gw{width:28px;height:28px;flex:none;border-radius:9px;display:grid;place-items:center;background:hsl(calc(272deg + var(--ch,0deg)) 90% 60% / .18)}'+
+    '.ch-toast small{display:block;font:500 10px/1.2 var(--m);letter-spacing:.08em;text-transform:uppercase;color:hsl(calc(270deg + var(--ch,0deg)) 95% 82%)}'+
+    '.ch-toast b{display:block;font-size:13px;line-height:1.25;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}'+
+    '.ch-toast span{display:block;font-size:12px;line-height:1.25;color:var(--tx2)}'+
     '@keyframes chin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}'+
     '.gd{width:12px;height:12px;flex:none;border-radius:3px;transform:rotate(45deg);background:hsl(calc(264deg + var(--ch,0deg)) 80% 68%);box-shadow:0 0 10px hsl(calc(264deg + var(--ch,0deg)) 90% 60%)}'+
     '.tpc{position:fixed;left:max(16px,env(safe-area-inset-left));bottom:calc(76px + env(safe-area-inset-bottom));z-index:55;width:400px;height:min(620px,calc(100vh - 110px));display:flex;flex-direction:column;border-radius:22px;background:var(--s1);border:1px solid var(--line2);box-shadow:0 24px 70px rgba(0,0,0,.65);overflow:hidden;animation:chin .25s cubic-bezier(.2,.8,.2,1)}'+
@@ -114,7 +118,8 @@
   function toast(m){
     var g=gemInfo(m.course), old=document.querySelector('.ch-toast'); if(old) old.remove();
     var t=document.createElement('div'); t.className='ch-toast'; t.style.setProperty('--ch',g[1]+'deg');
-    t.innerHTML='<i class="gd"></i><span><b>'+esc(m.nick||'Новый участник')+'</b> получил кристалл «'+esc(g[0])+'»</span>';
+    t.setAttribute('role','status');
+    t.innerHTML='<div class="gw"><i class="gd"></i></div><div><small>Новый кристалл</small><b>'+esc(m.nick||'Новый участник')+'</b><span>получил «'+esc(g[0])+'»</span></div>';
     t.onclick=function(){ t.remove(); show('chat') };
     if(m.id>(+lsGet('tp_chat_toast')||0)) lsSet('tp_chat_toast',m.id);
     document.body.appendChild(t); setTimeout(function(){ if(t.parentNode) t.remove() },9000);
