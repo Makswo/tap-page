@@ -676,7 +676,9 @@ function ykMount(token,pick){
   if(YK){try{YK.destroy()}catch(e){}} $('ykform').innerHTML='';
   var c={colors:YK_COLORS}; if(pick) c.payment_methods=['bank_card','sbp','sberbank'];
   YK=new window.YooMoneyCheckoutWidget({
-    confirmation_token:token, customization:c,
+    // Куда вернуть после оплаты в приложении банка (T-Pay, SberPay, СБП) и после экрана «Успешно»:
+    // по личной ссылке страница сама проверит оплату и откроет инструкцию.
+    confirmation_token:token, customization:c, return_url:location.origin+'/start?order='+encodeURIComponent(ORDER),
     error_callback:function(err){
       var code=err&&(err.error||err.code||err);
       if(pick&&/payment_methods|combination/.test(String(code))) return ykMount(token,false);
@@ -701,6 +703,16 @@ function ykWatch(){
     },function(){ setTimeout(tick,4000) });
   })();
 }
+// Вернулись на вкладку (например, из приложения банка) — сразу проверяем оплату, не ждём таймера.
+function payCheckNow(){
+  if(!ORDER||!$('s-pay').classList.contains('on')) return;
+  api('GET','/api/tutorial-guide?order='+encodeURIComponent(ORDER)).then(function(d){
+    if(d.status==='paid'&&d.html&&$('s-pay').classList.contains('on')){ track('tutorial_paid'); ykReset(); try{localStorage.removeItem('claude_start_paying')}catch(e){}; renderGuide(d) }
+  });
+}
+document.addEventListener('visibilitychange',function(){ if(!document.hidden) payCheckNow() });
+window.addEventListener('pageshow',function(e){ if(e.persisted) payCheckNow() });
+window.addEventListener('focus',payCheckNow);
 function ykFail(t){ ykReset(); $('ykpay').textContent='Попробовать ещё раз · '+((PAY&&PAY.price)||299)+' ₽'; ykErr(t) }
 $('ykpay').onclick=ykStart;
 $('payform').onsubmit=function(){track('tutorial_pay_click',{p:'yoomoney'})};
