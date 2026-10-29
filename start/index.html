@@ -239,7 +239,8 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(212,255,63,.55)}100%{box-shadow:0 0 0 16px rgba(212,255,63,0)}}
 .mylink{display:flex;gap:8px;align-items:center;margin-top:14px;background:var(--bg);border:1px solid var(--line2);border-radius:14px;padding:8px 8px 8px 14px}
 .mylink code{flex:1;min-width:0;font:13px var(--m);color:var(--tx2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-body[data-screen]:not([data-screen="s-intro"]) .vw{display:none}
+/* на вопросах и инструкции окно видео прячем, но если ролик идёт со звуком — оставляем, пока его не выключат */
+body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
 .gcard{margin:0 0 6px;border-radius:20px;padding:12px 16px;border:1px solid rgba(196,148,255,.28);background:linear-gradient(90deg,rgba(168,85,247,.11),var(--s1) 55%)}
 .gtop{display:flex;align-items:center;gap:14px}
 .gtop .gem{margin:0 4px 0 2px;flex:none}
