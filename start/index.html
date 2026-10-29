@@ -417,8 +417,8 @@ body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
         <label class="flbl" for="email">Email для чека</label>
         <input id="email" class="tin" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" maxlength="120">
       </div>
-      <button class="btn pri lg ykgo" id="ykpay" data-m="bank_card" type="button">Оплатить картой · 299 ₽</button>
-      <button class="btn gho lg ykgo sbp" id="ykpaysbp" data-m="sbp" type="button">Оплатить по СБП</button>
+      <button class="btn pri lg ykgo" id="ykpay" data-m="bank_card" type="button">Оплатить · 299 ₽</button>
+      <button class="btn gho lg ykgo sbp" id="ykpaysbp" data-m="sbp" type="button" hidden>Оплатить по СБП</button>
       <button class="linkbtn" id="ykother" type="button" hidden>Выбрать другой способ</button>
       <div id="ykform"></div>
       <div class="perr" id="ykerr" role="alert"></div>
@@ -657,34 +657,33 @@ function renderPay(d){
   } else { show('s-pay'); track('tutorial_paywall',{p:'yoomoney'}); }
 }
 function ykErr(t){$('ykerr').textContent=t||''}
-function ykLabels(){ var pr=((PAY&&PAY.price)||299)+' ₽', mob=payMobile(); $('ykpay').textContent=(mob?'Оплатить картой · ':'Перейти к оплате · ')+pr; $('ykpaysbp').textContent='Оплатить по СБП · '+pr; $('ykpaysbp').hidden=!mob }
-function ykReset(){ ykWatchN++; if(YK){try{YK.destroy()}catch(e){} YK=null} $('ykform').innerHTML=''; ['ykpay','ykpaysbp'].forEach(function(id){$(id).hidden=false;$(id).disabled=false}); $('ykother').hidden=true; ykLabels(); ykErr('') }
+function ykLabels(){ var pr=((PAY&&PAY.price)||299)+' ₽'; $('ykpay').textContent=(payMobile()?'Оплатить · ':'Перейти к оплате · ')+pr; $('ykpaysbp').hidden=true }
+function ykReset(){ ykWatchN++; if(YK){try{YK.destroy()}catch(e){} YK=null} $('ykform').innerHTML=''; ykLeaving=false; ['ykpay','ykpaysbp'].forEach(function(id){$(id).hidden=false;$(id).disabled=false}); $('ykother').hidden=true; ykLabels(); ykErr('') }
 function loadYK(){
   if(window.YooMoneyCheckoutWidget) return Promise.resolve();
   if(ykLoading) return ykLoading;
   ykLoading=new Promise(function(ok,bad){var sc=document.createElement('script');sc.src='https://yookassa.ru/checkout-widget/v1/checkout-widget.js';sc.onload=ok;sc.onerror=function(){ykLoading=null;bad()};document.head.appendChild(sc)});
   return ykLoading;
 }
-// Телефон: кнопки «Картой» и «По СБП» ведут на страницу ЮKassa только с этим способом —
-// без T-Pay, который уводит в приложение банка и не возвращает. После оплаты ЮKassa вернёт на сайт.
+// Телефон: кнопка «Оплатить» ведёт на страницу ЮKassa с выбором способа (карта, SberPay, СБП и др.).
+// После оплаты ЮKassa вернёт на сайт по личной ссылке. Назад с её страницы — кнопка снова активна.
 // Компьютер: встроенная форма ЮKassa прямо на странице.
 function payMobile(){ return !(PAY&&PAY.mobileEmbedded) && /iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent||'') }
 function ykStart(method){
-  method=method==='sbp'?'sbp':'bank_card';
   var email='';
   if(PAY&&PAY.needEmail){
     email=$('email').value.trim();
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ykErr('Впиши email — на него придёт чек');$('email').focus();return}
   }
-  var b=$(method==='sbp'?'ykpaysbp':'ykpay');
+  var b=$('ykpay');
   ykErr(''); $('ykpay').disabled=true; $('ykpaysbp').disabled=true; b.textContent='Открываю оплату…';
   if(payMobile()){
-    api('POST','/api/tutorial-pay',{order:ORDER,email:email,mode:'redirect',method:method}).then(function(d){
+    api('POST','/api/tutorial-pay',{order:ORDER,email:email,mode:'redirect'}).then(function(d){
       if(d.paid) return goWait(true);
       if(!d.url){ ykFail(d.error==='email'?'Проверь email — похоже, в нём опечатка.':'Не получилось открыть оплату. Попробуй ещё раз.'); return }
       try{localStorage.setItem('claude_start_paying',ORDER)}catch(e){}
-      track('tutorial_pay_click',{p:'yookassa_redirect',m:method});
-      location.href=d.url;
+      track('tutorial_pay_click',{p:'yookassa_redirect'});
+      ykLeaving=true; location.href=d.url;
     },function(){ ykFail('Не получилось открыть оплату. Проверь интернет и попробуй ещё раз.') });
     return;
   }
@@ -700,7 +699,7 @@ function ykStart(method){
 }
 // Форма ЮKassa: светлая, в фирменных акцентах.
 var YK_COLORS={control_primary:'#D4FF3F',control_primary_content:'#0B0E00',background:'#F3F4EF',text:'#0B0E00',border:'#E1E4DA',control_secondary:'#E7EAE1'};
-var ykWatchN=0;
+var ykWatchN=0, ykLeaving=false;
 // pick — если платёж создан без выбора способа, просим виджет показать только выбранный (если магазину это разрешено).
 function ykMount(token){
   if(YK){try{YK.destroy()}catch(e){}} $('ykform').innerHTML='';
@@ -738,12 +737,13 @@ function payCheckNow(){
     if(d.status==='paid'&&d.html&&$('s-pay').classList.contains('on')){ track('tutorial_paid'); ykReset(); renderGuide(d) }
   });
 }
-document.addEventListener('visibilitychange',function(){ if(!document.hidden) payCheckNow() });
-window.addEventListener('pageshow',function(e){ if(e.persisted) payCheckNow() });
+// Вернулись кнопкой «Назад» со страницы ЮKassa — браузер восстановил страницу с кнопкой в загрузке: оживляем её.
+function ykBack(){ if(ykLeaving&&!YK) ykReset() }
+document.addEventListener('visibilitychange',function(){ if(!document.hidden){ ykBack(); payCheckNow() } });
+window.addEventListener('pageshow',function(e){ if(e.persisted){ ykBack(); if(!YK&&$('ykpay').disabled) ykReset(); payCheckNow() } });
 window.addEventListener('focus',payCheckNow);
 function ykFail(t){ ykReset(); ykErr(t) }
-$('ykpay').onclick=function(){ykStart('bank_card')};
-$('ykpaysbp').onclick=function(){ykStart('sbp')};
+$('ykpay').onclick=function(){ykStart()};
 $('ykother').onclick=function(){ykReset()};
 $('payform').onsubmit=function(){track('tutorial_pay_click',{p:'yoomoney'});try{localStorage.setItem('claude_start_paying',ORDER)}catch(e){}};
 $('ipaid').onclick=function(){ykReset();goWait(false)};
@@ -894,6 +894,8 @@ $('hgem').innerHTML=gemHTML({})+'<div class="gcap">Кристалл старта
       if(d.status==='paid'&&d.html&&paying===ORDER){ track('tutorial_paid'); return renderGuide(d) }
       if(d.status==='paid'&&d.html){ LAST=d; $('resume').hidden=false; $('resume').textContent='Моя инструкция'; }
       else if(d._s===404) setOrder(null);
+      // Ушёл на страницу ЮKassa и вернулся «Назад» без оплаты — сразу снова экран оплаты.
+      else if(paying===ORDER&&A&&A.role){ api('POST','/api/tutorial-answers',{order:ORDER,answers:A}).then(function(p){ if(p.paid) return goWait(true); if(p.pay) renderPay(p) }) }
       else if(d.status==='new'&&A&&A.role){ $('resume').hidden=false; $('resume').textContent='Продолжить'; $('resume').onclick=function(){finish()}; }
     });
   }
