@@ -25,7 +25,7 @@ function render({ subject, text, cta, link, unsub, footer }) {
 <tr><td><h1 style="margin:0 0 14px;font-size:24px;line-height:1.2;color:#0b0e00">${esc(subject)}</h1>${paras}
 ${link ? `<p style="margin:22px 0 6px"><a href="${esc(link)}" style="display:inline-block;background:#d4ff3f;color:#0b0e00;text-decoration:none;font-weight:700;font-size:15px;padding:13px 24px;border-radius:999px">${esc(cta || 'Открыть курс')}</a></p>` : ''}
 </td></tr>
-<tr><td style="padding-top:22px;border-top:1px solid #eceee6;font-size:12px;line-height:1.5;color:#8a8f86">${esc(footer || 'Ты получил это письмо, потому что нажал «Сообщить о старте» на tap-page.ru.')}${unsub ? ` <a href="${esc(unsub)}" style="color:#8a8f86">Отписаться</a>` : ''}<br>ИП Малыгин Максим Валерьевич · mxmgin@gmail.com</td></tr>
+<tr><td style="padding-top:22px;border-top:1px solid #eceee6;font-size:12px;line-height:1.5;color:#8a8f86">${esc(footer || 'Ты получил это письмо, потому что нажал «Сообщить о старте» на tap-page.ru.')}${unsub ? ` <a href="${esc(unsub)}" style="color:#8a8f86">Отписаться</a>` : ''}<br>ИП Малыгин Максим Валерьевич · mxmginarm@gmail.com</td></tr>
 </table></td></tr></table></body></html>`;
   const plain = `${subject}\n\n${text}\n\n${link ? `${cta || 'Открыть курс'}: ${link}\n\n` : ''}${unsub ? `Отписаться: ${unsub}` : ''}`;
   return { html, text: plain };

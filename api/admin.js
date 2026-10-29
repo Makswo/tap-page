@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
     // Отписка по ссылке из письма — без входа, по подписи.
     if (req.method === 'GET' && q.unsub) {
       const ok = UUID.test(String(q.unsub)) && COURSES[q.c] && String(q.t || '') === mail.unsubToken(q.unsub, q.c);
-      if (!ok) return page(res, 'Ссылка не подошла', 'Возможно, она устарела. Напиши на mxmgin@gmail.com — отпишем вручную.');
+      if (!ok) return page(res, 'Ссылка не подошла', 'Возможно, она устарела. Напиши на mxmginarm@gmail.com — отпишем вручную.');
       await db.remove('waitlist', { user_id: `eq.${q.unsub}`, course: `eq.${q.c}` });
       return page(res, 'Готово, ты отписан', `Больше не пришлём писем о курсе «${COURSES[q.c]}».`);
     }

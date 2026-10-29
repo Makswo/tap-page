@@ -158,7 +158,7 @@
       TP.loginForm(f.querySelector('#chlf'),{cta:'Войти',onDone:function(){ meLoaded=false; me=null; drawFoot(); poll() }}); return;
     }
     if(!meLoaded){ f.innerHTML='<div class="ch-box"><p>Загружаем…</p></div>'; return }
-    if(me&&me.banned){ f.innerHTML='<div class="ch-box"><p>Ты не можешь писать в чат. Если это ошибка — напиши на mxmgin@gmail.com.</p></div>'; return }
+    if(me&&me.banned){ f.innerHTML='<div class="ch-box"><p>Ты не можешь писать в чат. Если это ошибка — напиши на mxmginarm@gmail.com.</p></div>'; return }
     if(!me||!me.nick){
       f.innerHTML='<form class="ch-box"><p>Как тебя называть в чате? Ник видят все, почту — никто.</p><div class="row"><input maxlength="24" placeholder="Например, Аня или max_dev"><button class="btn pri" type="submit">Готово</button></div></form><div class="ch-err"></div>';
       var nf=f.querySelector('form'); nf.onsubmit=function(e){ e.preventDefault(); var v=nf.querySelector('input').value.trim(); setErr('');
@@ -214,8 +214,8 @@
     api('POST','/api/support',{messages:smsgs.filter(function(x){return !x.err}).map(function(x){return {role:x.role,content:x.content}}),order:order}).then(function(d){
       sbusy=false;
       if(d.answer) smsgs.push({role:'assistant',content:d.answer});
-      else smsgs.push({role:'assistant',err:true,content:d.error==='rate'?'Слишком много вопросов подряд. Попробуй чуть позже или напиши на mxmgin@gmail.com.':
-        d.error==='off'?'Поддержка сейчас недоступна. Напиши на mxmgin@gmail.com или в директ @makswo — ответим.':'Не получилось ответить. Попробуй ещё раз или напиши на mxmgin@gmail.com.'});
+      else smsgs.push({role:'assistant',err:true,content:d.error==='rate'?'Слишком много вопросов подряд. Попробуй чуть позже или напиши на mxmginarm@gmail.com.':
+        d.error==='off'?'Поддержка сейчас недоступна. Напиши на mxmginarm@gmail.com или в директ @makswo — ответим.':'Не получилось ответить. Попробуй ещё раз или напиши на mxmginarm@gmail.com.'});
       ssave(); drawHelp();
     },function(){ sbusy=false; smsgs.push({role:'assistant',err:true,content:'Нет связи. Проверь интернет и попробуй ещё раз.'}); ssave(); drawHelp() });
   }
@@ -229,7 +229,7 @@
       unread=0; drawBtn(); lsSet('tp_chat_seen',lastId); drawMsgs(); drawFoot(); poll();
     } else {
       body.innerHTML='<div class="sp-m"></div><form class="sp-f"><textarea rows="1" maxlength="1500" placeholder="Опиши вопрос…"></textarea><button type="submit" aria-label="Отправить"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>'+
-        '<div class="sp-n">Отвечает ИИ по вопросам портала, может ошибаться. Сложный случай — <a href="mailto:mxmgin@gmail.com">mxmgin@gmail.com</a></div>';
+        '<div class="sp-n">Отвечает ИИ по вопросам портала, может ошибаться. Сложный случай — <a href="mailto:mxmginarm@gmail.com">mxmginarm@gmail.com</a></div>';
       var ta=body.querySelector('textarea'), f=body.querySelector('form');
       f.onsubmit=function(e){e.preventDefault(); var v=ta.value; ta.value=''; ta.style.height=''; ask(v)};
       ta.onkeydown=function(e){ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();f.onsubmit(e)} };

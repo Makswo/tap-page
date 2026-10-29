@@ -91,7 +91,7 @@ module.exports = async (req, res) => {
     let answer;
     try { answer = await ask(support.system(ctx.text), msgs); }
     catch (e) { console.error('ai', e.message); return send(res, 502, { error: 'ai' }); }
-    answer = answer || 'Не получилось ответить. Напиши, пожалуйста, на mxmgin@gmail.com.';
+    answer = answer || 'Не получилось ответить. Напиши, пожалуйста, на mxmginarm@gmail.com.';
 
     try { await db.insert('support_messages', { ip_hash: ip, user_id: ctx.user ? ctx.user.id : null, question: question.slice(0, 2000), answer: answer.slice(0, 4000) }); }
     catch (e) { console.warn('support log', e.message); }

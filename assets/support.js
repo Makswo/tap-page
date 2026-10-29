@@ -68,8 +68,8 @@
     }).then(function(d){
       busy=false;
       if(d.answer) msgs.push({role:'assistant',content:d.answer});
-      else msgs.push({role:'assistant',err:true,content:d.error==='rate'?'Слишком много вопросов подряд. Попробуй чуть позже или напиши на mxmgin@gmail.com.':
-        d.error==='off'?'Поддержка сейчас недоступна. Напиши на mxmgin@gmail.com или в директ @makswo — ответим.':'Не получилось ответить. Попробуй ещё раз или напиши на mxmgin@gmail.com.'});
+      else msgs.push({role:'assistant',err:true,content:d.error==='rate'?'Слишком много вопросов подряд. Попробуй чуть позже или напиши на mxmginarm@gmail.com.':
+        d.error==='off'?'Поддержка сейчас недоступна. Напиши на mxmginarm@gmail.com или в директ @makswo — ответим.':'Не получилось ответить. Попробуй ещё раз или напиши на mxmginarm@gmail.com.'});
       save(); render();
     },function(){ busy=false; msgs.push({role:'assistant',err:true,content:'Нет связи. Проверь интернет и попробуй ещё раз.'}); save(); render() });
   }
@@ -78,7 +78,7 @@
     box=document.createElement('div'); box.className='tps'; box.setAttribute('role','dialog'); box.setAttribute('aria-label','Поддержка');
     box.innerHTML='<div class="sp-h"><div class="av">M</div><div><b>Поддержка tap-page</b><span>ИИ-помощник · отвечает сразу</span></div><button class="x" type="button" aria-label="Закрыть"><svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>'+
       '<div class="sp-m"></div><form class="sp-f"><textarea rows="1" maxlength="1500" placeholder="Опиши вопрос…"></textarea><button type="submit" aria-label="Отправить"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>'+
-      '<div class="sp-n">ИИ может ошибаться. Сложный случай — <a href="mailto:mxmgin@gmail.com">mxmgin@gmail.com</a></div>';
+      '<div class="sp-n">ИИ может ошибаться. Сложный случай — <a href="mailto:mxmginarm@gmail.com">mxmginarm@gmail.com</a></div>';
     document.body.appendChild(box);
     var ta=box.querySelector('textarea'), f=box.querySelector('form');
     box.querySelector('.x').onclick=hide;
