@@ -54,7 +54,13 @@
     '.sp-b a{color:var(--acc);text-decoration:underline;text-underline-offset:2px;word-break:break-all}.sp-b.err{border-color:rgba(255,107,107,.4)}'+
     '.sp-dots{display:inline-flex;gap:4px}.sp-dots i{width:6px;height:6px;border-radius:50%;background:var(--tx3);animation:spd 1s infinite}.sp-dots i:nth-child(2){animation-delay:.15s}.sp-dots i:nth-child(3){animation-delay:.3s}@keyframes spd{0%,60%,100%{opacity:.3}30%{opacity:1}}'+
     '.sp-s{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}.sp-s button{min-height:32px;padding:4px 12px;border-radius:999px;border:1px solid var(--line2);font-size:13px;color:var(--tx2);background:none}.sp-s button:hover{color:var(--tx);background:var(--s2)}'+
-    '@media (max-width:640px){.tpc{left:0;right:0;bottom:0;top:0;width:auto;height:auto;border-radius:0;border:0}.ch-btn{height:44px;padding:0 14px 0 12px;font-size:14px}}'+
+    '.ch-bd{position:fixed;inset:0;z-index:54;background:rgba(4,5,6,.55);animation:chfade .2s ease}@keyframes chfade{from{opacity:0}}'+
+    '.ch-grab{display:none}'+
+    '@media (max-width:640px){.tpc{left:0;right:0;bottom:0;width:auto;height:min(76dvh,640px);height:min(76vh,640px);border-radius:24px 24px 0 0;border-bottom:0;padding-bottom:env(safe-area-inset-bottom);animation:chup .28s cubic-bezier(.2,.8,.2,1);transition:transform .25s cubic-bezier(.2,.8,.2,1)}'+
+    '@supports (height:1dvh){.tpc{height:min(76dvh,640px)}}'+
+    '@keyframes chup{from{transform:translateY(100%)}to{transform:none}}'+
+    '.tpc.drag{transition:none}.ch-grab{display:block;padding:8px 0 2px;touch-action:none}.ch-grab i{display:block;width:42px;height:5px;border-radius:3px;background:var(--line2);margin:0 auto}'+
+    '.ch-h{touch-action:none}.ch-btn{height:44px;padding:0 14px 0 12px;font-size:14px}}'+
     '@media print{.tpc,.ch-btn,.ch-toast{display:none!important}}';
   document.head.appendChild(css);
 
@@ -231,15 +237,31 @@
     if(open){ drawBody(); return }
     open=true; btn.style.display='none'; var old=document.querySelector('.ch-toast'); if(old) old.remove();
     box=document.createElement('div'); box.className='tpc'; box.setAttribute('role','dialog'); box.setAttribute('aria-label','Чат');
-    box.innerHTML='<div class="ch-h"><div class="ch-tabs"><button type="button" data-t="chat">Общий чат</button><button type="button" data-t="help">Помощь</button></div>'+
+    var mobile=window.matchMedia&&matchMedia('(max-width:640px)').matches;
+    if(mobile){ bd=document.createElement('div'); bd.className='ch-bd'; bd.onclick=hide; document.body.appendChild(bd) }
+    box.innerHTML='<div class="ch-grab" aria-hidden="true"><i></i></div><div class="ch-h"><div class="ch-tabs"><button type="button" data-t="chat">Общий чат</button><button type="button" data-t="help">Помощь</button></div>'+
       '<button class="x" type="button" aria-label="Закрыть"><svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="ch-body" style="flex:1;display:flex;flex-direction:column;min-height:0"></div>';
     document.body.appendChild(box);
     box.querySelector('.x').onclick=hide;
+    if(mobile) swipe(box);
     box.addEventListener('keydown',function(e){ if(e.key==='Escape') hide() });
     [].forEach.call(box.querySelectorAll('.ch-tabs button'),function(b){ b.onclick=function(){ tab=b.getAttribute('data-t'); try{sessionStorage.setItem('tp_chat_tab',tab)}catch(e){}; drawBody() } });
     meLoaded=false; drawBody(); tr('chat_open',{tab:tab});
   }
-  function hide(){ open=false; if(box) box.remove(); box=null; btn.style.display=''; poll() }
+  var bd=null;
+  // Свайп вниз за шапку закрывает чат (на телефоне).
+  function swipe(el){
+    var y0=null, dy=0;
+    function start(e){ if(e.target.closest('button')) return; y0=e.touches[0].clientY; dy=0; el.classList.add('drag') }
+    function move(e){ if(y0===null) return; dy=Math.max(0,e.touches[0].clientY-y0); el.style.transform='translateY('+dy+'px)'; if(bd) bd.style.opacity=String(Math.max(0,1-dy/300)); e.preventDefault() }
+    function end(){ if(y0===null) return; y0=null; el.classList.remove('drag');
+      if(dy>90){ el.style.transform='translateY(100%)'; setTimeout(hide,200) } else { el.style.transform=''; if(bd) bd.style.opacity='' } }
+    [el.querySelector('.ch-grab'),el.querySelector('.ch-h')].forEach(function(h){
+      h.addEventListener('touchstart',start,{passive:true}); h.addEventListener('touchmove',move,{passive:false});
+      h.addEventListener('touchend',end); h.addEventListener('touchcancel',end);
+    });
+  }
+  function hide(){ open=false; if(box) box.remove(); box=null; if(bd){ bd.remove(); bd=null } btn.style.display=''; poll() }
   btn.onclick=function(){ show() };
   window.TPChat={open:show};
   window.TPSupport={open:function(){show('help')}};

@@ -42,7 +42,7 @@ async function createPayment({ order, price, email }) {
   const value = Number(price).toFixed(2);
   const body = {
     amount: { value, currency: 'RUB' },
-    confirmation: { type: 'embedded' },
+    confirmation: { type: 'embedded', locale: 'ru_RU' },
     capture: true,
     description: `Туториал «Как начать с Claude», заказ ${order.slice(0, 8).toUpperCase()}`,
     metadata: { order_id: order },

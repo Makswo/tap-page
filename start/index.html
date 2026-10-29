@@ -213,7 +213,23 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
 /* pay */
 .pay{padding-block:36px 48px}
 .paybox{border-radius:26px;padding:22px;background:radial-gradient(90% 80% at 100% 0%,rgba(212,255,63,.12),transparent 60%),var(--s1);border:1px solid rgba(212,255,63,.35)}
-.prc{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:22px 0 4px;color:var(--tx2);font-size:14px}
+.prc{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 4px;color:var(--tx2);font-size:14px}
+.inside{margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.inside-h{font-family:var(--m);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--tx2);margin-bottom:10px}
+.inside .lst{margin:0}
+.inside .paygem{margin:14px 0 0}
+#ykform{background:#fff;border-radius:18px}
+@media (max-width:640px){
+  .pay{padding-block:22px 36px}
+  .pay .qt{font-size:28px}
+  .pay .qh{font-size:14.5px;margin-bottom:16px}
+  .paybox{padding:16px;border-radius:22px}
+  .price{font-size:40px}
+  .prc span:last-child{font-size:13px}
+  .inside .lst{font-size:14px;gap:6px}
+  .inside .paygem{padding:6px 10px 6px 2px}
+  .inside .paygem span{font-size:12.5px}
+}
 .price{font-size:52px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1}
 .paybtns{display:grid;gap:10px;margin-top:16px}
 .fine{color:var(--tx3);font-size:13.5px;margin:14px 0 0}
@@ -381,10 +397,8 @@ body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
 <main id="s-pay" class="screen"><div class="wrap pay">
   <div class="eyebrow">Готово</div>
   <h2 class="qt">Твоя инструкция собрана</h2>
-  <p class="qh">Вот что внутри — всё под твои ответы:</p>
+  <p class="qh">Всё под твои ответы. Оплати — и она откроется сразу на этой странице.</p>
   <div class="paybox">
-    <div class="paygem" id="paygem"></div>
-    <ul class="lst yes" id="incl"></ul>
     <div class="prc"><span class="price" id="pprice">299 ₽</span><span>разово, доступ остаётся у тебя</span></div>
     <div id="ykbox" hidden>
       <div id="ykemail" hidden>
@@ -405,7 +419,12 @@ body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
       <button class="linkbtn" id="ymalt" type="submit" name="paymentType" value="AC" hidden>Не получается? Оплатить через ЮMoney</button>
       <p class="fine" id="ymnote">Оплата через ЮMoney. После оплаты вернёшься сюда — инструкция откроется сама.</p>
     </form>
-    <p class="fine">Оплачивая, ты принимаешь условия <a href="/oferta" target="_blank" rel="noopener">публичной оферты</a>. Инструкция откроется сразу после оплаты.</p>
+    <p class="fine">Оплачивая, ты принимаешь условия <a href="/oferta" target="_blank" rel="noopener">публичной оферты</a>.</p>
+    <div class="inside">
+      <div class="inside-h">Что внутри</div>
+      <ul class="lst yes" id="incl"></ul>
+      <div class="paygem" id="paygem"></div>
+    </div>
   </div>
   <div class="paylinks"><button class="linkbtn" id="ipaid" type="button">Я уже оплатил — проверить</button><button class="linkbtn" id="paybackq" type="button">Изменить ответы</button></div>
 </div></main>
@@ -626,7 +645,7 @@ function renderPay(d){
   } else { show('s-pay'); track('tutorial_paywall',{p:'yoomoney'}); }
 }
 function ykErr(t){$('ykerr').textContent=t||''}
-function ykReset(){ if(YK){try{YK.destroy()}catch(e){} YK=null} $('ykform').innerHTML=''; $('ykpay').hidden=false; $('ykpay').disabled=false; ykErr('') }
+function ykReset(){ ykWatchN++; if(YK){try{YK.destroy()}catch(e){} YK=null} $('ykform').innerHTML=''; $('ykpay').hidden=false; $('ykpay').disabled=false; ykErr('') }
 function loadYK(){
   if(window.YooMoneyCheckoutWidget) return Promise.resolve();
   if(ykLoading) return ykLoading;
@@ -645,16 +664,42 @@ function ykStart(){
     if(d.paid) return goWait(true);
     if(!d.token){ ykFail(d.error==='email'?'Проверь email — похоже, в нём опечатка.':'Не получилось открыть оплату. Попробуй ещё раз.'); return }
     $('ykpay').hidden=true;
-    YK=new window.YooMoneyCheckoutWidget({
-      confirmation_token:d.token,
-      customization:{colors:{control_primary:'#D4FF3F',control_primary_content:'#0B0E00',background:'#101214',text:'#F1F4EC',border:'#2B2F33',control_secondary:'#22262A'}},
-      error_callback:function(){ ykFail('Форма оплаты не загрузилась. Обнови страницу или оплати через ЮMoney ниже.') }
-    });
-    YK.on('success',function(){ track('tutorial_pay_success'); ykReset(); goWait(true) });
-    YK.on('fail',function(){ ykReset(); $('ykpay').textContent='Попробовать ещё раз · '+PAY.price+' ₽'; ykErr('Оплата не прошла. Попробуй другой способ или другую карту.') });
-    YK.render('ykform');
+    ykMount(d.token,true);
     track('tutorial_pay_click',{p:'yookassa'});
   },function(){ ykFail('Не получилось загрузить форму оплаты. Проверь интернет и попробуй ещё раз.') });
+}
+// Форма ЮKassa: светлая, в фирменных акцентах; сначала пробуем показать только карту, СБП и SberPay
+// (без кнопки «Другие способы»). Если магазину нельзя выбирать способы — показываем все.
+var YK_COLORS={control_primary:'#D4FF3F',control_primary_content:'#0B0E00',background:'#F3F4EF',text:'#0B0E00',border:'#E1E4DA',control_secondary:'#E7EAE1'};
+var ykWatchN=0;
+function ykMount(token,pick){
+  if(YK){try{YK.destroy()}catch(e){}} $('ykform').innerHTML='';
+  var c={colors:YK_COLORS}; if(pick) c.payment_methods=['bank_card','sbp','sberbank'];
+  YK=new window.YooMoneyCheckoutWidget({
+    confirmation_token:token, customization:c,
+    error_callback:function(err){
+      var code=err&&(err.error||err.code||err);
+      if(pick&&/payment_methods|combination/.test(String(code))) return ykMount(token,false);
+      ykFail('Форма оплаты не загрузилась. Обнови страницу или оплати через ЮMoney ниже.');
+    }
+  });
+  YK.on('success',function(){ track('tutorial_pay_success'); ykReset(); goWait(true) });
+  YK.on('fail',function(){ ykReset(); $('ykpay').textContent='Попробовать ещё раз · '+PAY.price+' ₽'; ykErr('Оплата не прошла. Попробуй другой способ или другую карту.') });
+  YK.render('ykform');
+  ykWatch();
+}
+// Пока форма открыта, сами проверяем оплату: как только деньги пришли — убираем форму ЮKassa
+// вместе с её экраном «Успешно» и рекламой и сразу открываем инструкцию.
+function ykWatch(){
+  var my=++ykWatchN;
+  (function tick(){
+    if(my!==ykWatchN||!YK) return;
+    api('GET','/api/tutorial-guide?order='+encodeURIComponent(ORDER||'')).then(function(d){
+      if(my!==ykWatchN||!YK) return;
+      if(d.status==='paid'&&d.html){ track('tutorial_pay_success'); track('tutorial_paid'); ykReset(); try{localStorage.removeItem('claude_start_paying')}catch(e){}; renderGuide(d); return }
+      setTimeout(tick,2500);
+    },function(){ setTimeout(tick,4000) });
+  })();
 }
 function ykFail(t){ ykReset(); $('ykpay').textContent='Попробовать ещё раз · '+((PAY&&PAY.price)||299)+' ₽'; ykErr(t) }
 $('ykpay').onclick=ykStart;
