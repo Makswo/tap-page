@@ -5,7 +5,7 @@ function TPVideo(o){
   'use strict';
   o=o||{};
   var key='tp_vw_closed_'+(o.key||'x');
-  try{ if(sessionStorage.getItem(key)) return }catch(e){}
+  if(!o.force){ try{ if(sessionStorage.getItem(key)) return }catch(e){} }
   var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
   if(!document.getElementById('tpvw-css')){
     var st=document.createElement('style'); st.id='tpvw-css';
@@ -96,5 +96,20 @@ function TPVideo(o){
   window.addEventListener('resize',function(){ try{var p=JSON.parse(sessionStorage.getItem(POS)||'null'); if(p) place(p)}catch(_){} });
   el.onclick=function(e){ if(moved){ moved=false; e.preventDefault(); return } toggleSound() };
   el.onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleSound()} };
+  // Переключить окно на другой ролик и сразу включить его со звуком (например, видео о курсе из карточки).
+  el.tpPlay=function(n){
+    if(!v) return;
+    o.src=n.src; o.mini=n.mini; o.key=n.key||o.key; if(n.title){ o.title=n.title; el.setAttribute('aria-label',n.title) }
+    if(n.poster) v.poster=n.poster;
+    loud=false; v.src=o.src; toggleSound();
+  };
+  TPVideo.cur=el;
   return el;
+}
+
+// Включить ролик в маленьком окне со звуком: если окно было закрыто — открываем снова.
+function TPVideoPlay(n){
+  var el=TPVideo.cur;
+  if(!el||!el.parentNode) el=TPVideo({key:n.key,src:n.src,mini:n.mini,poster:n.poster,title:n.title,force:true});
+  if(el&&el.tpPlay) el.tpPlay(n);
 }

@@ -53,6 +53,11 @@
 .step .gift i{width:9px;height:9px;border-radius:3px;transform:rotate(45deg);background:hsl(calc(264deg + var(--ch,0deg)) 80% 66%);box-shadow:0 0 8px hsl(calc(264deg + var(--ch,0deg)) 90% 60%)}
 .step .act{display:flex;flex-direction:column;align-items:flex-end;gap:10px;min-width:180px}
 .step .prc{font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.cvid{position:relative;width:96px;aspect-ratio:9/16;border-radius:14px;overflow:hidden;background:#0d0f11 center/cover no-repeat;border:1px solid var(--line2);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;padding:8px 6px;color:#fff;font-size:11.5px;font-weight:650;line-height:1.2;text-align:center;box-shadow:0 10px 26px rgba(0,0,0,.4);transition:transform .2s,border-color .2s}
+.cvid::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.8))}
+.cvid i,.cvid span{position:relative}.cvid i{position:absolute;top:50%;left:50%;width:34px;height:34px;margin:-26px 0 0 -17px;border-radius:50%;background:var(--acc);display:grid;place-items:center;box-shadow:0 0 0 0 rgba(212,255,63,.45);animation:cvp 2.4s ease-out infinite}
+.cvid svg{width:15px;height:15px;fill:var(--acc-ink);margin-left:2px}.cvid:hover{transform:translateY(-2px);border-color:var(--acc)}
+@keyframes cvp{0%{box-shadow:0 0 0 0 rgba(212,255,63,.45)}100%{box-shadow:0 0 0 12px rgba(212,255,63,0)}}
 .step .tag{font-family:var(--m);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3)}
 
 /* бонус: кристаллы */
@@ -71,6 +76,7 @@
   .step::before{width:34px;height:34px;border-radius:12px;font-size:14px}
   .step:not(:last-child)::after{left:32px;top:54px}
   .step .act{grid-column:2;flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;min-width:0}
+  .cvid{width:68px;border-radius:12px;font-size:0;padding:0}.cvid i{width:28px;height:28px;margin:-14px 0 0 -14px}
   .bonus{gap:14px;padding:18px}
   .bonus .gems{flex-wrap:wrap;gap:0}
   .bonus .gems .gem{width:38px;height:50px}
@@ -129,8 +135,8 @@
 
 <script src="/assets/gem.js"></script>
 <script src="/assets/account.js"></script>
-<script src="/assets/catalog.js"></script>
-<script src="/assets/video.js"></script>
+<script src="/assets/catalog.js?v=3"></script>
+<script src="/assets/video.js?v=3"></script>
 <script src="/assets/chat.js" defer></script>
 <script>
 (function(){
@@ -151,9 +157,15 @@ function renderCourses(){
       '<div class="tag">'+(open?'Доступен сейчас':'Скоро')+'</div><h3>'+esc(c.title)+'</h3><p>'+esc(c.desc)+'</p>'+
       '<div class="items">'+c.items.map(function(x){return '<span>'+esc(x)+'</span>'}).join('')+'</div>'+
       '<div class="gift"><i></i>Сертификат и кристалл «'+esc(g.name)+'»'+(have?' · получен':'')+'</div></div>'+
-      '<div class="act">'+(c.price?'<div class="prc">'+esc(c.price)+'</div>':'')+cta+'</div></li>';
+      '<div class="act">'+(c.price?'<div class="prc">'+esc(c.price)+'</div>':'')+
+      (c.video?'<button class="cvid" type="button" data-vid="'+c.id+'" style="background-image:url('+c.video.poster+')"><i><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></i><span>Макс о курсе</span></button>':'')+cta+'</div></li>';
   }).join('');
   [].forEach.call($('clist').querySelectorAll('[data-wait]'),function(b){b.onclick=function(){wait(b.getAttribute('data-wait'))}});
+  [].forEach.call($('clist').querySelectorAll('[data-vid]'),function(b){b.onclick=function(){
+    var c=courseById(b.getAttribute('data-vid'));
+    TPVideoPlay({key:'home',src:c.video.src,mini:c.video.mini,poster:c.video.poster,title:'Макс о курсе «'+c.title+'»'});
+    track('video_course',{course:c.id});
+  }});
 }
 function renderBonus(){
   var n=0; GEMS.forEach(function(g){if(OWNED[g.id])n++});
@@ -194,8 +206,8 @@ function load(){
 }
 render(); load();
 
-// Видео от Макса о курсах. Когда снимешь ролик: src:'/assets/video/home.mp4'
-TPVideo({key:'home',src:'/assets/video/start.mp4',mini:'/assets/video/start-mini.mp4',poster:'/assets/video/start-poster.jpg',title:'Макс о курсах',label:'Привет от Макса',
+// Видео от Макса о курсах; кнопки «Макс о курсе» в карточках переключают это окно на ролик курса.
+TPVideo({key:'home',src:'/assets/video/home.mp4',mini:'/assets/video/home-mini.mp4',poster:'/assets/video/home-poster.jpg',title:'Макс о курсах',label:'Привет от Макса',
   soonTitle:'Макс расскажет о курсах',soonText:'Видео скоро появится здесь: кто я, чему научат курсы и с чего начать.'});
 })();
 </script>
