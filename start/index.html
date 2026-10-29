@@ -672,21 +672,23 @@ function ykStart(method){
     if(!d.token){ ykFail(d.error==='email'?'Проверь email — похоже, в нём опечатка.':'Не получилось открыть оплату. Попробуй ещё раз.'); return }
     $('ykpay').hidden=true; $('ykpaysbp').hidden=true; $('ykother').hidden=false;
     try{localStorage.setItem('claude_start_paying',ORDER)}catch(e){}
-    ykMount(d.token);
-    track('tutorial_pay_click',{p:'yookassa',m:method});
+    ykMount(d.token,d.single?null:method);
+    track('tutorial_pay_click',{p:'yookassa',m:method,single:!!d.single});
   },function(){ ykFail('Не получилось загрузить форму оплаты. Проверь интернет и попробуй ещё раз.') });
 }
 // Форма ЮKassa: светлая, в фирменных акцентах.
 var YK_COLORS={control_primary:'#D4FF3F',control_primary_content:'#0B0E00',background:'#F3F4EF',text:'#0B0E00',border:'#E1E4DA',control_secondary:'#E7EAE1'};
 var ykWatchN=0;
-function ykMount(token){
+// pick — если платёж создан без выбора способа, просим виджет показать только выбранный (если магазину это разрешено).
+function ykMount(token,pick){
   if(YK){try{YK.destroy()}catch(e){}} $('ykform').innerHTML='';
-  var c={colors:YK_COLORS};
+  var c={colors:YK_COLORS}; if(pick) c.payment_methods=[pick];
   YK=new window.YooMoneyCheckoutWidget({
     // Куда вернуть после оплаты в приложении банка (T-Pay, SberPay, СБП) и после экрана «Успешно»:
     // по личной ссылке страница сама проверит оплату и откроет инструкцию.
     confirmation_token:token, customization:c, return_url:location.origin+'/start?order='+encodeURIComponent(ORDER),
-    error_callback:function(){
+    error_callback:function(err){
+      if(pick) return ykMount(token,null); // фильтр способов не разрешён — показываем форму без него
       ykFail('Форма оплаты не загрузилась. Обнови страницу или оплати через ЮMoney ниже.');
     }
   });

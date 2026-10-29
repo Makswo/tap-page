@@ -40,10 +40,20 @@ module.exports = async (req, res) => {
 
     const redirect = b.mode === 'redirect';
     const method = ['bank_card', 'sbp'].includes(b.method) ? b.method : null;
-    const p = await yk.createPayment({ order, price: price(), email, method, returnUrl: redirect ? `${site()}/start?order=${order}` : null });
+    const returnUrl = redirect ? `${site()}/start?order=${order}` : null;
+    let p, single = !!method;
+    try {
+      p = await yk.createPayment({ order, price: price(), email, method, returnUrl });
+    } catch (e) {
+      // ЮKassa может не разрешить выбор одного способа для виджета — тогда создаём обычный платёж.
+      if (!method || !(e.status >= 400 && e.status < 500)) throw e;
+      console.warn('yookassa: single method rejected, fallback', e.message);
+      p = await yk.createPayment({ order, price: price(), email, returnUrl });
+      single = false;
+    }
     await db.update('tutorial_orders', { id: `eq.${order}` }, { provider: 'yookassa', payment_id: p.id });
     if (redirect) return send(res, 200, { url: p.confirmation && p.confirmation.confirmation_url });
-    return send(res, 200, { token: p.confirmation && p.confirmation.confirmation_token });
+    return send(res, 200, { token: p.confirmation && p.confirmation.confirmation_token, single });
   } catch (e) {
     console.error(e);
     return send(res, 500, { error: 'server' });
