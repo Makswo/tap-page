@@ -51,7 +51,7 @@ module.exports = async (req, res) => {
       p = await yk.createPayment({ order, price: price(), email, returnUrl });
       single = false;
     }
-    await db.update('tutorial_orders', { id: `eq.${order}` }, { provider: 'yookassa', payment_id: p.id });
+    await db.update('tutorial_orders', { id: `eq.${order}` }, { provider: 'yookassa', payment_id: p.id, ...(email ? { email } : {}) });
     if (redirect) return send(res, 200, { url: p.confirmation && p.confirmation.confirmation_url });
     return send(res, 200, { token: p.confirmation && p.confirmation.confirmation_token, single });
   } catch (e) {
