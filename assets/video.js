@@ -50,7 +50,9 @@ function TPVideo(o){
   function toggleSound(){
     if(!v) return;
     if(!loud){
-      if(o.mini&&v.getAttribute('src')!==o.src){ v.src=o.src; v.loop=false; v.currentTime=0 }
+      // «Включить звук» — всегда с начала ролика.
+      if(o.mini&&v.getAttribute('src')!==o.src){ v.src=o.src }
+      v.loop=false; try{ v.currentTime=0 }catch(e){}
       v.muted=false; loud=true; v.play().catch(function(){ v.muted=true; loud=false; setBtn() });
       if(typeof track==='function') track('video_sound',{v:o.key});
     } else { v.muted=true; loud=false }
