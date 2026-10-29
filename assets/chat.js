@@ -41,7 +41,8 @@
     '.cc b{color:var(--tx)}.cc time{font-size:10.5px;color:var(--tx3)}'+
     '.ch-empty{margin:auto;text-align:center;color:var(--tx3);font-size:14px;max-width:270px}'+
     '.ch-f,.sp-f{display:flex;gap:8px;align-items:flex-end;padding:10px;border-top:1px solid var(--line)}'+
-    '.ch-f textarea,.sp-f textarea,.ch-f input{flex:1;min-width:0;min-height:44px;max-height:120px;resize:none;border-radius:16px;background:var(--bg);border:1px solid var(--line2);padding:11px 14px;font:15px/1.4 var(--f);color:var(--tx);outline:none}'+
+    '.ch-f textarea,.sp-f textarea,.ch-f input{flex:1;min-width:0;min-height:44px;max-height:120px;resize:none;border-radius:16px;background:var(--bg);border:1px solid var(--line2);padding:11px 14px;font:15px/1.4 var(--f);color:var(--tx);outline:none;overflow:hidden;scrollbar-width:none}'+
+    '.ch-f textarea::-webkit-scrollbar,.sp-f textarea::-webkit-scrollbar{display:none}'+
     '.ch-f textarea:focus,.sp-f textarea:focus,.ch-f input:focus{border-color:var(--acc)}'+
     '.ch-f button.go,.sp-f button{width:44px;height:44px;border-radius:50%;background:var(--acc);color:var(--acc-ink);display:grid;place-items:center;flex:none}.ch-f button[disabled],.sp-f button[disabled]{opacity:.4}'+
     '.ch-box{padding:12px 14px;border-top:1px solid var(--line)}.ch-box p{margin:0 0 10px;font-size:14px;color:var(--tx2)}.ch-box .row{display:flex;gap:8px}'+
@@ -73,6 +74,14 @@
     var fresh=[];
     list.forEach(function(m){ if(seen[m.id]) return; seen[m.id]=1; MSG.push(m); fresh.push(m); if(m.id>lastId) lastId=m.id });
     if(MSG.length>200) MSG=MSG.slice(-200);
+    if(!isNew&&fresh.length&&!open){
+      // Первая загрузка страницы: показываем, что появилось с прошлого визита.
+      var last=lsGet('tp_chat_seen'), shown=+lsGet('tp_chat_toast')||0;
+      if(last!==null){ unread=fresh.filter(function(m){return m.id>+last}).length; drawBtn() }
+      var fresh2w=Date.now()-14*864e5;
+      var cr0=fresh.filter(function(m){return m.kind==='crystal'&&m.id>shown&&new Date(m.at).getTime()>fresh2w}).pop();
+      if(cr0) setTimeout(function(){ if(!open) toast(cr0) },1500);
+    }
     if(isNew&&fresh.length){
       var others=fresh.filter(function(m){return !(me&&m.kind==='msg'&&m.nick===me.nick)});
       if(!open||tab!=='chat'){ unread+=others.length; drawBtn() }
@@ -81,13 +90,15 @@
     }
     return fresh.length;
   }
+  function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+  function lsSet(k,v){try{localStorage.setItem(k,String(v))}catch(e){}}
   function poll(){
     clearTimeout(timer);
     if(document.hidden){ timer=setTimeout(poll,15000); return }
     var url='/api/chat'+(lastId?'?after='+lastId:'')+((open&&!meLoaded)?(lastId?'&':'?')+'me=1':'');
     var wantMe=open&&!meLoaded;
     api('GET',url).then(function(d){
-      if(d.messages){ var n=add(d.messages,primed); primed=true; if(open&&tab==='chat'&&n) drawMsgs() }
+      if(d.messages){ var n=add(d.messages,primed); primed=true; if(open&&tab==='chat'&&n){ drawMsgs(); lsSet('tp_chat_seen',lastId) } }
       if(wantMe){ meLoaded=true; me=d.me||null; if(open&&tab==='chat'){ drawFoot(); drawMsgs() } }
     },function(){}).then(function(){ timer=setTimeout(poll,open&&tab==='chat'?4000:25000) });
   }
@@ -99,7 +110,8 @@
     var t=document.createElement('div'); t.className='ch-toast'; t.style.setProperty('--ch',g[1]+'deg');
     t.innerHTML='<i class="gd"></i><span><b>'+esc(m.nick||'Новый участник')+'</b> получил кристалл «'+esc(g[0])+'»</span>';
     t.onclick=function(){ t.remove(); show('chat') };
-    document.body.appendChild(t); setTimeout(function(){ if(t.parentNode) t.remove() },6000);
+    if(m.id>(+lsGet('tp_chat_toast')||0)) lsSet('tp_chat_toast',m.id);
+    document.body.appendChild(t); setTimeout(function(){ if(t.parentNode) t.remove() },9000);
   }
 
   /* ---------- общий чат ---------- */
@@ -155,7 +167,7 @@
       },function(){ sending=false; go.disabled=false; setErr('Нет связи.') });
     };
     ta.onkeydown=function(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); cf.onsubmit(e) } };
-    ta.oninput=function(){ ta.style.height=''; ta.style.height=Math.min(120,ta.scrollHeight)+'px' };
+    ta.oninput=function(){ ta.style.height=''; ta.style.height=Math.min(120,ta.scrollHeight)+'px'; ta.style.overflowY=ta.scrollHeight>120?'auto':'hidden' };
     if(window.innerWidth>640) ta.focus();
   }
 
@@ -203,14 +215,14 @@
     [].forEach.call(box.querySelectorAll('.ch-tabs button'),function(b){b.classList.toggle('on',b.getAttribute('data-t')===tab)});
     if(tab==='chat'){
       body.innerHTML='<div class="ch-m"></div><div class="ch-foot"></div>';
-      unread=0; drawBtn(); drawMsgs(); drawFoot(); poll();
+      unread=0; drawBtn(); lsSet('tp_chat_seen',lastId); drawMsgs(); drawFoot(); poll();
     } else {
       body.innerHTML='<div class="sp-m"></div><form class="sp-f"><textarea rows="1" maxlength="1500" placeholder="Опиши вопрос…"></textarea><button type="submit" aria-label="Отправить"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>'+
         '<div class="sp-n">Отвечает ИИ по вопросам портала, может ошибаться. Сложный случай — <a href="mailto:mxmgin@gmail.com">mxmgin@gmail.com</a></div>';
       var ta=body.querySelector('textarea'), f=body.querySelector('form');
       f.onsubmit=function(e){e.preventDefault(); var v=ta.value; ta.value=''; ta.style.height=''; ask(v)};
       ta.onkeydown=function(e){ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();f.onsubmit(e)} };
-      ta.oninput=function(){ta.style.height='';ta.style.height=Math.min(120,ta.scrollHeight)+'px'};
+      ta.oninput=function(){ta.style.height='';ta.style.height=Math.min(120,ta.scrollHeight)+'px';ta.style.overflowY=ta.scrollHeight>120?'auto':'hidden'};
       drawHelp(); if(window.innerWidth>640) ta.focus();
     }
   }
