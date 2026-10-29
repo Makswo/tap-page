@@ -10,7 +10,7 @@ var COURSES=[
   {id:'montage', gem:'montage', status:'soon', title:'Студия авто-монтажа в Claude',
    desc:'Как собрать в Claude студию, которая монтирует вертикальные ролики: режет дубли и паузы, ставит субтитры и плашки.',
    items:['Монтаж по расшифровке речи','Субтитры и плашки в твоём стиле','Готовый ролик за минуты'],
-   video:{src:'/assets/video/montage.mp4',mini:'/assets/video/montage-mini.mp4',poster:'/assets/video/montage-poster.jpg'}},
+   video:{src:'/assets/video/montage.mp4?v=2',mini:'/assets/video/montage-mini.mp4?v=2',poster:'/assets/video/montage-poster.jpg?v=2'}},
   {id:'assistant', gem:'assistant', status:'soon', title:'Личный помощник в Claude',
    desc:'Как сделать помощника, который знает твои дела: помнит контекст, разбирает входящие и готовит план дня.',
    items:['Память о тебе и твоих проектах','Разбор почты и календаря','План дня и напоминания']}
