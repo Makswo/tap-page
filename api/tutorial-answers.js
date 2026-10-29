@@ -35,6 +35,8 @@ module.exports = async (req, res) => {
       price: price(),
       provider: yk.enabled() ? 'yookassa' : 'yoomoney',
       needEmail: yk.enabled() && yk.receipts(),
+      // 1 — на телефонах тоже встроенный виджет (включать, когда ЮKassa отключит T-Pay или разрешит выбор способов).
+      mobileEmbedded: process.env.YOOKASSA_MOBILE_EMBEDDED === '1',
       // Кошелёк ЮMoney — запасной способ, если он настроен.
       pay: wallet ? {
         action: 'https://yoomoney.ru/quickpay/confirm',
