@@ -15,7 +15,12 @@ async function certFor(user, order, course = 'start') {
   if (have.length) return have[0];
   const ins = await db.insertIgnore('certificates', { user_id: user.id, course, order_id: order });
   if (ins.length) {
-    try { await db.insert('chat_messages', { user_id: user.id, kind: 'crystal', course }); } catch (e) { console.warn('chat crystal', e.message); }
+    // Кристалл уже объявлен в чате при оплате — просто подписываем его ником; иначе объявляем сейчас.
+    try {
+      const ev = order ? await db.select('chat_messages', { select: 'id', order_id: `eq.${order}`, kind: 'eq.crystal' }) : [];
+      if (ev.length) await db.update('chat_messages', { id: `eq.${ev[0].id}` }, { user_id: user.id });
+      else await db.insert('chat_messages', { user_id: user.id, kind: 'crystal', course, order_id: order || null });
+    } catch (e) { console.warn('chat crystal', e.message); }
     return ins[0];
   }
   const again = await db.select('certificates', q);

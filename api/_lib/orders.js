@@ -20,6 +20,25 @@ async function sendGuideLink(row) {
   if (r.ok.length) await db.update('tutorial_orders', { id: `eq.${row.id}` }, { guide_emailed_at: new Date().toISOString() });
 }
 
+// Новый кристалл в общем чате — сразу после оплаты, без ника (ник подставится, когда человек зарегистрируется).
+// Один кристалл на человека: повторная покупка с того же аккаунта или почты в чат не попадает.
+async function announceCrystal(row) {
+  if (!row) return;
+  if (row.user_id) {
+    const c = await db.select('certificates', { select: 'id', user_id: `eq.${row.user_id}`, course: 'eq.start', limit: '1' });
+    if (c.length) return;
+  }
+  if (row.email) {
+    const prev = await db.select('tutorial_orders', { select: 'id', email: `eq.${row.email}`, status: 'eq.paid', id: `neq.${row.id}`, limit: '1' });
+    if (prev.length) return;
+  }
+  try {
+    await db.insert('chat_messages', { kind: 'crystal', course: 'start', order_id: row.id, user_id: row.user_id || null });
+  } catch (e) {
+    if (!/409|23505|duplicate/.test(e.message)) throw e;
+  }
+}
+
 async function markPaid(order, fields) {
   const rows = await db.update('tutorial_orders', { id: `eq.${order}`, status: 'neq.paid' }, {
     status: 'paid',
@@ -27,6 +46,7 @@ async function markPaid(order, fields) {
     ...fields,
   });
   for (const row of rows || []) {
+    try { await announceCrystal(row); } catch (e) { console.warn('chat crystal', e.message); }
     try { await sendGuideLink(row); } catch (e) { console.warn('guide email', e.message); }
   }
   return rows;

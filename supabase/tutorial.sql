@@ -120,3 +120,7 @@ create table if not exists public.chat_blocked (
   reason text
 );
 alter table public.chat_blocked enable row level security;
+
+-- Кристалл в чате сразу после оплаты: связь с заказом, одно событие на заказ.
+alter table public.chat_messages add column if not exists order_id uuid references public.tutorial_orders(id) on delete set null;
+create unique index if not exists chat_messages_order_uniq on public.chat_messages(order_id);
