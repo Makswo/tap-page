@@ -194,6 +194,9 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
 .pin:focus{border-color:var(--acc)}
 .pin.bad{border-color:var(--bad)}
 .perr{color:var(--bad);font-size:14px;min-height:20px;margin-top:8px}
+.promo #go{width:100%;max-width:420px}.promo .phint{margin-top:10px}
+.pshow{margin-top:14px;font-size:14px;color:var(--tx2)}.pbox{margin-top:10px}
+@media (max-width:640px){.promo #go{max-width:none}}
 .phint{color:var(--tx2);font-size:14.5px;margin:2px 0 0}
 #resume{margin-top:18px}
 /* analysis + wait */
@@ -387,10 +390,13 @@ body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
   <div class="meta"><span class="chip">10 вопросов</span><span class="chip">≈ 5 минут</span><span class="chip">план на 7 дней</span><span class="chip" style="color:var(--acc);border-color:rgba(212,255,63,.4)">+ 50 запросов в подарок</span></div>
   </div><div class="hgem" id="hgem"></div></div>
   <form class="promo" id="pf" autocomplete="off" novalidate>
-    <label for="code">Промокод из директа</label>
-    <div class="prow"><input id="code" class="pin" placeholder="Например, CLAUDE26" maxlength="40" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="go"><button class="btn pri lg" id="go" type="submit">Начать <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+    <button class="btn pri lg" id="go" type="submit">Начать — вопросы бесплатно <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    <p class="phint">Инструкция — 299 ₽ после вопросов, когда увидишь, что в ней будет.</p>
+    <button class="linkbtn pshow" id="pshow" type="button">Есть промокод?</button>
+    <div class="pbox" id="pbox" hidden>
+      <div class="prow"><input id="code" class="pin" placeholder="Промокод" maxlength="40" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="go" aria-label="Промокод"><button class="btn gho lg" id="gocode" type="submit">Применить</button></div>
+    </div>
     <div class="perr" id="perr" role="alert"></div>
-    <p class="phint">Нет кода? Напиши <span class="word">СТАРТ</span> в директ <a href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">@makswo</a> — пришлю. Вопросы бесплатно, инструкция — 299 ₽ после них.</p>
   </form>
   <button class="btn gho lg" id="resume" type="button" hidden>Моя инструкция</button>
   <p class="phint" style="margin-top:14px">Уже покупал? Открой свою личную ссылку — она была на странице инструкции. Потерял — напиши в директ <a href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">@makswo</a>, восстановлю.</p>
@@ -478,7 +484,7 @@ body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
 <script src="/assets/bonus.js?v=2"></script>
 <script src="/assets/account.js"></script>
 <script src="/assets/video.js?v=3"></script>
-<script src="/assets/chat.js?v=2" defer></script>
+<script src="/assets/chat.js?v=3" defer></script>
 <script>
 (function(){
 'use strict';
@@ -599,14 +605,19 @@ $('back').onclick=function(){ if(i>0){i--;renderQ()} else show('s-intro') };
 
 /* ---------- промокод ---------- */
 function perr(t){$('perr').textContent=t||'';$('code').classList.toggle('bad',!!t)}
+function showCode(v){ $('pbox').hidden=false; $('pshow').hidden=true; if(v) $('code').value=v }
+$('pshow').onclick=function(){ showCode(); $('code').focus() };
+// Начать можно без кода; промокод (например, бесплатный) — по желанию.
 $('pf').onsubmit=function(e){
   e.preventDefault();
-  var code=$('code').value.trim(); if(!code){perr('Впиши промокод из директа');$('code').focus();return}
-  var b=$('go'); b.disabled=true; perr('');
+  var byCode=e.submitter?e.submitter.id==='gocode':!$('pbox').hidden&&document.activeElement===$('code');
+  var code=$('pbox').hidden?'':$('code').value.trim();
+  if(byCode&&!code){perr('Впиши промокод');$('code').focus();return}
+  var b=$(byCode?'gocode':'go'); b.disabled=true; perr('');
   api('POST','/api/tutorial-start',{code:code}).then(function(d){
     b.disabled=false;
-    if(d.order){ setOrder(d.order); A={}; i=0; try{localStorage.removeItem(KEY);localStorage.removeItem(DAYS_KEY)}catch(_){}; track('tutorial_start'); show('s-quiz'); renderQ(); return }
-    if(d._s===403||d._s===400) perr('Такого кода нет. Проверь, как написал, или возьми свежий: напиши СТАРТ в директ @makswo.');
+    if(d.order){ setOrder(d.order); A={}; i=0; try{localStorage.removeItem(KEY);localStorage.removeItem(DAYS_KEY)}catch(_){}; track('tutorial_start',{code:code?1:0}); show('s-quiz'); renderQ(); return }
+    if(d._s===403||d._s===400) perr('Такого промокода нет. Проверь, как написал, — или начни без него.');
     else perr('Не получилось связаться с сервером. Попробуй ещё раз через минуту.');
   });
 };
@@ -617,7 +628,7 @@ function finish(){
   $('pbar').style.width='100%';
   try{localStorage.setItem(KEY,JSON.stringify(A))}catch(e){}
   track('tutorial_finish',{role:A.role,pain:A.pain});
-  if(!ORDER){show('s-intro');perr('Сначала впиши промокод');return}
+  if(!ORDER){show('s-intro');perr('Нажми «Начать», чтобы ответить на вопросы');return}
   var PAIN={mail:'почта и переписки',texts:'тексты и посты',tables:'таблицы и отчёты',plan:'планирование',search:'поиск информации',study:'учёба'};
   var DV={iphone:'iPhone',android:'Android',win:'Windows',mac:'Mac'};
   var steps=['Смотрю, чем ты занимаешься',
@@ -635,7 +646,7 @@ function finish(){
     var d=r[1];
     if(d.paid){ try{localStorage.setItem('claude_start_paying',ORDER)}catch(e){}; return goWait(true) }
     if(d.pay) return renderPay(d);
-    if(d._s===404){setOrder(null);show('s-intro');perr('Сессия устарела. Впиши промокод ещё раз — ответы сохранятся.');return}
+    if(d._s===404){setOrder(null);show('s-intro');perr('Сессия устарела. Нажми «Начать» ещё раз — ответы сохранятся.');return}
     $('atitle').textContent='Не получилось связаться с сервером';
     $('alist').innerHTML='<li class="ok"><span>Ответы сохранены на этом устройстве.</span></li>';
     $('aretry').hidden=false;
@@ -779,7 +790,7 @@ function goWait(fast){
     api('GET','/api/tutorial-guide?order='+encodeURIComponent(ORDER||'')).then(function(d){
       if(my!==polling) return;
       if(d.status==='paid'&&d.html){track('tutorial_paid');return renderGuide(d)}
-      if(d._s===404||d._s===400){$('worb').hidden=true;$('wtitle').textContent='Заказ не найден';$('wtext').textContent='Начни заново с промокодом.';$('wretry').hidden=false;return}
+      if(d._s===404||d._s===400){$('worb').hidden=true;$('wtitle').textContent='Заказ не найден';$('wtext').textContent='Начни заново: нажми «Начать» на первом экране.';$('wretry').hidden=false;return}
       n++;
       if(n>=(fast?20:60)){$('worb').hidden=true;$('wtitle').textContent='Оплата пока не пришла';$('wtext').textContent='Если деньги уже списались — подожди пару минут и нажми «Проверить ещё раз». Не помогло — напиши в директ @makswo и назови номер заказа ниже.';$('wretry').hidden=false;return}
       setTimeout(tick,3000);
@@ -900,7 +911,7 @@ document.addEventListener('click',function(e){
 $('hgem').innerHTML=bonusIcon('start','lg')+'<div class="gcap">Бонус к инструкции</div><div class="gsub">50 готовых запросов под твою работу</div><div class="gcr">'+crystalTag('start')+'</div>';
 (function boot(){
   var q=new URLSearchParams(location.search);
-  if(q.get('code')) $('code').value=q.get('code');
+  if(q.get('code')) showCode(q.get('code'));
   if(q.get('preview')){
     api('GET','/api/tutorial-guide?preview='+encodeURIComponent(q.get('preview'))+'&p='+encodeURIComponent(q.get('p')||'')).then(function(d){ if(d.html) renderGuide(d); });
     return;

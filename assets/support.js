@@ -14,8 +14,8 @@
     h=h.replace(/([\w.+-]+@[\w-]+\.[\w.]+)/g,function(m){return m.indexOf('href')>-1?m:'<a href="mailto:'+m+'">'+m+'</a>'});
     return h.replace(/\n/g,'<br>');
   }
-  var HELLO='Привет! Я ИИ-помощник tap-page. Помогу с курсами, промокодом, оплатой, доступом к инструкции и входом в профиль. Что случилось?';
-  var SUGG=['Где взять промокод?','Оплатил, но инструкции нет','Не приходит код на почту','Как сохранить инструкцию?'];
+  var HELLO='Привет! Я ИИ-помощник tap-page. Помогу с курсами, оплатой, доступом к инструкции и входом в профиль. Что случилось?';
+  var SUGG=['С чего начать?','Оплатил, но инструкции нет','Не приходит код на почту','Как сохранить инструкцию?'];
 
   var css=document.createElement('style');
   css.textContent='.sp-btn{position:fixed;left:max(16px,env(safe-area-inset-left));bottom:calc(16px + env(safe-area-inset-bottom));z-index:45;display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 18px 0 14px;border-radius:999px;background:var(--s2);border:1px solid var(--line2);color:var(--tx);font:650 14.5px var(--f);box-shadow:0 12px 30px rgba(0,0,0,.5);cursor:pointer}'+
