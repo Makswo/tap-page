@@ -39,7 +39,7 @@ function TPVideo(o){
   var MUTE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4z" fill="currentColor"/><path d="M22 9l-6 6M16 9l6 6"/></svg>';
   var LOUD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
   var el=document.createElement('div'); el.className='vw'; el.setAttribute('role','button'); el.setAttribute('tabindex','0'); el.setAttribute('aria-label',o.title||'Видео');
-  el.innerHTML=(o.src?'<video src="'+esc(o.mini||o.src)+'"'+(o.poster?' poster="'+esc(o.poster)+'"':'')+' muted loop playsinline autoplay preload="metadata"></video>':ph(false))+
+  el.innerHTML=(o.src?'<video'+(o.poster?' poster="'+esc(o.poster)+'"':'')+' muted loop playsinline autoplay preload="none"></video>':ph(false))+
     (o.src?'<button class="vsnd" type="button" aria-label="Включить звук"><i>'+MUTE+'</i><span>Включить звук</span></button>':'')+
     '<button class="vx" type="button" aria-label="Скрыть видео">'+X+'</button>';
   document.body.appendChild(el);
@@ -57,6 +57,11 @@ function TPVideo(o){
       if(typeof track==='function') track('video_sound',{v:o.key});
     } else { v.muted=true; loud=false }
     setBtn();
+  }
+  // Сначала показываем обложку, а ролик начинаем грузить, когда страница уже загрузилась, — чтобы не тормозить сайт.
+  if(v){
+    var startMini=function(){ if(v.getAttribute('src')) return; v.preload='auto'; v.src=o.mini||o.src; v.play().catch(function(){}) };
+    if(document.readyState==='complete') setTimeout(startMini,200); else window.addEventListener('load',function(){ setTimeout(startMini,200) });
   }
   if(v) v.addEventListener('ended',function(){ loud=false; if(o.mini){ v.src=o.mini } v.loop=true; v.muted=true; v.play().catch(function(){}); setBtn() });
   if(btn) btn.onclick=function(e){ e.stopPropagation(); if(moved){moved=false;return} toggleSound() };
