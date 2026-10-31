@@ -18,13 +18,9 @@ async function context(req, order) {
   try {
     const user = await auth.userFrom(req);
     if (user) {
-      const [certs, guides] = await Promise.all([
-        db.select('certificates', { select: 'course', user_id: `eq.${user.id}` }),
-        db.select('tutorial_orders', { select: 'id,paid_at', user_id: `eq.${user.id}`, status: 'eq.paid' }),
-      ]);
+      const guides = await db.select('tutorial_orders', { select: 'id,paid_at', user_id: `eq.${user.id}`, status: 'eq.paid' });
       lines.push(`Пользователь вошёл в профиль: ${user.email}.`);
       lines.push(`Оплаченных инструкций в профиле: ${guides.length}${guides.length ? ' (ссылки: ' + guides.map((g) => 'https://tap-page.ru/start?order=' + g.id).join(', ') + ')' : ''}.`);
-      lines.push(`Кристаллов в профиле: ${certs.length}${certs.length ? ' (' + certs.map((c) => c.course).join(', ') + ')' : ''}.`);
       return { user, text: lines.join('\n') };
     }
     lines.push('Пользователь не вошёл в профиль.');

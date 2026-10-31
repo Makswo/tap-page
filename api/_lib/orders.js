@@ -20,7 +20,7 @@ async function sendGuideLink(row) {
   if (r.ok.length) await db.update('tutorial_orders', { id: `eq.${row.id}` }, { guide_emailed_at: new Date().toISOString() });
 }
 
-// Новый кристалл в общем чате — сразу после оплаты, без ника (ник подставится, когда человек зарегистрируется).
+// Кристалл в общем чате — сразу после оплаты, без ника (ник подставится, когда человек зарегистрируется).
 // Один кристалл на человека: повторная покупка с того же аккаунта или почты в чат не попадает.
 async function announceCrystal(row) {
   if (!row) return;

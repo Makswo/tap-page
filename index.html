@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://tap-page.ru/">
 <meta property="og:title" content="Курсы по Claude от Макса">
 <meta property="og:description" content="Пошаговые инструкции под твою работу — от первого запуска Claude до своего ИИ-помощника.">
-<meta property="og:image" content="https://tap-page.ru/assets/og-home.png">
+<meta property="og:image" content="https://tap-page.ru/assets/og-home.png?v=2">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta property="og:locale" content="ru_RU">
 <meta name="twitter:card" content="summary_large_image">
@@ -49,8 +49,8 @@
 .step .items span{display:inline-flex;gap:7px;align-items:center}
 .step .items span::before{content:"";width:6px;height:6px;border-radius:2px;background:var(--acc)}
 .step:not(.open) .items span::before{background:var(--tx3)}
-.step .gift{display:inline-flex;align-items:center;gap:7px;margin-top:12px;font-size:12.5px;color:var(--tx3)}
-.step .gift i{width:9px;height:9px;border-radius:3px;transform:rotate(45deg);background:hsl(calc(264deg + var(--ch,0deg)) 80% 66%);box-shadow:0 0 8px hsl(calc(264deg + var(--ch,0deg)) 90% 60%)}
+.step .cryl{margin-top:6px}
+.step .gift{display:inline-flex;align-items:center;gap:9px;margin-top:12px;font-size:13px;color:var(--tx3)}
 .step .act{display:flex;flex-direction:column;align-items:flex-end;gap:10px;min-width:180px}
 .step .prc{font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1}
 .cvid{position:relative;width:96px;aspect-ratio:9/16;border-radius:14px;overflow:hidden;background:#0d0f11 center/cover no-repeat;border:1px solid var(--line2);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;padding:8px 6px;color:#fff;font-size:11.5px;font-weight:650;line-height:1.2;text-align:center;box-shadow:0 10px 26px rgba(0,0,0,.4);transition:transform .2s,border-color .2s}
@@ -60,14 +60,17 @@
 @keyframes cvp{0%{box-shadow:0 0 0 0 rgba(212,255,63,.45)}100%{box-shadow:0 0 0 12px rgba(212,255,63,0)}}
 .step .tag{font-family:var(--m);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3)}
 
-/* бонус: кристаллы */
-.bonus{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-top:56px;padding:20px 22px;border-radius:22px;border:1px solid rgba(196,148,255,.25);background:linear-gradient(90deg,rgba(168,85,247,.09),var(--s1) 60%)}
-.bonus .gems{display:flex;gap:2px}
-.bonus .gems .gem{margin:0}
-.bonus .txt{flex:1;min-width:240px}
-.bonus .txt b{display:block;font-size:16px}
-.bonus .txt span{font-size:14px;color:var(--tx2)}
-.bonus a{color:var(--tx2);font-size:14px}
+/* бонусы к курсам */
+.bonus{margin-top:56px;padding:22px;border-radius:22px;border:1px solid var(--line);background:var(--s1)}
+.bonus .bh{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.bonus .bh b{font-size:18px;letter-spacing:-.01em}.bonus .bh span{font-size:14px;color:var(--tx2)}
+.bonus .bgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.bonus .bt{display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:18px;background:var(--s2);border:1px solid var(--line)}
+.bonus .bt small{font-family:var(--m);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3)}
+.bonus .bt b{font-size:15px;line-height:1.3}.bonus .bt em{font-style:normal;font-size:13px;color:var(--tx2);line-height:1.4}
+.bonus .bt.open{border-color:rgba(212,255,63,.35)}
+.step .gift .bico{width:26px;height:26px;border-radius:8px}
+.step .gift b{color:var(--tx);font-weight:600}
 
 @media (max-width:760px){
   .hero{padding-top:40px}
@@ -77,9 +80,9 @@
   .step:not(:last-child)::after{left:32px;top:54px}
   .step .act{grid-column:2;flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;min-width:0}
   .cvid{width:68px;border-radius:12px;font-size:0;padding:0}.cvid i{width:28px;height:28px;margin:-14px 0 0 -14px}
-  .bonus{gap:14px;padding:18px}
-  .bonus .gems{flex-wrap:wrap;gap:0}
-  .bonus .gems .gem{width:38px;height:50px}
+  .bonus{padding:18px}
+  .bonus .bgrid{grid-template-columns:1fr 1fr;gap:10px}
+  .bonus .bt{padding:14px;gap:8px}.bonus .bt em{display:none}
   .ctas .btn{flex:1}
 }
 </style>
@@ -133,11 +136,11 @@
 <footer>Сделал Макс · <a href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">@makswo</a> · <a href="/oferta" target="_blank" rel="noopener">Публичная оферта</a> · Это не официальный материал Anthropic<br><span class="freq">ИП Малыгин Максим Валерьевич · ИНН 183512338627 · ОГРНИП 323180000018526 · <a href="mailto:mxmginarm@gmail.com">mxmginarm@gmail.com</a></span></footer>
 <div class="toast" id="toast"></div>
 
-<script src="/assets/gem.js"></script>
+<script src="/assets/bonus.js?v=2"></script>
 <script src="/assets/account.js"></script>
-<script src="/assets/catalog.js?v=4"></script>
+<script src="/assets/catalog.js?v=5"></script>
 <script src="/assets/video.js?v=3"></script>
-<script src="/assets/chat.js" defer></script>
+<script src="/assets/chat.js?v=2" defer></script>
 <script>
 (function(){
 'use strict';
@@ -150,13 +153,14 @@ function toast(t){var el=$('toast');el.textContent=t;el.classList.add('on');setT
 
 function renderCourses(){
   $('clist').innerHTML=COURSES.map(function(c){
-    var g=gemById(c.gem), open=c.status==='open', w=WAIT[c.id], have=OWNED[c.gem];
+    var bn=BONUS[c.id], open=c.status==='open', w=WAIT[c.id], have=OWNED[c.id];
     var cta=open?'<a class="btn pri" href="'+c.href+'">'+(have?'Открыть':'Начать')+'</a>':
       (w?'<button class="btn done" type="button" disabled>✓ Сообщим на почту</button>':'<button class="btn gho" type="button" data-wait="'+c.id+'">Сообщить о старте</button>');
-    return '<li class="step '+(open?'open':'soon')+'" id="c-'+c.id+'" style="--ch:'+g.hue+'deg"><div>'+
+    return '<li class="step '+(open?'open':'soon')+'" id="c-'+c.id+'"><div>'+
       '<div class="tag">'+(open?'Доступен сейчас':'Скоро')+'</div><h3>'+esc(c.title)+'</h3><p>'+esc(c.desc)+'</p>'+
       '<div class="items">'+c.items.map(function(x){return '<span>'+esc(x)+'</span>'}).join('')+'</div>'+
-      '<div class="gift"><i></i>Сертификат и кристалл «'+esc(g.name)+'»'+(have?' · получен':'')+'</div></div>'+
+      '<div class="gift">'+bonusIcon(c.id,open?'sm':'sm mute')+'<span>В подарок: <b>'+esc(bn.title)+'</b>'+(have?' · у тебя в профиле':'')+'</span></div>'+
+      '<div class="cryl">'+crystalTag(c.id)+'</div></div>'+
       '<div class="act">'+(c.price?'<div class="prc">'+esc(c.price)+'</div>':'')+
       (c.video?'<button class="cvid" type="button" data-vid="'+c.id+'" style="background-image:url('+c.video.poster+')"><i><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></i><span>Макс о курсе</span></button>':'')+cta+'</div></li>';
   }).join('');
@@ -168,11 +172,8 @@ function renderCourses(){
   }});
 }
 function renderBonus(){
-  var n=0; GEMS.forEach(function(g){if(OWNED[g.id])n++});
-  $('bonus').innerHTML='<div class="gems">'+GEMS.map(function(g){return gemHTML({size:'sm',hue:g.hue,locked:!OWNED[g.id],secret:g.secret})}).join('')+'</div>'+
-    '<div class="txt"><b>Бонус за прогресс: коллекция кристаллов</b><span>За каждый курс — именной сертификат и кристалл в профиль. Всего 7, три из них секретные.'+(n?' Собрано '+n+' из 7.':'')+'</span></div>'+
-    '<a href="/me">'+(TP.user()?'Моя коллекция':'Войти в профиль')+' →</a>';
-  mountGems($('bonus'));
+  $('bonus').innerHTML='<div class="bh"><b>С каждым курсом — полезный бонус</b><span>Готовые инструменты, которые сразу экономят время</span></div><div class="bgrid">'+
+    COURSES.map(function(c){var bn=BONUS[c.id];return '<div class="bt'+(c.status==='open'?' open':'')+'">'+bonusIcon(c.id,c.status==='open'?'':'mute')+'<small>'+esc(c.title)+'</small><b>'+esc(bn.title)+'</b><em>'+esc(bn.sub)+'</em></div>'}).join('')+'</div>';
 }
 function render(){ renderCourses(); renderBonus(); $('acct').textContent=TP.user()?'Профиль':'Войти' }
 

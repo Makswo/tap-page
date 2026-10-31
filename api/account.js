@@ -1,4 +1,4 @@
-// Профиль: GET — мои сертификаты, инструкции и лист ожидания;
+// Профиль: GET — мои инструкции и лист ожидания;
 // POST claim — привязать оплаченную инструкцию к профилю; POST waitlist — сообщить о старте курса.
 'use strict';
 const db = require('./_lib/db');
@@ -8,14 +8,14 @@ const { UUID, send, body } = require('./_lib/util');
 // Курсы, которые пока «скоро» (на них можно подписаться).
 const SOON = ['nabor', 'montage', 'assistant'];
 
-// Выдать сертификат на кристалл курса (один на курс) и сообщить об этом в общий чат.
+// Отметить, что курс есть в профиле (одна запись на курс), и объявить кристалл в общем чате.
 async function certFor(user, order, course = 'start') {
   const q = { select: 'id,course,order_id,created_at', user_id: `eq.${user.id}`, course: `eq.${course}` };
   const have = await db.select('certificates', q);
   if (have.length) return have[0];
   const ins = await db.insertIgnore('certificates', { user_id: user.id, course, order_id: order });
   if (ins.length) {
-    // Кристалл уже объявлен в чате при оплате — просто подписываем его ником; иначе объявляем сейчас.
+    // Кристалл уже объявлен в чате при оплате — подписываем его ником; иначе объявляем сейчас.
     try {
       const ev = order ? await db.select('chat_messages', { select: 'id', order_id: `eq.${order}`, kind: 'eq.crystal' }) : [];
       if (ev.length) await db.update('chat_messages', { id: `eq.${ev[0].id}` }, { user_id: user.id });

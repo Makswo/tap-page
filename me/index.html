@@ -19,6 +19,9 @@
 .who{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px}
 .logincard{margin-top:24px;border-radius:24px;padding:24px;background:var(--s1);border:1px solid var(--line2)}
 .empty{color:var(--tx2);margin:0}
+.bl{display:grid;gap:10px}.bi{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:16px;border-radius:20px;background:var(--s1);border:1px solid var(--line)}.bi.got{border-color:rgba(212,255,63,.35)}.bi small{display:block;font-family:var(--m);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3)}.bi b{display:block;font-size:16px;margin:2px 0}.bi span{display:block;font-size:13.5px;color:var(--tx2)}.bi .cry{display:inline-flex;margin-top:5px;font-size:11.5px}.bi .cry i{width:6px;height:6px}.bi em{font-style:normal;font-size:12.5px;color:var(--tx3);white-space:nowrap}
+.cbtns{display:flex;gap:8px;flex-wrap:wrap}
+@media (max-width:560px){.bi{grid-template-columns:auto 1fr}.bi .btn,.bi em{grid-column:2;justify-self:start}}
 .waits{display:flex;gap:8px;flex-wrap:wrap}
 .loading{color:var(--tx3);padding:40px 0}
 .adm{border-radius:22px;padding:18px;background:var(--s1);border:1px solid var(--line);margin-top:12px}
@@ -52,10 +55,10 @@
 
 <footer>Сделал Макс · <a href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">@makswo</a> · <a href="/oferta" target="_blank" rel="noopener">Публичная оферта</a> · Это не официальный материал Anthropic<br><span class="freq">ИП Малыгин Максим Валерьевич · ИНН 183512338627 · ОГРНИП 323180000018526 · <a href="mailto:mxmginarm@gmail.com">mxmginarm@gmail.com</a></span></footer>
 
-<script src="/assets/gem.js"></script>
+<script src="/assets/bonus.js?v=2"></script>
 <script src="/assets/account.js"></script>
-<script src="/assets/catalog.js"></script>
-<script src="/assets/chat.js" defer></script>
+<script src="/assets/catalog.js?v=5"></script>
+<script src="/assets/chat.js?v=2" defer></script>
 <script>
 (function(){
 'use strict';
@@ -65,12 +68,18 @@ window.track=track;
 var esc=TP.esc, app=$('app');
 var UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+function bonusesHTML(have){
+  return '<div class="bl">'+COURSES.map(function(c){
+    var bn=BONUS[c.id], got=!!have[c.id];
+    return '<div class="bi'+(got?' got':'')+'">'+bonusIcon(c.id,got?'':'mute')+'<div><small>'+esc(c.title)+'</small><b>'+esc(bn.title)+'</b><span>'+esc(bn.sub)+'</span>'+crystalTag(c.id,got?'кристалл «'+CRYSTAL[c.id][0]+'» получен':null)+'</div>'+
+      (got?'<a class="btn gho sm" href="'+have[c.id]+'">Открыть</a>':'<em>'+(c.status==='open'?'Вместе с курсом':'Скоро')+'</em>')+'</div>';
+  }).join('')+'</div>';
+}
 function guest(){
-  app.innerHTML='<div class="top"><div class="eyebrow">Профиль</div><h1>Твои кристаллы <span class="acc">и инструкции</span></h1>'+
-    '<p class="lead">Войди по почте: здесь хранятся купленные инструкции и сертификаты на кристаллы. Код придёт в письме, пароль не нужен.</p></div>'+
-    '<div class="logincard" id="lf"></div><section class="sec"><div class="eyebrow">Коллекция</div><h2>Собери все 7 кристаллов</h2><div id="coll"></div></section>';
+  app.innerHTML='<div class="top"><div class="eyebrow">Профиль</div><h1>Твои инструкции <span class="acc">и материалы</span></h1>'+
+    '<p class="lead">Войди по почте: здесь хранятся купленные инструкции и бонусы к курсам. Код придёт в письме, пароль не нужен.</p></div>'+
+    '<div class="logincard" id="lf"></div><section class="sec"><div class="eyebrow">Бонусы</div><h2>Что заберёшь с курсами</h2>'+bonusesHTML({})+'</section>';
   TP.loginForm($('lf'),{cta:'Войти',onDone:function(){app.innerHTML='<p class="loading">Загружаем профиль…</p>';load()}});
-  $('coll').innerHTML=collectionHTML({}); mountGems($('coll'));
 }
 
 // Если на этом устройстве уже есть оплаченная инструкция — сразу привязываем её к профилю.
@@ -81,24 +90,21 @@ function claimLocal(){
 }
 
 function render(d){
-  var owned={}; (d.certificates||[]).forEach(function(c){owned[c.course]=true});
-  var certs=(d.certificates||[]).map(certHTML).join('');
-  var linked={}; (d.certificates||[]).forEach(function(c){if(c.order_id)linked[c.order_id]=1});
-  var extra=(d.guides||[]).filter(function(g){return !linked[g.id]});
+  var guides=d.guides||[], have={};
+  if(guides.length) have.start='/start?order='+encodeURIComponent(guides[0].id)+'#bonus';
   var waits=(d.waitlist||[]).map(function(id){var c=courseById(id);return c?'<a class="chip" href="/#c-'+id+'">'+esc(c.title)+'</a>':''}).join('');
-  app.innerHTML='<div class="top"><div class="eyebrow">Профиль</div><h1>Твоя <span class="acc">коллекция</span></h1>'+
+  app.innerHTML='<div class="top"><div class="eyebrow">Профиль</div><h1>Мои <span class="acc">материалы</span></h1>'+
     '<div class="who"><span class="chip">'+esc(d.user.email)+'</span><button class="linkbtn" id="out" type="button">Выйти</button></div></div>'+
     (d.admin?'<section class="sec" id="admin" style="padding-top:36px"><div class="eyebrow">Админ</div><h2>Рассылки</h2><p class="loading" style="padding:0">Загружаем…</p></section>':'')+
-    '<section class="sec" style="padding-top:36px"><div id="coll"></div></section>'+
-    '<section class="sec"><div class="eyebrow">Сертификаты</div><h2>Твои кристаллы</h2>'+
-      (certs||'<p class="empty">Пока нет ни одного. Пройди <a href="/start">«Как начать с Claude»</a> — первый кристалл придёт вместе с инструкцией.</p>')+'</section>'+
-    (extra.length?'<section class="sec"><div class="eyebrow">Инструкции</div><h2>Ещё инструкции</h2>'+extra.map(function(g){
-      var dt=g.paid_at?new Date(g.paid_at).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}):'';
-      return '<div class="card"><h3>Как начать с Claude</h3><p>'+esc(dt)+(g.sphere?' · '+esc(g.sphere):'')+'</p><p><a class="btn gho sm" href="/start?order='+encodeURIComponent(g.id)+'">Открыть</a></p></div>'}).join('')+'</section>':'')+
+    '<section class="sec" style="padding-top:36px"><div class="eyebrow">Инструкции</div><h2>Мои инструкции</h2>'+
+      (guides.length?guides.map(function(g){
+        var dt=g.paid_at?new Date(g.paid_at).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}):'';
+        var u='/start?order='+encodeURIComponent(g.id);
+        return '<div class="card"><h3>Как начать с Claude</h3><p>'+esc(dt)+(g.sphere?' · '+esc(g.sphere):'')+'</p><p class="cbtns"><a class="btn pri sm" href="'+u+'">Открыть инструкцию</a><a class="btn gho sm" href="'+u+'#bonus">50 запросов</a></p></div>'}).join(''):
+        '<p class="empty">Пока нет ни одной. Пройди <a href="/start">«Как начать с Claude»</a> — инструкция и бонус появятся здесь.</p>')+'</section>'+
+    '<section class="sec"><div class="eyebrow">Бонусы</div><h2>Бонусы к курсам</h2>'+bonusesHTML(have)+'</section>'+
     '<section class="sec"><div class="eyebrow">Скоро</div><h2>Жду курсы</h2>'+
       (waits?'<div class="waits">'+waits+'</div><p class="empty" style="margin-top:12px">Напишем на почту, когда откроются.</p>':'<p class="empty">Пока ни на что не подписан. <a href="/#courses">Посмотреть курсы</a></p>')+'</section>';
-  $('coll').innerHTML=collectionHTML(owned);
-  mountGems(app);
   $('out').onclick=function(){TP.logout();track('auth_logout');guest()};
   if(d.admin) loadAdmin();
 }

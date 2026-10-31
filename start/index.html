@@ -12,8 +12,8 @@
 <meta property="og:site_name" content="tap-page">
 <meta property="og:url" content="https://tap-page.ru/start">
 <meta property="og:title" content="Как начать с Claude — личный туториал">
-<meta property="og:description" content="10 вопросов — и инструкция под тебя: установка, первые запросы и план на 7 дней.">
-<meta property="og:image" content="https://tap-page.ru/assets/og-start.png">
+<meta property="og:description" content="10 вопросов — инструкция под тебя и 50 готовых запросов в подарок.">
+<meta property="og:image" content="https://tap-page.ru/assets/og-start.png?v=2">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta property="og:locale" content="ru_RU">
 <meta name="twitter:card" content="summary_large_image">
@@ -227,7 +227,7 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
   .price{font-size:40px}
   .prc span:last-child{font-size:13px}
   .inside .lst{font-size:14px;gap:6px}
-  .inside .paygem{padding:6px 10px 6px 2px}
+  .inside .paygem{padding:8px 10px 8px 8px}
   .inside .paygem span{font-size:12.5px}
 }
 .price{font-size:52px;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1}
@@ -269,10 +269,11 @@ body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
 .rdy p{margin:0 0 20px;color:var(--tx2);font-size:15px}
 .rdy .btn{width:100%}
 @media print{.rdy{display:none!important}}
-.gcard{margin:0 0 6px;border-radius:20px;padding:12px 16px;border:1px solid rgba(196,148,255,.28);background:linear-gradient(90deg,rgba(168,85,247,.11),var(--s1) 55%)}
+.gcard{margin:0 0 6px;border-radius:20px;padding:12px 16px;border:1px solid rgba(212,255,63,.22);background:linear-gradient(90deg,rgba(212,255,63,.07),var(--s1) 55%)}
 .gtop{display:flex;align-items:center;gap:14px}
 .gtop .gem{margin:0 4px 0 2px;flex:none}
-.gt .eyebrow{color:#d8b4fe;font-size:11px}
+.gt .eyebrow{color:var(--acc);font-size:11px}
+.gt span a{color:var(--tx)}
 .gt b{display:block;font-size:15.5px;margin-top:2px}
 .gt span{display:block;font-size:13px;color:var(--tx2)}
 #acctbox{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
@@ -283,10 +284,25 @@ body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
 .fab.on{transform:none}
 @media (max-width:640px){.savebtns .btn{flex:1}}
 
+/* бонус: 50 запросов */
+.bonusico{margin:0 0 14px}
+.bgrp{margin:0 0 12px;border:1px solid var(--line);border-radius:20px;background:var(--s1);overflow:hidden}
+.bgrp summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;cursor:pointer;list-style:none;font-size:17px}
+.bgrp summary::-webkit-details-marker{display:none}
+.bgrp summary span{font-family:var(--m);font-size:12px;color:var(--tx3);white-space:nowrap}
+.bgrp summary::after{content:"";width:9px;height:9px;border-right:2px solid var(--tx2);border-bottom:2px solid var(--tx2);transform:rotate(45deg);margin:-4px 4px 0 0;transition:transform .2s;flex:none}
+.bgrp[open] summary::after{transform:rotate(-135deg);margin-top:4px}
+.bgrp[open] summary{border-bottom:1px solid var(--line)}
+.bq{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start;padding:12px 14px 0}
+.bq:last-child{padding-bottom:14px}
+.bq .bn{font-family:var(--m);font-size:12px;color:var(--tx3);padding-top:14px;text-align:right}
+.bq .pr{margin:0}
+@media print{.bgrp{border-color:#ccc}}
 /* crystal */
 .hero{display:grid;grid-template-columns:1fr 180px;gap:20px;align-items:center}
 .hgem{text-align:center}
-.hgem .gcap{font-family:var(--m);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#d8b4fe;margin-top:14px}
+.hgem .gcap{font-family:var(--m);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);margin-top:14px}
+.hgem .gcr{margin-top:6px}@media (max-width:640px){.hgem .gcr{display:none}}.gcard .cry,.paygem .cry{display:flex;margin-top:4px;font-size:11.5px}
 .hgem .gsub{font-size:13.5px;color:var(--tx2);margin-top:4px;line-height:1.35}
 .hgem .gtap{font-size:12px;color:var(--tx3);margin-top:6px}
 .gem{--gc:hsl(calc(272deg + var(--gh,0deg)) 100% 66%);--ga:hsl(calc(170deg + var(--gh,0deg)) 100% 62%);position:relative;width:74px;height:96px;margin:0 auto;isolation:isolate;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
@@ -314,7 +330,7 @@ body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
 .gstar{transform-box:fill-box;transform-origin:center;animation:gstar 3.4s ease-in-out infinite}@keyframes gstar{0%,55%,100%{opacity:0;transform:scale(.3) rotate(0)}72%{opacity:1;transform:scale(1) rotate(45deg)}}
 @keyframes gcore{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.08)}}
 @keyframes gpop{0%{transform:scale(.4);opacity:0;filter:brightness(3)}60%{transform:scale(1.08);opacity:1;filter:brightness(1.6)}100%{transform:none;filter:none}}
-.paygem{display:flex;gap:14px;align-items:center;margin:0 0 14px;padding:10px 14px 10px 6px;border-radius:18px;background:linear-gradient(90deg,rgba(168,85,247,.16),rgba(168,85,247,0));border:1px solid rgba(168,85,247,.3)}
+.paygem{display:flex;gap:14px;align-items:center;margin:0 0 14px;padding:10px 14px 10px 10px;border-radius:18px;background:linear-gradient(90deg,rgba(212,255,63,.08),rgba(212,255,63,0));border:1px solid rgba(212,255,63,.25)}
 .paygem b{display:block;font-size:15.5px}
 .paygem span{font-size:13.5px;color:var(--tx2)}
 .cert{position:relative;display:grid;grid-template-columns:130px 1fr;gap:18px;align-items:center;margin:4px 0 14px;padding:20px;border-radius:24px;overflow:hidden;
@@ -327,7 +343,7 @@ body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
 .cert dd{margin:0;color:var(--tx)}
 .cert .cno{font-family:var(--m);letter-spacing:.08em;color:#e9d5ff}
 .cert p{margin:12px 0 0;font-size:13.5px;color:var(--tx2)}
-@media (max-width:640px){.hero{grid-template-columns:1fr 64px;gap:0 12px;align-items:start}.htext{display:contents}.htext .eyebrow{grid-column:1;grid-row:1}.htext h1{grid-column:1;grid-row:2}.htext .lead,.htext .meta{grid-column:1/-1}.hgem{grid-column:2;grid-row:1/3;align-self:center;margin:0}.hgem .gem{width:56px;height:73px}.hgem .gcap,.hgem .gsub,.hgem .gtap{display:none}.cert{grid-template-columns:1fr;text-align:center}.cert dl{text-align:left;max-width:300px;margin:0 auto}}
+@media (max-width:640px){.hero{grid-template-columns:1fr 64px;gap:0 12px;align-items:start}.htext{display:contents}.htext .eyebrow{grid-column:1;grid-row:1}.htext h1{grid-column:1;grid-row:2}.htext .lead,.htext .meta{grid-column:1/-1}.hgem{grid-column:2;grid-row:1/3;align-self:center;margin:0}.hgem .gem{width:56px;height:73px}.hgem .bico.lg{width:60px;height:60px;border-radius:18px}.hgem .gcap,.hgem .gsub,.hgem .gtap{display:none}.cert{grid-template-columns:1fr;text-align:center}.cert dl{text-align:left;max-width:300px;margin:0 auto}}
 @media (prefers-reduced-motion:reduce){.gem *,.gem{animation:none!important}}
 
 @media (max-width:640px){
@@ -368,7 +384,7 @@ body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
   <div class="eyebrow">Личный туториал</div>
   <h1>Как начать <span class="acc">с Claude</span></h1>
   <p class="lead">Ответь на 10 коротких вопросов — и получишь инструкцию под себя: где установить, какой первый запрос дать и что поручить Claude в первую очередь.</p>
-  <div class="meta"><span class="chip">10 вопросов</span><span class="chip">≈ 5 минут</span><span class="chip">план на 7 дней</span><span class="chip" style="color:#d8b4fe;border-color:rgba(168,85,247,.4)">+ Кристалл старта</span></div>
+  <div class="meta"><span class="chip">10 вопросов</span><span class="chip">≈ 5 минут</span><span class="chip">план на 7 дней</span><span class="chip" style="color:var(--acc);border-color:rgba(212,255,63,.4)">+ 50 запросов в подарок</span></div>
   </div><div class="hgem" id="hgem"></div></div>
   <form class="promo" id="pf" autocomplete="off" novalidate>
     <label for="code">Промокод из директа</label>
@@ -459,10 +475,10 @@ body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
 <div class="toast" id="toast">Скопировано</div>
 <button class="btn pri fab" id="fab" type="button" hidden><svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Сохранить PDF</button>
 
-<script src="/assets/gem.js"></script>
+<script src="/assets/bonus.js?v=2"></script>
 <script src="/assets/account.js"></script>
 <script src="/assets/video.js?v=3"></script>
-<script src="/assets/chat.js" defer></script>
+<script src="/assets/chat.js?v=2" defer></script>
 <script>
 (function(){
 'use strict';
@@ -502,7 +518,7 @@ var Q=[
    ['other','ChatGPT или другие','Claude ещё не пробовал'],
    ['claude','Уже пробовал Claude','Но не прижилось']]},
  {id:'goal',type:'one',t:'Что хочешь получить за первую неделю?',h:'Одна цель — проще заметить результат.',o:[
-   ['time','Сэкономить время',''],['write','Писать лучше и быстрее',''],
+   ['time','Сэкономить время',''],['write','Быстрее писать письма, посты и тексты',''],
    ['understand','Разобраться в задаче',''],['automate','Скинуть рутину','']]},
  {id:'time',type:'one',t:'Сколько времени готов уделять?',h:'План на неделю подстроится.',o:[
    ['m5','5 минут в день','Совсем маленькие шаги'],
@@ -638,7 +654,7 @@ function renderPay(d){
   var ok='<svg class="ic" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   $('incl').innerHTML=inc.map(function(x){return '<li>'+ok+'<span>'+esc(x)+'</span></li>'}).join('');
   $('pprice').textContent=d.price+' ₽';
-  $('paygem').innerHTML=gemHTML({size:'sm',hue:gemFromOrder(ORDER).hue})+'<div><b>+ Кристалл старта</b><span>Именной сертификат с номером — твой знак того, что ты начал.</span></div>'; mountGems($('paygem'));
+  $('paygem').innerHTML=bonusIcon('start')+'<div><b>+ Бонус: 50 готовых запросов</b><span>Под твою работу и задачи — скопировал и вставил.</span>'+crystalTag('start')+'</div>';
   var yk=d.provider==='yookassa';
   // форма кошелька ЮMoney: основная или запасная
   var f=$('payform');
@@ -779,7 +795,8 @@ function pdfHint(){
   if(/Android/.test(ua)) return 'На Android: нажми «Сохранить PDF» → в поле принтера выбери «Сохранить как PDF».';
   return 'В окне печати выбери «Сохранить как PDF» вместо принтера.';
 }
-function savePDF(){ track('tutorial_pdf'); window.print() }
+function savePDF(){ track('tutorial_pdf'); [].forEach.call(document.querySelectorAll('.bgrp'),function(d){d.open=true}); window.print() }
+window.addEventListener('beforeprint',function(){ [].forEach.call(document.querySelectorAll('.bgrp'),function(d){d.open=true}) });
 // Окно «Инструкция готова» — один раз, сразу после оплаты (или бесплатного промокода).
 function readyModal(){
   var m=document.createElement('div'); m.className='rdy'; m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true');
@@ -800,7 +817,7 @@ function renderGuide(d){
   var preview=/[?&]preview=/.test(location.search);
   var link=(!preview&&ORDER)?(location.origin+'/start?order='+ORDER):'';
   var sb=$('savebox');
-  var gm=gemFromOrder(preview?'preview':ORDER), a=d.answers||{};
+  var a=d.answers||{};
   var ROLE={biz:'Свой бизнес',emp:'Найм',free:'Фриланс',blog:'Блог',study:'Учёба',other:'Своё дело'};
   var when=d.paid_at?new Date(d.paid_at):new Date();
   var dt=when.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
@@ -810,12 +827,11 @@ function renderGuide(d){
     (link?'<div class="mylink"><code>'+esc(link)+'</code></div><p>Личная ссылка открывает инструкцию с любого устройства. Отправь её себе в «Избранное» Telegram или в заметки.</p>':'')+
     '<p style="margin-top:12px"><button class="linkbtn" id="redo" type="button">Пройти вопросы заново</button></p></div>';
   if(sb){
-    var no=preview?'DEMO-0000':gm.no.slice(0,4)+'-'+gm.no.slice(4);
     var card=document.createElement('div'); card.className='gcard';
-    card.innerHTML='<div class="gtop">'+gemHTML({size:'sm',hue:gm.hue})+'<div class="gt"><div class="eyebrow">Бонус · сертификат № '+esc(no)+'</div>'+
-      '<b>Кристалл старта · '+esc(gm.name)+'</b><span>Выдан '+esc(dt)+' · огранка по 10 твоим ответам</span></div></div>'+
+    card.innerHTML='<div class="gtop">'+bonusIcon('start')+'<div class="gt"><div class="eyebrow">Бонус к инструкции</div>'+
+      '<b>50 готовых запросов под тебя</b><span>Подобраны по твоим ответам · <a href="#bonus">Открыть</a></span>'+crystalTag('start','и кристалл «Аметист» — его увидят в общем чате')+'</div></div>'+
       ((!preview&&ORDER)?'<div id="acctbox"></div>':'');
-    sb.parentNode.insertBefore(card,sb.nextSibling); mountGems(card);
+    sb.parentNode.insertBefore(card,sb.nextSibling);
     if(!preview&&ORDER) renderAcct($('acctbox'));
   }
   var pr=$('pr'); if(pr) pr.onclick=savePDF;
@@ -836,12 +852,15 @@ function renderGuide(d){
   $('resume').hidden=false;
   show('s-res');
   if(fresh) setTimeout(readyModal,350);
+  // Пришли по ссылке «50 запросов» из профиля — сразу к бонусу.
+  if(JUMP&&document.getElementById(JUMP)){ var j=JUMP; JUMP=''; setTimeout(function(){ document.getElementById(j).scrollIntoView({block:'start'}) },300) }
 }
-// Профиль: предлагаем зарегистрироваться и привязываем инструкцию с кристаллом.
+var JUMP='';
+// Профиль: предлагаем зарегистрироваться и привязываем инструкцию с бонусом.
 function renderAcct(box){
   var u=TP.user();
   if(!u){
-    box.innerHTML='<p class="gp">Сохрани инструкцию и кристалл в профиль на tap-page — они будут под рукой на любом устройстве.</p><div id="acf"></div>';
+    box.innerHTML='<p class="gp">Сохрани инструкцию и бонус в профиль на tap-page — они будут под рукой на любом устройстве.</p><div id="acf"></div>';
     TP.loginForm($('acf'),{cta:'Зарегистрироваться',onDone:function(){track('tutorial_signup');renderAcct(box)}});
     return;
   }
@@ -878,7 +897,7 @@ document.addEventListener('click',function(e){
 
 
 /* ---------- старт страницы ---------- */
-$('hgem').innerHTML=gemHTML({})+'<div class="gcap">Кристалл старта</div><div class="gsub">в подарок к инструкции — именной, с сертификатом</div><div class="gtap">нажми на кристалл</div>'; mountGems($('hgem'));
+$('hgem').innerHTML=bonusIcon('start','lg')+'<div class="gcap">Бонус к инструкции</div><div class="gsub">50 готовых запросов под твою работу</div><div class="gcr">'+crystalTag('start')+'</div>';
 (function boot(){
   var q=new URLSearchParams(location.search);
   if(q.get('code')) $('code').value=q.get('code');
@@ -887,7 +906,7 @@ $('hgem').innerHTML=gemHTML({})+'<div class="gcap">Кристалл старта
     return;
   }
   var o=q.get('order');
-  if(o&&UUID.test(o)){ setOrder(o); history.replaceState(null,'',location.pathname); goWait(false); return }
+  if(o&&UUID.test(o)){ JUMP=location.hash.slice(1); setOrder(o); history.replaceState(null,'',location.pathname); goWait(false); return }
   if(ORDER){
     var paying=null; try{paying=localStorage.getItem('claude_start_paying')}catch(e){}
     api('GET','/api/tutorial-guide?order='+encodeURIComponent(ORDER)).then(function(d){

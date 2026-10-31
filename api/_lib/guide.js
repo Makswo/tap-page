@@ -1,6 +1,7 @@
 // Сборка личной инструкции. Живёт только на сервере: текст отдаётся
 // после оплаты, в коде страницы его нет.
 'use strict';
+var bonus=require('./bonus');
 var CHECKED='27 октября 2026';
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
@@ -9,7 +10,7 @@ var ROLE_LBL={biz:'Свой бизнес',emp:'Найм',free:'Фриланс',b
 var ROLE_SAY={biz:'У меня свой бизнес',emp:'Я работаю в найме',free:'Я фрилансер',blog:'Я веду блог',study:'Я учусь',other:'Я занимаюсь'};
 var PAIN_LBL={mail:'почта и переписки',texts:'тексты и посты',tables:'таблицы и отчёты',plan:'планирование',search:'поиск информации',study:'учёба'};
 var DEV_LBL={iphone:'iPhone',android:'Android',win:'Windows',mac:'Mac'};
-var GOAL_LBL={time:'сэкономить время',write:'писать лучше и быстрее',understand:'разобраться в своей задаче',automate:'скинуть рутину'};
+var GOAL_LBL={time:'сэкономить время',write:'быстрее писать письма, посты и тексты',understand:'разобраться в своей задаче',automate:'скинуть рутину'};
 var STYLE_LINE={steps:'Отвечай по шагам, списком, без лишних объяснений.',ex:'Показывай пример того, что должно получиться.',why:'Коротко объясняй, почему предлагаешь именно так.'};
 
 function ctx(a){
@@ -240,6 +241,16 @@ function bSafety(){
   return sec('safety','08 · Безопасность','Что отдавать ИИ, а что нет','',h);
 }
 
+function bBonus(a){
+  var G=bonus.groups(a,lead(a)), n=0;
+  var h=G.map(function(g,k){
+    return '<details class="bgrp"'+(k===0?' open':'')+'><summary><b>'+esc(g.title)+'</b><span>'+g.items.length+' запросов</span></summary>'+
+      g.items.map(function(t){n++;return '<div class="bq"><span class="bn">'+n+'</span>'+P(t)+'</div>'}).join('')+'</details>';
+  }).join('');
+  return sec('bonus','Бонус к курсу','50 готовых запросов <span class="acc">под тебя</span>','Подобраны по твоим ответам: под твою работу, под то, что отнимает больше всего времени, и на каждый день. Замени то, что в [скобках], — и отправляй.',
+    '<div class="bonusico">'+ICON_PROMPTS+'</div>'+h);
+}
+var ICON_PROMPTS='<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="6" width="28" height="34" rx="5"/><path d="M8 13v25a5 5 0 0 0 5 5h21"/><path d="M19 16h14M19 23h14M19 30h8"/></svg>';
 
 function build(a){
   var f=firstPrompt(a);
@@ -252,9 +263,10 @@ function build(a){
       '<li><span><a href="#install">Поставь Claude</a> на '+devs(a).map(function(x){return DEV_LBL[x]}).join(' и ')+'</span></li>'+
       '<li><span><a href="#first">Первый запрос</a>: «'+esc(f.t)+'»</span></li>'+
       '<li><span><a href="#project">Создай проект</a>, чтобы Claude помнил, кто ты</span></li>'+
+      '<li><span><a href="#bonus">Бонус: 50 запросов</a> под твою работу</span></li>'+
     '</ol></div>';
-  h+=bInstall(a)+bSetup(a)+bFirst(a)+bProject(a)+bTasks(a)+bMail(a)+bWeek(a)+bSafety();
-  h+='<div class="bridge"><div class="eyebrow">Что дальше</div><h2>Стартовый набор Макса</h2><p>Когда Claude станет привычкой, следующий шаг — чтобы рутина делалась без тебя. В наборе простые инструкции, как скинуть на ИИ базовые дела и оставить время на себя.</p><a class="btn pri" href="/#c-nabor">Узнать о наборе</a></div>';
+  h+=bInstall(a)+bSetup(a)+bFirst(a)+bProject(a)+bTasks(a)+bMail(a)+bWeek(a)+bSafety()+bBonus(a);
+  h+='<div class="bridge"><div class="eyebrow">Что дальше</div><h2>Стартовый набор Макса</h2><p>Когда Claude станет привычкой, следующий шаг — научить его твоей работе: набор скилов, чтобы он делал твои повторяющиеся задачи так же, как ты. В подарок к курсу — команда агентов для бизнеса.</p><a class="btn pri" href="/#c-nabor">Узнать о наборе</a></div>';
   h+='<div class="src">Факты о Claude проверены '+CHECKED+' по официальным страницам. Интерфейс и тарифы меняются — если кнопка называется чуть иначе, ищи по смыслу.<ul>'+
    '<li><a href="https://www.anthropic.com/supported-countries" target="_blank" rel="noopener">Страны, где доступен Claude</a></li>'+
    '<li><a href="https://claude.com/pricing" target="_blank" rel="noopener">Тарифы</a></li>'+

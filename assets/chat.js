@@ -1,5 +1,5 @@
 /* Общий чат tap-page и ИИ-помощь: кнопка «Чат» слева внизу.
-   Вкладка «Общий чат» — сообщения участников и события «получил кристалл» (api/chat.js).
+   Вкладка «Общий чат» — сообщения участников (api/chat.js).
    Вкладка «Помощь» — ИИ-поддержка по вопросам портала (api/support.js). */
 (function(){
   'use strict';
@@ -138,7 +138,7 @@
   function drawMsgs(){
     if(!box||tab!=='chat') return;
     var el=box.querySelector('.ch-m'), stick=el.scrollHeight-el.scrollTop-el.clientHeight<80;
-    el.innerHTML=MSG.length?MSG.map(msgHTML).join(''):'<div class="ch-empty">Здесь пока тихо. Напиши первым — а когда кто-то получит кристалл за курс, это появится здесь.</div>';
+    el.innerHTML=MSG.length?MSG.map(msgHTML).join(''):'<div class="ch-empty">Здесь пока тихо. Напиши первым — спроси, кто как пользуется Claude.</div>';
     if(stick||!el.dataset.init){ el.scrollTop=el.scrollHeight; el.dataset.init=1 }
     [].forEach.call(el.querySelectorAll('.adm button'),function(b){ b.onclick=function(){
       var id=+b.closest('.cm').getAttribute('data-id'), a=b.getAttribute('data-a');
