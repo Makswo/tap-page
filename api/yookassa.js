@@ -11,9 +11,18 @@ module.exports = async (req, res) => {
   try {
     const b = body(req);
     const id = b && b.object && b.object.id;
-    if (!yk.enabled() || !id || b.event !== 'payment.succeeded') { res.statusCode = 200; return res.end('ok: skip'); }
+    if (!yk.enabled() || !id || !['payment.succeeded', 'payment.canceled'].includes(b.event)) { res.statusCode = 200; return res.end('ok: skip'); }
 
     const p = await yk.getPayment(String(id));
+    // Платежи Glocal идут через этот же магазин ЮKassa, а адрес уведомлений
+    // у магазина один. Их узнаём по metadata.payment_id и пересылаем в Glocal —
+    // он сам перепроверит платёж в ЮKassa.
+    if (p.metadata && p.metadata.payment_id && !p.metadata.order_id) {
+      const to = process.env.GLOCAL_WEBHOOK_URL || 'https://glocal.pixelharbor.games/api/pay/yookassa';
+      const r = await fetch(to, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
+      if (!r.ok) throw new Error(`Glocal webhook ${r.status}`);
+      res.statusCode = 200; return res.end('ok: glocal');
+    }
     const order = String((p.metadata && p.metadata.order_id) || '');
     if (!UUID.test(order)) { res.statusCode = 200; return res.end('ok: no order'); }
     if (!yk.isPaid(p, order, price())) { res.statusCode = 200; return res.end('ok: not paid'); }
