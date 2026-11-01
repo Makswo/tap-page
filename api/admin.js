@@ -6,7 +6,7 @@ const auth = require('./_lib/auth');
 const mail = require('./_lib/mail');
 const { UUID, send, body, site } = require('./_lib/util');
 
-const COURSES = { nabor: 'Стартовый набор Макса', montage: 'Студия авто-монтажа в Claude', assistant: 'Личный помощник в Claude' };
+const COURSES = { nabor: 'Стартовый набор Макса', montage: 'Студия авто-монтажа с ИИ', assistant: 'Свой ИИ-помощник' };
 
 function page(res, title, text) {
   res.statusCode = 200;

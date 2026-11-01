@@ -31,8 +31,8 @@ async function context(req, order) {
       if (rows.length) {
         const o = rows[0];
         lines.push(o.status === 'paid'
-          ? `На этом устройстве есть ОПЛАЧЕННЫЙ заказ «Как начать с Claude». Его личная ссылка: https://tap-page.ru/start?order=${order}`
-          : `На этом устройстве есть начатый, но НЕ оплаченный заказ «Как начать с Claude» (${o.answers ? 'вопросы пройдены' : 'вопросы не пройдены'}). Продолжить: https://tap-page.ru/start`);
+          ? `На этом устройстве есть ОПЛАЧЕННЫЙ заказ «Как начать с ИИ». Его личная ссылка: https://tap-page.ru/start?order=${order}`
+          : `На этом устройстве есть начатый, но НЕ оплаченный заказ «Как начать с ИИ» (${o.answers ? 'вопросы пройдены' : 'вопросы не пройдены'}). Продолжить: https://tap-page.ru/start`);
       }
     }
   } catch (e) { console.warn('support ctx order', e.message); }

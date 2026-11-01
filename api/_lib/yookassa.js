@@ -47,7 +47,7 @@ async function createPayment({ order, price, email, returnUrl, method }) {
     capture: true,
     // Один способ оплаты (карта или СБП): форма покажет только его.
     ...(method === 'bank_card' || method === 'sbp' ? { payment_method_data: { type: method } } : {}),
-    description: `Туториал «Как начать с Claude», заказ ${order.slice(0, 8).toUpperCase()}`,
+    description: `Туториал «Как начать с ИИ», заказ ${order.slice(0, 8).toUpperCase()}`,
     metadata: { order_id: order },
   };
   if (receipts()) {
@@ -56,7 +56,7 @@ async function createPayment({ order, price, email, returnUrl, method }) {
       // Система налогообложения для чека: 6 — патент (ПСН), 2 — УСН «доходы».
       ...(process.env.YOOKASSA_TAX_SYSTEM ? { tax_system_code: Number(process.env.YOOKASSA_TAX_SYSTEM) } : {}),
       items: [{
-        description: 'Персональная инструкция «Как начать с Claude» (цифровой материал)',
+        description: 'Персональная инструкция «Как начать с ИИ» (цифровой материал)',
         quantity: '1.00',
         amount: { value, currency: 'RUB' },
         vat_code: Number(process.env.YOOKASSA_VAT_CODE || 1),
