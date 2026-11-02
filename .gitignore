@@ -4,3 +4,6 @@ desktop.ini
 tap_new*.html
 index_new*.html
 spasibo_new.html
+# мусор от npm pack и локальные заметки
+pkg*.tgz
+readme_add.md
