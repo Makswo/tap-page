@@ -124,3 +124,18 @@ alter table public.chat_blocked enable row level security;
 -- Кристалл в чате сразу после оплаты: связь с заказом, одно событие на заказ.
 alter table public.chat_messages add column if not exists order_id uuid references public.tutorial_orders(id) on delete set null;
 create unique index if not exists chat_messages_order_uniq on public.chat_messages(order_id);
+
+-- Метки источников (?from=start_r23): в заказе, в профиле и в заходах на страницы — для воронки в админке.
+alter table public.tutorial_orders add column if not exists src text;
+create index if not exists tutorial_orders_src_idx on public.tutorial_orders(src);
+alter table public.profiles add column if not exists src text;
+create table if not exists public.visits (
+  id bigint generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  vid text not null,       -- анонимный id браузера, без личных данных
+  page text not null,      -- home, start, me, kit, group, pro, other
+  src text
+);
+create index if not exists visits_time_idx on public.visits(created_at desc);
+create index if not exists visits_src_idx on public.visits(src, created_at desc);
+alter table public.visits enable row level security;

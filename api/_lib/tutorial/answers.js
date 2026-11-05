@@ -1,10 +1,10 @@
 // Шаг 2: сохраняем ответы и отдаём данные для формы оплаты ЮMoney.
 'use strict';
-const db = require('./_lib/db');
-const guide = require('./_lib/guide');
-const yk = require('./_lib/yookassa');
-const { markPaid } = require('./_lib/orders');
-const { UUID, price, site, send, body } = require('./_lib/util');
+const db = require('../db');
+const guide = require('../guide');
+const yk = require('../yookassa');
+const { markPaid } = require('../orders');
+const { UUID, price, site, send, body } = require('../util');
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return send(res, 405, { error: 'method' });

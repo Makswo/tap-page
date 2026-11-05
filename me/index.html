@@ -25,6 +25,15 @@
 @media (max-width:560px){.bi{grid-template-columns:auto 1fr;column-gap:12px}.bgem{grid-row:span 2;width:50px}.bi .btn,.bi em{grid-column:2;justify-self:start}}
 .waits{display:flex;gap:8px;flex-wrap:wrap}
 .loading{color:var(--tx3);padding:40px 0}
+.fper{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.ftab{overflow-x:auto;border-radius:18px;border:1px solid var(--line);background:var(--s1)}
+.ftab table{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
+.ftab th,.ftab td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+.ftab th:first-child,.ftab td:first-child{text-align:left}
+.ftab th{font-family:var(--m);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3);font-weight:500}
+.ftab td i{font-style:normal;color:var(--tx3);font-size:12px}
+.ftab tr.tot td{font-weight:700;border-bottom:0}
+.ftab .nos{color:var(--tx3)}
 .adm{border-radius:22px;padding:18px;background:var(--s1);border:1px solid var(--line);margin-top:12px}
 .adm-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
 .adm-h b{font-size:18px}
@@ -58,6 +67,7 @@
 
 <script src="/assets/gem.js"></script>
 <script src="/assets/bonus.js?v=2"></script>
+<script src="/assets/src.js?v=1"></script>
 <script src="/assets/account.js"></script>
 <script src="/assets/catalog.js?v=8"></script>
 <script src="/assets/chat.js?v=4" defer></script>
@@ -97,6 +107,7 @@ function render(d){
   var waits=(d.waitlist||[]).map(function(id){var c=courseById(id);return c?'<a class="chip" href="/#c-'+id+'">'+esc(c.title)+'</a>':''}).join('');
   app.innerHTML='<div class="top"><div class="eyebrow">Профиль</div><h1>Мои <span class="acc">материалы</span></h1>'+
     '<div class="who"><span class="chip">'+esc(d.user.email)+'</span><button class="linkbtn" id="out" type="button">Выйти</button></div></div>'+
+    (d.admin?'<section class="sec" id="funnel" style="padding-top:36px"><div class="eyebrow">Админ</div><h2>Воронка по меткам</h2><p class="loading" style="padding:0">Загружаем…</p></section>':'')+
     (d.admin?'<section class="sec" id="admin" style="padding-top:36px"><div class="eyebrow">Админ</div><h2>Рассылки</h2><p class="loading" style="padding:0">Загружаем…</p></section>':'')+
     '<section class="sec" style="padding-top:36px"><div class="eyebrow">Инструкции</div><h2>Мои инструкции</h2>'+
       (guides.length?guides.map(function(g){
@@ -109,7 +120,31 @@ function render(d){
       (waits?'<div class="waits">'+waits+'</div><p class="empty" style="margin-top:12px">Напишем на почту, когда откроются.</p>':'<p class="empty">Пока ни на что не подписан. <a href="/#courses">Посмотреть курсы</a></p>')+'</section>';
   if(window.mountGems) mountGems(app);
   $('out').onclick=function(){TP.logout();track('auth_logout');guest()};
-  if(d.admin) loadAdmin();
+  if(d.admin){ loadAdmin(); loadFunnel(30) }
+}
+
+/* ---------- панель админа: воронка по меткам ?from= ---------- */
+function loadFunnel(days){
+  var box=$('funnel'); if(!box) return;
+  TP.call('GET','/api/admin?funnel=1&days='+days).then(function(d){
+    if(!d.funnel){ box.innerHTML='<div class="eyebrow">Админ</div><h2>Воронка по меткам</h2><p class="empty">Не получилось загрузить ('+esc(d.error||d._status)+'). Если только что обновили сайт — выполни SQL с таблицей visits в Supabase.</p>'; return }
+    renderFunnel(d.funnel);
+  });
+}
+function renderFunnel(f){
+  var box=$('funnel');
+  function pct(a,b){ return b?' <i>'+Math.round(a*100/b)+'%</i>':'' }
+  function tr(r,head){
+    return '<tr'+(head?' class="tot"':'')+'><td>'+(head?'Всего':(r.src?esc(r.src):'<span class="nos">без метки</span>'))+'</td><td>'+r.visitors+'</td><td>'+r.started+'</td><td>'+r.answered+pct(r.answered,r.started)+'</td><td>'+r.paid+pct(r.paid,r.answered)+(r.free?' <i>+'+r.free+' беспл.</i>':'')+'</td><td>'+r.revenue.toLocaleString('ru-RU')+' ₽</td><td>'+(r.kit||'—')+'</td></tr>';
+  }
+  var P=[[7,'7 дней'],[30,'30 дней'],[90,'90 дней'],[0,'всё время']];
+  box.innerHTML='<div class="eyebrow">Админ</div><h2>Воронка по меткам</h2>'+
+    '<p class="empty">Ссылка с меткой: <code>tap-page.ru/start?from=start_r23</code> — латиница, цифры, _ и -. Метка живёт в браузере 30 дней.</p>'+
+    '<div class="fper">'+P.map(function(p){return '<button class="btn sm '+(p[0]===f.days?'pri':'gho')+'" data-d="'+p[0]+'">'+p[1]+'</button>'}).join('')+'</div>'+
+    '<div class="ftab"><table><thead><tr><th>Метка</th><th>Заходы</th><th>Начали</th><th>Ответили</th><th>Оплатили 299</th><th>Выручка</th><th>Набор</th></tr></thead><tbody>'+
+    (f.rows.length?f.rows.map(function(r){return tr(r)}).join('')+tr(f.total,true):'<tr><td colspan="7">Пока пусто</td></tr>')+'</tbody></table></div>'+
+    '<p class="empty" style="margin-top:8px">Заходы — уникальные браузеры. Заказы и оплаты до появления меток попадают в «без метки».</p>';
+  [].forEach.call(box.querySelectorAll('[data-d]'),function(b){ b.onclick=function(){ loadFunnel(Number(b.getAttribute('data-d'))) } });
 }
 
 /* ---------- панель админа: рассылка по листу ожидания ---------- */

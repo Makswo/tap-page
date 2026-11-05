@@ -17,10 +17,13 @@
 
 | Файл | Что делает |
 |---|---|
-| `api/tutorial-start.js` | проверяет промокод, создаёт заказ |
-| `api/tutorial-answers.js` | сохраняет ответы, отдаёт данные формы оплаты |
+| `api/tutorial.js` | одна функция на весь туториал (лимит Hobby — 12 функций), действие в `?a=`; старые адреса `/api/tutorial-*` переписаны в `vercel.json` |
+| `api/_lib/tutorial/start.js` | проверяет промокод, создаёт заказ, сохраняет метку `from` |
+| `api/_lib/tutorial/answers.js` | сохраняет ответы, отдаёт данные формы оплаты |
+| `api/_lib/tutorial/pay.js` | создаёт платёж ЮKassa |
+| `api/_lib/tutorial/visit.js` | отмечает заход на страницу с меткой (для воронки) |
 | `api/yoomoney.js` | принимает уведомление ЮMoney, проверяет подпись, отмечает заказ оплаченным |
-| `api/tutorial-guide.js` | отдаёт инструкцию по оплаченному заказу (и предпросмотр по ключу) |
+| `api/_lib/tutorial/guide.js` | отдаёт инструкцию по оплаченному заказу (и предпросмотр по ключу) |
 | `supabase/tutorial.sql` | таблицы `promo_codes` и `tutorial_orders` |
 
 Переменные окружения в Vercel (Settings → Environment Variables):
@@ -47,3 +50,7 @@
 - Таблицы: `certificates`, `waitlist`, колонка `tutorial_orders.user_id` (см. `supabase/tutorial.sql`).
 
 Почта для кодов: Supabase → Authentication → SMTP (Resend). Шаблоны «Magic Link» и «Confirm signup» должны содержать `{{ .Token }}`.
+
+## Метки источников
+
+Ссылка из автоответа: `tap-page.ru/start?from=start_r23` (латиница, цифры, `_`, `-`). `assets/src.js` запоминает метку в браузере на 30 дней и отмечает заходы; метка пишется в `tutorial_orders.src` и `profiles.src`. Воронка по меткам — в `/me` под админом. Таблица `visits` и колонки `src` — в конце `supabase/tutorial.sql`.

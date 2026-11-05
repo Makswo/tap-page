@@ -104,7 +104,7 @@ var TP=(function(){
   }
 
   // Привязать оплаченную инструкцию к профилю.
-  function claim(order){ return call('POST','/api/account',{action:'claim',order:order}) }
+  function claim(order){ return call('POST','/api/account',{action:'claim',order:order,from:window.TP_SRC?TP_SRC():null}) }
 
   return {user:user,logout:logout,call:call,claim:claim,loginForm:loginForm,esc:esc,token:token};
 })();

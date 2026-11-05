@@ -482,6 +482,7 @@ body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
 <button class="btn pri fab" id="fab" type="button" hidden><svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Сохранить PDF</button>
 
 <script src="/assets/bonus.js?v=2"></script>
+<script src="/assets/src.js?v=1"></script>
 <script src="/assets/account.js"></script>
 <script src="/assets/video.js?v=5"></script>
 <script src="/assets/chat.js?v=4" defer></script>
@@ -614,7 +615,7 @@ $('pf').onsubmit=function(e){
   var code=$('pbox').hidden?'':$('code').value.trim();
   if(byCode&&!code){perr('Впиши промокод');$('code').focus();return}
   var b=$(byCode?'gocode':'go'); b.disabled=true; perr('');
-  api('POST','/api/tutorial-start',{code:code}).then(function(d){
+  api('POST','/api/tutorial?a=start',{code:code,from:window.TP_SRC?TP_SRC():null}).then(function(d){
     b.disabled=false;
     if(d.order){ setOrder(d.order); A={}; i=0; try{localStorage.removeItem(KEY);localStorage.removeItem(DAYS_KEY)}catch(_){}; track('tutorial_start',{code:code?1:0}); show('s-quiz'); renderQ(); return }
     if(d._s===403||d._s===400) perr('Такого промокода нет. Проверь, как написал, — или начни без него.');
@@ -641,7 +642,7 @@ function finish(){
   show('s-anal');
   var lis=$('alist').querySelectorAll('li');
   var anim=steps.reduce(function(p,_,k){return p.then(function(){lis[k].classList.add('on');return wait(650+Math.random()*350)}).then(function(){lis[k].classList.remove('on');lis[k].classList.add('ok')})},Promise.resolve());
-  var req=api('POST','/api/tutorial-answers',{order:ORDER,answers:A});
+  var req=api('POST','/api/tutorial?a=answers',{order:ORDER,answers:A});
   Promise.all([anim,req]).then(function(r){
     var d=r[1];
     if(d.paid){ try{localStorage.setItem('claude_start_paying',ORDER)}catch(e){}; return goWait(true) }
@@ -705,7 +706,7 @@ function ykStart(method){
   var b=$('ykpay');
   ykErr(''); $('ykpay').disabled=true; $('ykpaysbp').disabled=true; b.textContent='Открываю оплату…';
   if(payMobile()){
-    api('POST','/api/tutorial-pay',{order:ORDER,email:email,mode:'redirect'}).then(function(d){
+    api('POST','/api/tutorial?a=pay',{order:ORDER,email:email,mode:'redirect'}).then(function(d){
       if(d.paid) return goWait(true);
       if(!d.url){ ykFail(d.error==='email'?'Проверь email — похоже, в нём опечатка.':'Не получилось открыть оплату. Попробуй ещё раз.'); return }
       try{localStorage.setItem('claude_start_paying',ORDER)}catch(e){}
@@ -714,7 +715,7 @@ function ykStart(method){
     },function(){ ykFail('Не получилось открыть оплату. Проверь интернет и попробуй ещё раз.') });
     return;
   }
-  Promise.all([api('POST','/api/tutorial-pay',{order:ORDER,email:email}),loadYK()]).then(function(r){
+  Promise.all([api('POST','/api/tutorial?a=pay',{order:ORDER,email:email}),loadYK()]).then(function(r){
     var d=r[0];
     if(d.paid) return goWait(true);
     if(!d.token){ ykFail(d.error==='email'?'Проверь email — похоже, в нём опечатка.':'Не получилось открыть оплату. Попробуй ещё раз.'); return }
@@ -750,7 +751,7 @@ function ykWatch(){
   var my=++ykWatchN;
   (function tick(){
     if(my!==ykWatchN||!YK) return;
-    api('GET','/api/tutorial-guide?order='+encodeURIComponent(ORDER||'')).then(function(d){
+    api('GET','/api/tutorial?a=guide&order='+encodeURIComponent(ORDER||'')).then(function(d){
       if(my!==ykWatchN||!YK) return;
       if(d.status==='paid'&&d.html){ track('tutorial_pay_success'); track('tutorial_paid'); ykReset(); renderGuide(d); return }
       setTimeout(tick,2500);
@@ -760,7 +761,7 @@ function ykWatch(){
 // Вернулись на вкладку (например, из приложения банка) — сразу проверяем оплату, не ждём таймера.
 function payCheckNow(){
   if(!ORDER||!$('s-pay').classList.contains('on')) return;
-  api('GET','/api/tutorial-guide?order='+encodeURIComponent(ORDER)).then(function(d){
+  api('GET','/api/tutorial?a=guide&order='+encodeURIComponent(ORDER)).then(function(d){
     if(d.status==='paid'&&d.html&&$('s-pay').classList.contains('on')){ track('tutorial_paid'); ykReset(); renderGuide(d) }
   });
 }
@@ -787,7 +788,7 @@ function goWait(fast){
   show('s-wait');
   (function tick(){
     if(my!==polling) return;
-    api('GET','/api/tutorial-guide?order='+encodeURIComponent(ORDER||'')).then(function(d){
+    api('GET','/api/tutorial?a=guide&order='+encodeURIComponent(ORDER||'')).then(function(d){
       if(my!==polling) return;
       if(d.status==='paid'&&d.html){track('tutorial_paid');return renderGuide(d)}
       if(d._s===404||d._s===400){$('worb').hidden=true;$('wtitle').textContent='Заказ не найден';$('wtext').textContent='Начни заново: нажми «Начать» на первом экране.';$('wretry').hidden=false;return}
@@ -913,19 +914,19 @@ $('hgem').innerHTML=bonusIcon('start','lg')+'<div class="gcap">Бонус к и�
   var q=new URLSearchParams(location.search);
   if(q.get('code')) showCode(q.get('code'));
   if(q.get('preview')){
-    api('GET','/api/tutorial-guide?preview='+encodeURIComponent(q.get('preview'))+'&p='+encodeURIComponent(q.get('p')||'')).then(function(d){ if(d.html) renderGuide(d); });
+    api('GET','/api/tutorial?a=guide&preview='+encodeURIComponent(q.get('preview'))+'&p='+encodeURIComponent(q.get('p')||'')).then(function(d){ if(d.html) renderGuide(d); });
     return;
   }
   var o=q.get('order');
   if(o&&UUID.test(o)){ JUMP=location.hash.slice(1); setOrder(o); history.replaceState(null,'',location.pathname); goWait(false); return }
   if(ORDER){
     var paying=null; try{paying=localStorage.getItem('claude_start_paying')}catch(e){}
-    api('GET','/api/tutorial-guide?order='+encodeURIComponent(ORDER)).then(function(d){
+    api('GET','/api/tutorial?a=guide&order='+encodeURIComponent(ORDER)).then(function(d){
       if(d.status==='paid'&&d.html&&paying===ORDER){ track('tutorial_paid'); return renderGuide(d) }
       if(d.status==='paid'&&d.html){ LAST=d; $('resume').hidden=false; $('resume').textContent='Моя инструкция'; }
       else if(d._s===404) setOrder(null);
       // Ушёл на страницу ЮKassa и вернулся «Назад» без оплаты — сразу снова экран оплаты.
-      else if(paying===ORDER&&A&&A.role){ api('POST','/api/tutorial-answers',{order:ORDER,answers:A}).then(function(p){ if(p.paid) return goWait(true); if(p.pay) renderPay(p) }) }
+      else if(paying===ORDER&&A&&A.role){ api('POST','/api/tutorial?a=answers',{order:ORDER,answers:A}).then(function(p){ if(p.paid) return goWait(true); if(p.pay) renderPay(p) }) }
       else if(d.status==='new'&&A&&A.role){ $('resume').hidden=false; $('resume').textContent='Продолжить'; $('resume').onclick=function(){finish()}; }
     });
   }

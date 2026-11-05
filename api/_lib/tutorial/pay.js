@@ -1,9 +1,9 @@
 // Создаёт платёж в ЮKassa: токен для встроенного виджета или ссылку на страницу оплаты (mode=redirect, телефоны).
 'use strict';
-const db = require('./_lib/db');
-const yk = require('./_lib/yookassa');
-const { markPaid } = require('./_lib/orders');
-const { UUID, price, site, send, body } = require('./_lib/util');
+const db = require('../db');
+const yk = require('../yookassa');
+const { markPaid } = require('../orders');
+const { UUID, price, site, send, body } = require('../util');
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 

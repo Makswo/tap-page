@@ -1,5 +1,5 @@
-// Панель админа: рассылка «курс открылся» по листу ожидания.
-// GET — статистика; POST send — тестовое письмо себе или рассылка; GET ?unsub= — отписка по ссылке из письма.
+// Панель админа: рассылка «курс открылся» по листу ожидания и воронка по меткам источников.
+// GET ?funnel=1&days=30 — воронка; GET — статистика рассылок; POST send — тестовое письмо себе или рассылка; GET ?unsub= — отписка по ссылке из письма.
 'use strict';
 const db = require('./_lib/db');
 const auth = require('./_lib/auth');
@@ -30,6 +30,44 @@ async function stats() {
   return { courses, history: hist };
 }
 
+// Supabase отдаёт не больше 1000 строк за раз — читаем страницами.
+async function all(table, filters, max = 50000) {
+  const out = [];
+  for (let off = 0; off < max; off += 1000) {
+    const rows = await db.select(table, { ...filters, limit: '1000', offset: String(off) });
+    out.push(...rows);
+    if (rows.length < 1000) break;
+  }
+  return out;
+}
+
+// Воронка по меткам: заходы (уникальные браузеры) → начали вопросы → ответили → оплатили 299 → набор.
+async function funnel(days) {
+  const since = days ? { created_at: `gte.${new Date(Date.now() - days * 864e5).toISOString()}` } : {};
+  const [visits, orders] = await Promise.all([
+    all('visits', { select: 'vid,src', ...since, order: 'id.asc' }),
+    all('tutorial_orders', { select: 'src,status,provider,amount,role:answers->>role', ...since, order: 'created_at.asc' }),
+  ]);
+  const by = {};
+  const row = (src) => by[src || ''] || (by[src || ''] = { src: src || null, vids: new Set(), started: 0, answered: 0, paid: 0, free: 0, revenue: 0, kit: 0 });
+  visits.forEach((v) => row(v.src).vids.add(v.vid));
+  orders.forEach((o) => {
+    const r = row(o.src);
+    r.started += 1;
+    if (o.role) r.answered += 1;
+    if (o.status === 'paid') {
+      if (o.provider === 'free' || !Number(o.amount)) r.free += 1;
+      else { r.paid += 1; r.revenue += Number(o.amount) || 0; }
+    }
+  });
+  const rows = Object.values(by).map((r) => ({ src: r.src, visitors: r.vids.size, started: r.started, answered: r.answered, paid: r.paid, free: r.free, revenue: Math.round(r.revenue), kit: r.kit }))
+    .sort((a, b) => b.revenue - a.revenue || b.started - a.started || b.visitors - a.visitors);
+  const total = rows.reduce((t, r) => { Object.keys(t).forEach((k) => { t[k] += r[k]; }); return t; }, { visitors: 0, started: 0, answered: 0, paid: 0, free: 0, revenue: 0, kit: 0 });
+  // Уникальные браузеры в итоге считаем по всем заходам, а не суммой строк (один человек мог прийти по двум меткам).
+  total.visitors = new Set(visits.map((v) => v.vid)).size;
+  return { days, rows, total };
+}
+
 module.exports = async (req, res) => {
   try {
     const q = req.query || {};
@@ -45,6 +83,10 @@ module.exports = async (req, res) => {
     if (!user) return send(res, 401, { error: 'auth' });
     if (!auth.isAdmin(user)) return send(res, 403, { error: 'admin' });
 
+    if (req.method === 'GET' && q.funnel) {
+      const days = [7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 0;
+      return send(res, 200, { funnel: await funnel(days) });
+    }
     if (req.method === 'GET') return send(res, 200, { ...(await stats()), mail: !!process.env.RESEND_API_KEY });
     if (req.method !== 'POST') return send(res, 405, { error: 'method' });
 

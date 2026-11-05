@@ -16,6 +16,12 @@ function normCode(s) {
   return String(s || '').toUpperCase().replace(/Ё/g, 'Е').replace(/\s+/g, '').slice(0, 40);
 }
 
+// Метка источника (?from=start_r23): латиница, цифры, _ и -, до 40 знаков. Иначе — null.
+function normSrc(s) {
+  const v = String(s || '').trim().toLowerCase().slice(0, 40);
+  return /^[a-z0-9][a-z0-9_-]*$/.test(v) ? v : null;
+}
+
 function send(res, status, data) {
   res.statusCode = status;
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -32,4 +38,4 @@ function body(req) {
   return b;
 }
 
-module.exports = { UUID, price, site, normCode, send, body };
+module.exports = { UUID, price, site, normCode, normSrc, send, body };

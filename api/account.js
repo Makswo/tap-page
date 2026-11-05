@@ -3,7 +3,7 @@
 'use strict';
 const db = require('./_lib/db');
 const auth = require('./_lib/auth');
-const { UUID, send, body } = require('./_lib/util');
+const { UUID, normSrc, send, body } = require('./_lib/util');
 
 // Курсы, которые пока «скоро» (на них можно подписаться).
 const SOON = ['nabor', 'montage', 'assistant'];
@@ -25,6 +25,15 @@ async function certFor(user, order, course = 'start') {
   }
   const again = await db.select('certificates', q);
   return again[0] || null;
+}
+
+// Первая метка источника в профиле: откуда человек пришёл (из заказа или из браузера). Потом не меняется.
+async function setSrc(user, src) {
+  src = normSrc(src);
+  if (!src) return;
+  const p = await db.select('profiles', { select: 'src', user_id: `eq.${user.id}` });
+  if (!p.length) await db.insertIgnore('profiles', { user_id: user.id, src });
+  else if (!p[0].src) await db.update('profiles', { user_id: `eq.${user.id}`, src: 'is.null' }, { src });
 }
 
 module.exports = async (req, res) => {
@@ -52,13 +61,14 @@ module.exports = async (req, res) => {
 
     if (b.action === 'claim') {
       if (!UUID.test(String(b.order || ''))) return send(res, 400, { error: 'order' });
-      const rows = await db.select('tutorial_orders', { select: 'id,status,user_id', id: `eq.${b.order}` });
+      const rows = await db.select('tutorial_orders', { select: 'id,status,user_id,src', id: `eq.${b.order}` });
       if (!rows.length) return send(res, 404, { error: 'order' });
       const o = rows[0];
       if (o.status !== 'paid') return send(res, 409, { error: 'unpaid' });
       if (o.user_id && o.user_id !== user.id) return send(res, 403, { error: 'other' });
       if (!o.user_id) await db.update('tutorial_orders', { id: `eq.${o.id}`, user_id: 'is.null' }, { user_id: user.id });
       const cert = await certFor(user, o.id);
+      try { await setSrc(user, o.src || b.from); } catch (e) { console.warn('profile src', e.message); }
       return send(res, 200, { ok: true, certificate: cert });
     }
 
@@ -66,6 +76,7 @@ module.exports = async (req, res) => {
       const course = String(b.course || '');
       if (!SOON.includes(course)) return send(res, 400, { error: 'course' });
       await db.insertIgnore('waitlist', { user_id: user.id, course, email: user.email });
+      try { await setSrc(user, b.from); } catch (e) { console.warn('profile src', e.message); }
       return send(res, 200, { ok: true });
     }
 

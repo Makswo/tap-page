@@ -9,6 +9,22 @@
     {
       "source": "/madam_vualya",
       "destination": "/madam-vualya"
+    },
+    {
+      "source": "/api/tutorial-start",
+      "destination": "/api/tutorial?a=start"
+    },
+    {
+      "source": "/api/tutorial-answers",
+      "destination": "/api/tutorial?a=answers"
+    },
+    {
+      "source": "/api/tutorial-pay",
+      "destination": "/api/tutorial?a=pay"
+    },
+    {
+      "source": "/api/tutorial-guide",
+      "destination": "/api/tutorial?a=guide"
     }
   ],
   "crons": [

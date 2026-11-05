@@ -3,11 +3,11 @@
 // /start?preview=КЛЮЧ&p=role,sphere,pain,dev1+dev2,country,exp,goal,time,mail,style
 'use strict';
 const crypto = require('crypto');
-const db = require('./_lib/db');
-const guide = require('./_lib/guide');
-const yk = require('./_lib/yookassa');
-const { markPaid } = require('./_lib/orders');
-const { UUID, price, send } = require('./_lib/util');
+const db = require('../db');
+const guide = require('../guide');
+const yk = require('../yookassa');
+const { markPaid } = require('../orders');
+const { UUID, price, send } = require('../util');
 
 function same(a, b) {
   const x = Buffer.from(String(a)); const y = Buffer.from(String(b));
