@@ -243,6 +243,8 @@ footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));color:var(--tx3);
 @media (max-width:640px){.prow{flex-direction:column}.prow .pin{flex:none;width:100%}.prow .btn{width:100%}}
 
 /* yookassa + save */
+.mok{display:flex;gap:10px;align-items:flex-start;margin:12px 0 0;font-size:13.5px;color:var(--tx2);cursor:pointer}
+.mok input{flex:none;width:18px;height:18px;margin:1px 0 0;accent-color:var(--acc)}
 .flbl{display:block;font-family:var(--m);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--tx2);margin:18px 0 8px}
 .ykgo{width:100%;margin-top:16px}
 .ykgo.sbp{margin-top:10px}
@@ -280,6 +282,14 @@ body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
 .gt b{display:block;font-size:15.5px;margin-top:2px}
 .gt span{display:block;font-size:13px;color:var(--tx2)}
 #acctbox{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.next{margin:28px 0 0;padding:22px;border-radius:22px;border:1px solid rgba(212,255,63,.4);background:radial-gradient(70% 90% at 100% 0%,rgba(212,255,63,.08),transparent 60%),var(--s1)}
+.next h3{margin:6px 0 8px;font-size:22px;letter-spacing:-.02em}
+.next p{margin:0 0 10px;color:var(--tx2);font-size:15px}
+.next .nprc{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:12px 0 14px}
+.next .nprc s{color:var(--tx3);font-size:18px}.next .nprc b{font-size:30px;letter-spacing:-.03em}
+.next .nprc span{font-size:13.5px;color:var(--tx2)}
+.next .nbtns{display:flex;gap:10px;flex-wrap:wrap}
+@media print{.next{display:none!important}}
 .gp{margin:0 0 12px;color:var(--tx2);font-size:14.5px}
 .gp.ok{margin:0;color:var(--tx)}
 .gp a{color:var(--tx)}
@@ -438,6 +448,7 @@ body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
       <div id="ykemail" hidden>
         <label class="flbl" for="email">Email для чека</label>
         <input id="email" class="tin" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" maxlength="120">
+        <label class="mok"><input type="checkbox" id="mailok"><span>Присылать 2 коротких письма: подсказку через день и новости о «Стартовом наборе». Отписаться — одной ссылкой.</span></label>
       </div>
       <button class="btn pri lg ykgo" id="ykpay" data-m="bank_card" type="button">Оплатить · 299 ₽</button>
       <button class="btn gho lg ykgo sbp" id="ykpaysbp" data-m="sbp" type="button" hidden>Оплатить по СБП</button>
@@ -455,7 +466,7 @@ body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
       <button class="linkbtn" id="ymalt" type="submit" name="paymentType" value="AC" hidden>Не получается? Оплатить через ЮMoney</button>
       <p class="fine" id="ymnote">Оплата через ЮMoney. После оплаты вернёшься сюда — инструкция откроется сама.</p>
     </form>
-    <p class="fine">Оплачивая, ты принимаешь условия <a href="/oferta" target="_blank" rel="noopener">публичной оферты</a>.</p>
+    <p class="fine">Оплачивая, ты принимаешь условия <a href="/oferta" target="_blank" rel="noopener">публичной оферты</a> и <a href="/privacy" target="_blank" rel="noopener">политики обработки персональных данных</a>.</p>
     <div class="inside">
       <div class="inside-h">Что внутри</div>
       <ul class="lst yes" id="incl"></ul>
@@ -477,7 +488,7 @@ body[data-screen]:not([data-screen="s-intro"]) .vw:not(.loud){display:none}
 <!-- RESULT -->
 <main id="s-res" class="screen"><div class="wrap res" id="res"></div></main>
 
-<footer>Сделал Макс · <a href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">@makswo</a> · <a href="/oferta" target="_blank" rel="noopener">Публичная оферта</a><br><span class="freq">ИП Малыгин Максим Валерьевич · ИНН 183512338627 · ОГРНИП 323180000018526 · <a href="mailto:mxmginarm@gmail.com">mxmginarm@gmail.com</a></span></footer>
+<footer>Сделал Макс · <a href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">@makswo</a> · <a href="/oferta" target="_blank" rel="noopener">Публичная оферта</a> · <a href="/privacy" target="_blank" rel="noopener">Персональные данные</a><br><span class="freq">ИП Малыгин Максим Валерьевич · ИНН 183512338627 · ОГРНИП 323180000018526 · <a href="mailto:mxmginarm@gmail.com">mxmginarm@gmail.com</a></span></footer>
 <div class="toast" id="toast">Скопировано</div>
 <button class="btn pri fab" id="fab" type="button" hidden><svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Сохранить PDF</button>
 
@@ -706,7 +717,7 @@ function ykStart(method){
   var b=$('ykpay');
   ykErr(''); $('ykpay').disabled=true; $('ykpaysbp').disabled=true; b.textContent='Открываю оплату…';
   if(payMobile()){
-    api('POST','/api/tutorial?a=pay',{order:ORDER,email:email,mode:'redirect'}).then(function(d){
+    api('POST','/api/tutorial?a=pay',{order:ORDER,email:email,mail:!!(email&&$('mailok').checked),mode:'redirect'}).then(function(d){
       if(d.paid) return goWait(true);
       if(!d.url){ ykFail(d.error==='email'?'Проверь email — похоже, в нём опечатка.':'Не получилось открыть оплату. Попробуй ещё раз.'); return }
       try{localStorage.setItem('claude_start_paying',ORDER)}catch(e){}
@@ -715,7 +726,7 @@ function ykStart(method){
     },function(){ ykFail('Не получилось открыть оплату. Проверь интернет и попробуй ещё раз.') });
     return;
   }
-  Promise.all([api('POST','/api/tutorial?a=pay',{order:ORDER,email:email}),loadYK()]).then(function(r){
+  Promise.all([api('POST','/api/tutorial?a=pay',{order:ORDER,email:email,mail:!!(email&&$('mailok').checked)}),loadYK()]).then(function(r){
     var d=r[0];
     if(d.paid) return goWait(true);
     if(!d.token){ ykFail(d.error==='email'?'Проверь email — похоже, в нём опечатка.':'Не получилось открыть оплату. Попробуй ещё раз.'); return }
@@ -846,6 +857,7 @@ function renderGuide(d){
     sb.parentNode.insertBefore(card,sb.nextSibling);
     if(!preview&&ORDER) renderAcct($('acctbox'));
   }
+  if(!preview) $('res').appendChild(nextStep(a));
   var pr=$('pr'); if(pr) pr.onclick=savePDF;
   var cl=$('cplink'); if(cl) cl.onclick=function(){copyText(link,function(){cl.textContent='Ссылка скопирована';track('tutorial_link_copy')})};
   var rd=$('redo'); if(rd) rd.onclick=function(){A={};i=0;try{localStorage.removeItem(DAYS_KEY)}catch(e){};$('fab').hidden=true;show('s-quiz');renderQ()};
@@ -868,6 +880,19 @@ function renderGuide(d){
   if(JUMP&&document.getElementById(JUMP)){ var j=JUMP; JUMP=''; setTimeout(function(){ document.getElementById(j).scrollIntoView({block:'start'}) },300) }
 }
 var JUMP='';
+// Апсейл: следующий шаг — «Стартовый набор» (пока предзапись). Зачёт 299 ₽ — в первые 72 часа после старта набора.
+function nextStep(a){
+  var LESSON={mail:'4.1 «Почта: разбор входящих и черновики ответов»',texts:'4.2 «Тексты в твоём стиле»',tables:'4.3 «Таблицы: из хаоса в таблицу и выводы»',search:'4.4 «Поиск и сравнение вместо 20 вкладок»',study:'4.5 «Учёба: ИИ объясняет и проверяет»'};
+  var el=document.createElement('section'); el.className='next'; el.id='next';
+  el.innerHTML='<div class="eyebrow">Следующий шаг · предзапись</div><h3>Стартовый набор: свой ИИ-помощник за 7 дней</h3>'+
+    '<p>Инструкция помогла начать. В наборе помощник узнаёт твою работу, подключается к почте и календарю и каждое утро присылает отчёт. 15 коротких уроков, без кода.</p>'+
+    (LESSON[a.pain]?'<p>По твоим ответам первым пригодится урок '+esc(LESSON[a.pain])+'.</p>':'')+
+    '<div class="nprc"><s>2 990 ₽</s><b>2 691 ₽</b><span>для тебя: зачёт 299 ₽ за инструкцию в первые 72 часа после старта</span></div>'+
+    '<div class="nbtns"><a class="btn pri" href="/kit" id="nextgo">Программа и предзапись</a></div>'+
+    '<p style="margin:12px 0 0;font-size:13px;color:var(--tx3)">Дату старта пришлём письмом тем, кто записался. Записаться бесплатно.</p>';
+  el.querySelector('#nextgo').onclick=function(){ track('upsell_kit_click',{pain:a.pain||''}) };
+  return el;
+}
 // Профиль: предлагаем зарегистрироваться и привязываем инструкцию с бонусом.
 function renderAcct(box){
   var u=TP.user();

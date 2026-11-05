@@ -15,6 +15,11 @@ function unsubUrl(userId, course) {
   return `${site()}/api/admin?unsub=${encodeURIComponent(userId)}&c=${encodeURIComponent(course)}&t=${unsubToken(userId, course)}`;
 }
 
+// Отписка от писем по заказу (письма после покупки) — та же подпись, другой ключ.
+function orderUnsubUrl(orderId) {
+  return `${site()}/api/admin?unsub_o=${encodeURIComponent(orderId)}&t=${unsubToken(orderId, 'order-mail')}`;
+}
+
 function render({ subject, text, cta, link, unsub, footer }) {
   const paras = String(text || '').split(/\n{2,}/).map((p) => `<p style="margin:0 0 14px;font-size:16px;line-height:1.55;color:#2b2f33">${esc(p).replace(/\n/g, '<br>')}</p>`).join('');
   const html = `<!doctype html><html><body style="margin:0;padding:0;background:#f3f4ef">
@@ -52,4 +57,4 @@ async function sendBatch(items) {
   return { ok, bad };
 }
 
-module.exports = { render, sendBatch, unsubUrl, unsubToken };
+module.exports = { render, sendBatch, unsubUrl, unsubToken, orderUnsubUrl };

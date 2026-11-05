@@ -139,3 +139,8 @@ create table if not exists public.visits (
 create index if not exists visits_time_idx on public.visits(created_at desc);
 create index if not exists visits_src_idx on public.visits(src, created_at desc);
 alter table public.visits enable row level security;
+
+-- Письма после покупки (через 24 и 72 часа) — только с галочкой согласия на экране оплаты.
+alter table public.tutorial_orders add column if not exists mail_ok boolean not null default false;
+alter table public.tutorial_orders add column if not exists mail1_at timestamptz;
+alter table public.tutorial_orders add column if not exists mail2_at timestamptz;

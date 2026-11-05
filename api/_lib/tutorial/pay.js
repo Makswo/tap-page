@@ -45,7 +45,8 @@ module.exports = async (req, res) => {
     const redirect = b.mode === 'redirect';
     const method = redirect && ['bank_card', 'sbp'].includes(b.method) ? b.method : null;
     const p = await yk.createPayment({ order, price: price(), email, method, returnUrl: redirect ? `${site()}/start?order=${order}` : null });
-    await db.update('tutorial_orders', { id: `eq.${order}` }, { provider: 'yookassa', payment_id: p.id, ...(email ? { email } : {}) });
+    // mail_ok — человек сам поставил галочку «присылать письма» (по умолчанию выключена).
+    await db.update('tutorial_orders', { id: `eq.${order}` }, { provider: 'yookassa', payment_id: p.id, ...(email ? { email, mail_ok: b.mail === true } : {}) });
     if (redirect) return send(res, 200, { url: p.confirmation && p.confirmation.confirmation_url });
     return send(res, 200, { token: p.confirmation && p.confirmation.confirmation_token });
   } catch (e) {

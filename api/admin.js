@@ -71,6 +71,13 @@ async function funnel(days) {
 module.exports = async (req, res) => {
   try {
     const q = req.query || {};
+    // Отписка от писем после покупки (по заказу) — без входа, по подписи.
+    if (req.method === 'GET' && q.unsub_o) {
+      const ok = UUID.test(String(q.unsub_o)) && String(q.t || '') === mail.unsubToken(q.unsub_o, 'order-mail');
+      if (!ok) return page(res, 'Ссылка не подошла', 'Возможно, она устарела. Напиши на mxmginarm@gmail.com — отпишем вручную.');
+      await db.update('tutorial_orders', { id: `eq.${q.unsub_o}` }, { mail_ok: false });
+      return page(res, 'Готово, ты отписан', 'Больше не пришлём писем после покупки. Инструкция остаётся у тебя по личной ссылке.');
+    }
     // Отписка по ссылке из письма — без входа, по подписи.
     if (req.method === 'GET' && q.unsub) {
       const ok = UUID.test(String(q.unsub)) && COURSES[q.c] && String(q.t || '') === mail.unsubToken(q.unsub, q.c);

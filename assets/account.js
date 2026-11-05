@@ -65,7 +65,7 @@ var TP=(function(){
       clearInterval(timer);
       el.innerHTML='<form class="tpl" novalidate><label for="tpe">Почта</label><div class="row"><input id="tpe" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" value="'+esc(email)+'">'+
         '<button class="btn pri" type="submit">'+esc(opts.cta||'Получить код')+'</button></div><div class="err" role="alert"></div>'+
-        '<p class="hint">Пришлём код из 6 цифр. Без пароля и рассылок.</p></form>';
+        '<p class="hint">Пришлём код из 6 цифр. Без пароля и рассылок. Входя, ты соглашаешься с <a href="/privacy" target="_blank" rel="noopener">обработкой персональных данных</a>.</p></form>';
       var f=el.querySelector('form'), inp=f.querySelector('input'), er=f.querySelector('.err'), btn=f.querySelector('button');
       f.onsubmit=function(e){
         e.preventDefault(); email=inp.value.trim().toLowerCase(); er.textContent='';
