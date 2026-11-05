@@ -3,16 +3,20 @@ var COURSES=[
   {id:'start', status:'open', title:'Как начать с ИИ', price:'299 ₽', href:'/start',
    desc:'Личная инструкция по 10 твоим ответам: какой ИИ взять — Claude, DeepSeek или ChatGPT, где установить, какой первый запрос дать и что поручить в первую очередь.',
    items:['Установка под твои устройства','Готовые запросы под твою работу','План на 7 дней']},
-  {id:'nabor', status:'soon', title:'Стартовый набор Макса',
+  {id:'nabor', status:'pre', title:'Стартовый набор Макса', price:'2 990 ₽',
    desc:'Следующий шаг после старта: научим твоего ИИ-помощника твоей работе. Набор готовых умений, чтобы он делал твои повторяющиеся задачи так же, как ты.',
    items:['Скилы под твою сферу и рутину','Письма, отчёты, посты и таблицы','Базовые дела — без тебя'],
    video:{src:'/assets/video/nabor.mp4?v=4',mini:'/assets/video/nabor-mini.mp4?v=4',poster:'/assets/video/nabor-poster.jpg'}},
-  {id:'montage', status:'soon', title:'Студия авто-монтажа с ИИ',
+  {id:'montage', status:'pre', title:'Студия авто-монтажа с ИИ',
    desc:'Как собрать с ИИ-помощником студию, которая монтирует вертикальные ролики: режет дубли и паузы, ставит субтитры и плашки.',
    items:['Монтаж по расшифровке речи','Субтитры и плашки в твоём стиле','Готовый ролик за минуты'],
    video:{src:'/assets/video/montage.mp4?v=4',mini:'/assets/video/montage-mini.mp4?v=4',poster:'/assets/video/montage-poster.jpg?v=2'}},
-  {id:'assistant', status:'soon', title:'Свой ИИ-помощник',
+  {id:'assistant', status:'pre', title:'Свой ИИ-помощник',
    desc:'Как сделать помощника, который знает твои дела: помнит контекст, разбирает входящие и готовит план дня.',
    items:['Память о тебе и твоих проектах','Разбор почты и календаря','План дня и напоминания']}
 ];
-function courseById(id){for(var k=0;k<COURSES.length;k++)if(COURSES[k].id===id)return COURSES[k];return null}
+/* Третья ступень после набора: группа. Не курс с кристаллом и бонусом, поэтому отдельно от COURSES. */
+var GROUP={id:'group', status:'pre', title:'Группа «Помощник за 2 недели»', price:'25 000 ₽',
+ desc:'10–15 человек, 4 созвона с Максом и общий чат. За две недели собираем ИИ-помощника под работу каждого участника — на твоих задачах, а не на примерах.',
+ items:['Помощник под твою работу','4 созвона и разбор задач','Чат группы']};
+function courseById(id){for(var k=0;k<COURSES.length;k++)if(COURSES[k].id===id)return COURSES[k];return id==='group'?GROUP:null}

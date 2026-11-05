@@ -5,8 +5,8 @@ const db = require('./_lib/db');
 const auth = require('./_lib/auth');
 const { UUID, normSrc, send, body } = require('./_lib/util');
 
-// Курсы, которые пока «скоро» (на них можно подписаться).
-const SOON = ['nabor', 'montage', 'assistant'];
+// Курсы и группа на предзаписи (на них можно подписаться).
+const SOON = ['nabor', 'montage', 'assistant', 'group'];
 
 // Отметить, что курс есть в профиле (одна запись на курс), и объявить кристалл в общем чате.
 async function certFor(user, order, course = 'start') {

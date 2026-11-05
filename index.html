@@ -72,8 +72,17 @@
 .step .gift .bico{width:26px;height:26px;border-radius:8px}
 .step .gift b{color:var(--tx);font-weight:600}
 
+.path.nonum .step{grid-template-columns:1fr auto;counter-increment:none}
+.path.nonum .step::before,.path.nonum .step::after{display:none}
+.step.pre .tag{color:var(--acc)}
+.who{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;padding:22px;border-radius:22px;background:var(--s1);border:1px solid var(--line)}
+.who .av{width:72px;height:72px;border-radius:22px;display:grid;place-items:center;background:var(--acc);color:var(--acc-ink);font:800 30px var(--f)}
+.who h3{margin:0 0 6px;font-size:21px;letter-spacing:-.02em}.who p{margin:0 0 12px;color:var(--tx2);font-size:15px;max-width:40em}
+.who .btns{display:flex;gap:10px;flex-wrap:wrap}
 @media (max-width:760px){
   .hero{padding-top:40px}
+  .path.nonum .step{grid-template-columns:1fr}.path.nonum .step .act{grid-column:1}
+  .who{grid-template-columns:1fr;gap:14px}
   .what{grid-template-columns:1fr}
   .step{grid-template-columns:40px 1fr;padding:16px;gap:12px}
   .step::before{width:34px;height:34px;border-radius:12px;font-size:14px}
@@ -114,8 +123,15 @@
   <section class="sec" id="program">
     <div class="eyebrow">Программа</div>
     <h2>От первого запуска до своего помощника</h2>
-    <p class="sub">Проходи по порядку: каждый курс опирается на предыдущий. Первый открыт сейчас, остальные скоро — оставь почту, и мы напишем, когда курс откроется.</p>
+    <p class="sub">Три ступени по порядку: каждая опирается на предыдущую. Первая открыта сейчас. На следующие идёт предзапись — дату старта пришлём письмом тем, кто записался.</p>
     <ol class="path" id="clist"></ol>
+  </section>
+
+  <section class="sec" id="more">
+    <div class="eyebrow">Отдельные курсы</div>
+    <h2>Ещё темы в работе</h2>
+    <p class="sub">Можно проходить после первой ступени в любом порядке. Тоже предзапись: напишем, когда откроется.</p>
+    <ol class="path nonum" id="mlist"></ol>
   </section>
 
   <div class="bonus" id="bonus"></div>
@@ -130,6 +146,18 @@
     </div>
   </section>
 
+  <section class="sec" id="who">
+    <div class="eyebrow">Кто ведёт</div>
+    <div class="who">
+      <div class="av" aria-hidden="true">M</div>
+      <div>
+        <h3>Макс · 15 лет в IT</h3>
+        <p>Каждый день работаю с ИИ-помощником Джаспером: он готовит утренний отчёт, разбирает почту и монтирует ролики. Всё это показываю в рилсах — без постановки, на своей работе.</p>
+        <div class="btns"><a class="btn gho sm" href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">Рилсы в Instagram @makswo</a><button class="btn gho sm" type="button" id="hello">Видео-привет от Макса</button></div>
+      </div>
+    </div>
+  </section>
+
   <div class="note" style="margin-top:28px"><b>Честно о странах.</b> Не все ИИ-сервисы официально доступны в России и Беларуси: у Claude, ChatGPT и DeepSeek свои списки стран, и они не всегда совпадают. В курсах только официальные способы, без обходных путей. Для примера — список стран Claude: <a href="https://www.anthropic.com/supported-countries" target="_blank" rel="noopener">anthropic.com/supported-countries</a>.</div>
 </main>
 
@@ -139,7 +167,7 @@
 <script src="/assets/bonus.js?v=2"></script>
 <script src="/assets/src.js?v=1"></script>
 <script src="/assets/account.js"></script>
-<script src="/assets/catalog.js?v=8"></script>
+<script src="/assets/catalog.js?v=9"></script>
 <script src="/assets/video.js?v=5"></script>
 <script src="/assets/chat.js?v=4" defer></script>
 <script>
@@ -152,21 +180,26 @@ var esc=TP.esc, OWNED={}, WAIT={};
 
 function toast(t){var el=$('toast');el.textContent=t;el.classList.add('on');setTimeout(function(){el.classList.remove('on')},1800)}
 
+// Лестница: инструкция → набор → группа; монтаж и помощник — отдельные курсы.
+var LADDER=['start','nabor','group'];
 function renderCourses(){
-  $('clist').innerHTML=COURSES.map(function(c){
+  var list=LADDER.map(courseById).concat(COURSES.filter(function(c){return LADDER.indexOf(c.id)<0}));
+  function card(c){
     var bn=BONUS[c.id], open=c.status==='open', w=WAIT[c.id], have=OWNED[c.id];
     var cta=open?'<a class="btn pri" href="'+c.href+'">'+(have?'Открыть':'Начать')+'</a>':
-      (w?'<button class="btn done" type="button" disabled>✓ Сообщим на почту</button>':'<button class="btn gho" type="button" data-wait="'+c.id+'">Сообщить о старте</button>');
-    return '<li class="step '+(open?'open':'soon')+'" id="c-'+c.id+'"><div>'+
-      '<div class="tag">'+(open?'Доступен сейчас':'Скоро')+'</div><h3>'+esc(c.title)+'</h3><p>'+esc(c.desc)+'</p>'+
+      (w?'<button class="btn done" type="button" disabled>✓ Ты в предзаписи</button>':'<button class="btn gho" type="button" data-wait="'+c.id+'">Записаться</button>');
+    return '<li class="step '+(open?'open':'pre')+'" id="c-'+c.id+'"><div>'+
+      '<div class="tag">'+(open?'Доступен сейчас':'Предзапись')+'</div><h3>'+esc(c.title)+'</h3><p>'+esc(c.desc)+'</p>'+
       '<div class="items">'+c.items.map(function(x){return '<span>'+esc(x)+'</span>'}).join('')+'</div>'+
-      '<div class="gift">'+bonusIcon(c.id,open?'sm':'sm mute')+'<span>В подарок: <b>'+esc(bn.title)+'</b>'+(have?' · у тебя в профиле':'')+'</span></div>'+
-      '<div class="cryl">'+crystalTag(c.id)+'</div></div>'+
+      (bn?'<div class="gift">'+bonusIcon(c.id,open?'sm':'sm mute')+'<span>В подарок: <b>'+esc(bn.title)+'</b>'+(have?' · у тебя в профиле':'')+'</span></div>':'')+
+      (CRYSTAL[c.id]?'<div class="cryl">'+crystalTag(c.id)+'</div>':'')+'</div>'+
       '<div class="act">'+(c.price?'<div class="prc">'+esc(c.price)+'</div>':'')+
       (c.video?'<button class="cvid" type="button" data-vid="'+c.id+'" style="background-image:url('+c.video.poster+')"><i><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></i><span>Макс о курсе</span></button>':'')+cta+'</div></li>';
-  }).join('');
-  [].forEach.call($('clist').querySelectorAll('[data-wait]'),function(b){b.onclick=function(){wait(b.getAttribute('data-wait'))}});
-  [].forEach.call($('clist').querySelectorAll('[data-vid]'),function(b){b.onclick=function(){
+  }
+  $('clist').innerHTML=list.filter(function(c){return LADDER.indexOf(c.id)>=0}).map(card).join('');
+  $('mlist').innerHTML=list.filter(function(c){return LADDER.indexOf(c.id)<0}).map(card).join('');
+  [].forEach.call(document.querySelectorAll('#clist [data-wait],#mlist [data-wait]'),function(b){b.onclick=function(){wait(b.getAttribute('data-wait'))}});
+  [].forEach.call(document.querySelectorAll('#clist [data-vid],#mlist [data-vid]'),function(b){b.onclick=function(){
     var c=courseById(b.getAttribute('data-vid'));
     TPVideoPlay({key:'home',src:c.video.src,mini:c.video.mini,poster:c.video.poster,title:'Макс о курсе «'+c.title+'»'});
     track('video_course',{course:c.id});
@@ -180,9 +213,9 @@ function render(){ renderCourses(); renderBonus(); $('acct').textContent=TP.user
 
 function wait(id){
   var c=courseById(id);
-  if(!TP.user()) return login('Сообщим о старте курса','Войди по почте — напишем, как только «'+c.title+'» откроется.',function(){wait(id)});
+  if(!TP.user()) return login('Предзапись','Войди по почте — напишем, как только откроется запись на «'+c.title+'».',function(){wait(id)});
   TP.call('POST','/api/account',{action:'waitlist',course:id,from:window.TP_SRC?TP_SRC():null}).then(function(d){
-    if(d.ok){WAIT[id]=true;renderCourses();toast('Готово, сообщим на почту');track('waitlist',{course:id})}
+    if(d.ok){WAIT[id]=true;renderCourses();toast('Готово, ты в предзаписи');track('waitlist',{course:id})}
     else if(d._status===401){TP.logout();wait(id)}
     else toast('Не получилось, попробуй ещё раз');
   });
@@ -211,6 +244,7 @@ render(); load();
 // Видео от Макса о курсах; кнопки «Макс о курсе» в карточках переключают это окно на ролик курса.
 TPVideo({key:'home',src:'/assets/video/home.mp4?v=4',mini:'/assets/video/home-mini.mp4?v=4',poster:'/assets/video/home-poster.jpg',title:'Макс о курсах',label:'Привет от Макса',
   soonTitle:'Макс расскажет о курсах',soonText:'Видео скоро появится здесь: кто я, чему научат курсы и с чего начать.'});
+$('hello').onclick=function(){ TPVideoPlay({key:'home',src:'/assets/video/home.mp4?v=4',mini:'/assets/video/home-mini.mp4?v=4',poster:'/assets/video/home-poster.jpg',title:'Макс о курсах'}); track('video_hello') };
 })();
 </script>
 </body>
