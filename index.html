@@ -167,7 +167,7 @@
 <script src="/assets/bonus.js?v=2"></script>
 <script src="/assets/src.js?v=1"></script>
 <script src="/assets/account.js"></script>
-<script src="/assets/catalog.js?v=10"></script>
+<script src="/assets/catalog.js?v=11"></script>
 <script src="/assets/video.js?v=5"></script>
 <script src="/assets/chat.js?v=4" defer></script>
 <script>
@@ -187,8 +187,8 @@ function renderCourses(){
   function card(c){
     var bn=BONUS[c.id], open=c.status==='open', w=WAIT[c.id], have=OWNED[c.id];
     var cta=open?'<a class="btn pri" href="'+c.href+'">'+(have?'Открыть':'Начать')+'</a>':
-      (c.page?'<a class="btn gho" href="'+c.page+'">Программа</a>':'')+
-      (w?'<button class="btn done" type="button" disabled>✓ Ты в предзаписи</button>':'<button class="btn gho" type="button" data-wait="'+c.id+'">Записаться</button>');
+      (c.page?'<a class="btn '+(c.noWait?'pri':'gho')+'" href="'+c.page+'">'+esc(c.pageLabel||'Программа')+'</a>':'')+
+      (c.noWait?'':(w?'<button class="btn done" type="button" disabled>✓ Ты в предзаписи</button>':'<button class="btn gho" type="button" data-wait="'+c.id+'">Записаться</button>'));
     return '<li class="step '+(open?'open':'pre')+'" id="c-'+c.id+'"><div>'+
       '<div class="tag">'+(open?'Доступен сейчас':'Предзапись')+'</div><h3>'+esc(c.title)+'</h3><p>'+esc(c.desc)+'</p>'+
       '<div class="items">'+c.items.map(function(x){return '<span>'+esc(x)+'</span>'}).join('')+'</div>'+

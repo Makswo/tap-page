@@ -25,6 +25,14 @@
 @media (max-width:560px){.bi{grid-template-columns:auto 1fr;column-gap:12px}.bgem{grid-row:span 2;width:50px}.bi .btn,.bi em{grid-column:2;justify-self:start}}
 .waits{display:flex;gap:8px;flex-wrap:wrap}
 .loading{color:var(--tx3);padding:40px 0}
+.lead .lq{margin:10px 0 0;font-size:14.5px;color:var(--tx);white-space:pre-wrap}
+.lead .lq i{display:block;font-style:normal;font-family:var(--m);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);margin-bottom:2px}
+.lead .lm{margin:8px 0 0;font-size:13px;color:var(--tx2)}
+.lead .lrow{display:grid;grid-template-columns:150px 1fr auto;gap:8px;align-items:center;margin-top:12px}
+.lead select{border-radius:12px;background:var(--bg);border:1px solid var(--line2);padding:9px 10px;font:14px var(--f);color:var(--tx)}
+.lead input{margin:0}
+.lead.st-paid{border-color:rgba(212,255,63,.45)}.lead.st-no{opacity:.55}
+@media (max-width:640px){.lead .lrow{grid-template-columns:1fr}}
 .fper{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
 .ftab{overflow-x:auto;border-radius:18px;border:1px solid var(--line);background:var(--s1)}
 .ftab table{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
@@ -69,7 +77,7 @@
 <script src="/assets/bonus.js?v=2"></script>
 <script src="/assets/src.js?v=1"></script>
 <script src="/assets/account.js"></script>
-<script src="/assets/catalog.js?v=10"></script>
+<script src="/assets/catalog.js?v=11"></script>
 <script src="/assets/chat.js?v=4" defer></script>
 <script>
 (function(){
@@ -107,6 +115,7 @@ function render(d){
   var waits=(d.waitlist||[]).map(function(id){var c=courseById(id);return c?'<a class="chip" href="/#c-'+id+'">'+esc(c.title)+'</a>':''}).join('');
   app.innerHTML='<div class="top"><div class="eyebrow">Профиль</div><h1>Мои <span class="acc">материалы</span></h1>'+
     '<div class="who"><span class="chip">'+esc(d.user.email)+'</span><button class="linkbtn" id="out" type="button">Выйти</button></div></div>'+
+    (d.admin?'<section class="sec" id="leads" style="padding-top:36px"><div class="eyebrow">Админ</div><h2>Заявки в группу</h2><p class="loading" style="padding:0">Загружаем…</p></section>':'')+
     (d.admin?'<section class="sec" id="funnel" style="padding-top:36px"><div class="eyebrow">Админ</div><h2>Воронка по меткам</h2><p class="loading" style="padding:0">Загружаем…</p></section>':'')+
     (d.admin?'<section class="sec" id="admin" style="padding-top:36px"><div class="eyebrow">Админ</div><h2>Рассылки</h2><p class="loading" style="padding:0">Загружаем…</p></section>':'')+
     '<section class="sec" style="padding-top:36px"><div class="eyebrow">Инструкции</div><h2>Мои инструкции</h2>'+
@@ -120,7 +129,45 @@ function render(d){
       (waits?'<div class="waits">'+waits+'</div><p class="empty" style="margin-top:12px">Напишем на почту, когда откроется запись.</p>':'<p class="empty">Пока ни на что не подписан. <a href="/#courses">Посмотреть курсы</a></p>')+'</section>';
   if(window.mountGems) mountGems(app);
   $('out').onclick=function(){TP.logout();track('auth_logout');guest()};
-  if(d.admin){ loadAdmin(); loadFunnel(30) }
+  if(d.admin){ loadAdmin(); loadFunnel(30); loadLeads() }
+}
+
+/* ---------- панель админа: заявки в группу (/group) ---------- */
+var LST={new:'Заявка',call:'Созвон',paid:'Оплатил',no:'Отказ'};
+var DEVN={iphone:'iPhone',android:'Android',win:'Windows',mac:'Mac'}, CTRN={ru:'Россия/Беларусь',cis:'СНГ',world:'Другая страна',unsure:'Не уверен'};
+function loadLeads(){
+  var box=$('leads'); if(!box) return;
+  TP.call('GET','/api/admin?leads=group').then(function(d){
+    if(!d.leads){ box.innerHTML='<div class="eyebrow">Админ</div><h2>Заявки в группу</h2><p class="empty">Не получилось загрузить ('+esc(d.error||d._status)+'). Если только что обновили сайт — выполни SQL с таблицей leads.</p>'; return }
+    renderLeads(d.leads);
+  });
+}
+function renderLeads(list){
+  var box=$('leads'), cnt={new:0,call:0,paid:0,no:0};
+  list.forEach(function(l){cnt[l.status]=(cnt[l.status]||0)+1});
+  var live=list.length-cnt.no;
+  var h='<div class="eyebrow">Админ</div><h2>Заявки в группу</h2>'+
+    '<p class="empty">Живых заявок: <b>'+live+'</b> из 10 — когда наберётся 10, открывай оплату. Заявка '+cnt.new+' · созвон '+cnt.call+' · оплатили '+cnt.paid+' · отказ '+cnt.no+'. Анкета: <a href="/group">tap-page.ru/group</a></p>';
+  if(!list.length) h+='<p class="empty">Пока ни одной заявки.</p>';
+  h+=list.map(function(l){
+    var dt=new Date(l.created_at).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    var meta=[(l.dev||[]).map(function(x){return DEVN[x]||x}).join(', '),CTRN[l.country]||'',l.src?'метка '+l.src:''].filter(Boolean).join(' · ');
+    return '<div class="adm lead st-'+l.status+'" data-id="'+l.id+'"><div class="adm-h"><b>'+esc(l.name)+'</b><span>'+esc(dt)+'</span><span>'+esc(l.contact)+(l.email&&l.email!==l.contact?' · '+esc(l.email):'')+'</span></div>'+
+      '<p class="lq"><i>Чем занимается</i>'+esc(l.work||'')+'</p><p class="lq"><i>Что отдать помощнику</i>'+esc(l.want||'')+'</p>'+(meta?'<p class="lm">'+esc(meta)+'</p>':'')+
+      '<div class="lrow"><select data-f="status">'+Object.keys(LST).map(function(k){return '<option value="'+k+'"'+(k===l.status?' selected':'')+'>'+LST[k]+'</option>'}).join('')+'</select>'+
+      '<input data-f="note" maxlength="1000" placeholder="Заметка: когда созвон, что обсудили" value="'+esc(l.note||'')+'"><span class="st"></span></div></div>';
+  }).join('');
+  box.innerHTML=h;
+  [].forEach.call(box.querySelectorAll('.lead'),function(el){
+    var id=Number(el.getAttribute('data-id')), st=el.querySelector('.st');
+    function save(data){ st.className='st'; st.textContent='Сохраняю…'; data.action='lead'; data.id=id;
+      TP.call('POST','/api/admin',data).then(function(r){ if(r.ok){ st.className='st ok'; st.textContent='✓'; if(data.status){ el.className='adm lead st-'+data.status; loadLeads() } } else { st.className='st bad'; st.textContent='Ошибка' } },function(){st.className='st bad';st.textContent='Нет связи'}) }
+    el.querySelector('[data-f=status]').onchange=function(){ save({status:this.value}) };
+    var n=el.querySelector('[data-f=note]'), last=n.value;
+    n.onblur=function(){ if(n.value!==last){ last=n.value; save({note:n.value}) } };
+    n.onkeydown=function(e){ if(e.key==='Enter') n.blur() };
+  });
+  if(location.hash==='#leads') setTimeout(function(){box.scrollIntoView({block:'start'})},200);
 }
 
 /* ---------- панель админа: воронка по меткам ?from= ---------- */

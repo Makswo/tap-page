@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Группа «Помощник за 2 недели» — предзапись</title>
+<meta name="description" content="10–15 человек, 4 созвона с Максом и чат: за две недели собираем ИИ-помощника под работу каждого участника. Предзапись по анкете.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="tap-page">
+<meta property="og:url" content="https://tap-page.ru/group">
+<meta property="og:title" content="Группа «Помощник за 2 недели»">
+<meta property="og:description" content="Собираем ИИ-помощника под твою работу вместе с Максом: 4 созвона, чат, разбор задач. Предзапись по анкете.">
+<meta property="og:image" content="https://tap-page.ru/assets/og-home.png?v=3">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:locale" content="ru_RU">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#08090a">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/ui.css">
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<style>
+.hero{padding-block:64px 8px}
+.hero h1{max-width:13em}
+.hero .lead{max-width:36em}
+.offer{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;margin-top:8px;padding:22px;border-radius:24px;border:1px solid rgba(212,255,63,.45);background:radial-gradient(70% 90% at 100% 0%,rgba(212,255,63,.09),transparent 60%),var(--s1)}
+.offer .prc{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.offer .disc{margin-top:8px;font-size:14.5px;color:var(--tx2)}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.card3{background:var(--s1);border:1px solid var(--line);border-radius:20px;padding:18px}
+.card3 b{display:block;font-size:16px}.card3 span{display:block;font-size:14px;color:var(--tx2);margin-top:6px}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:start;padding:16px 18px;border-radius:18px;background:var(--s1);border:1px solid var(--line);counter-increment:s}
+.steps li::before{content:counter(s);width:34px;height:34px;border-radius:12px;display:grid;place-items:center;font:500 15px var(--m);background:var(--s3);color:var(--tx2)}
+.steps b{display:block;font-size:16px}.steps span{display:block;font-size:14px;color:var(--tx2);margin-top:4px}
+.form{padding:22px;border-radius:24px;background:var(--s1);border:1px solid var(--line2)}
+.form label.l{display:block;font-family:var(--m);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin:16px 0 6px}
+.form label.l:first-child{margin-top:0}
+.form input[type=text],.form textarea{width:100%;border-radius:14px;background:var(--bg);border:1px solid var(--line2);padding:12px 14px;font:16px/1.45 var(--f);color:var(--tx);outline:none}
+.form input[type=text]:focus,.form textarea:focus{border-color:var(--acc)}
+.form textarea{min-height:96px;resize:vertical}
+.form .hint{font-size:13px;color:var(--tx3);margin:6px 0 0}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opts label{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;background:var(--bg);border:1px solid var(--line2);font-size:14.5px;cursor:pointer}
+.opts input{accent-color:var(--acc);width:16px;height:16px;margin:0}
+.opts label:has(input:checked){border-color:var(--acc);color:var(--tx)}
+.cons{display:flex;gap:10px;align-items:flex-start;margin:18px 0 0;font-size:14px;color:var(--tx2);cursor:pointer}
+.cons input{flex:none;width:18px;height:18px;margin:2px 0 0;accent-color:var(--acc)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.form .go{margin-top:18px}
+.form .err{color:var(--bad);font-size:14px;margin-top:10px;min-height:1em}
+.done{padding:26px;border-radius:24px;border:1px solid rgba(212,255,63,.45);background:var(--s1)}
+.done h3{margin:6px 0 8px;font-size:24px;letter-spacing:-.02em}.done p{color:var(--tx2);margin:0 0 10px}
+.faq details{border-bottom:1px solid var(--line);padding:14px 0}
+.faq summary{cursor:pointer;font-weight:700;font-size:16px;list-style:none}.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";float:right;color:var(--tx3)}.faq details[open] summary::after{content:"–"}
+.faq p{margin:10px 0 0;color:var(--tx2);font-size:15px}
+@media (max-width:760px){
+  .hero{padding-top:40px}
+  .offer{grid-template-columns:1fr}.offer .btn{width:100%}
+  .grid2{grid-template-columns:1fr}
+  .form{padding:18px}
+}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="wrap wide">
+  <a class="logo" href="/"><i>M</i>makswo</a>
+  <span class="sp"></span>
+  <a class="mono" href="#form" style="text-decoration:none">Анкета</a>
+  <a class="btn gho sm" id="acct" href="/me">Войти</a>
+</div></nav>
+
+<main class="wrap wide">
+  <div class="hero">
+    <div class="eyebrow">Ступень 3 · предзапись</div>
+    <h1>Группа «Помощник <span class="acc">за 2 недели»</span></h1>
+    <p class="lead">10–15 человек, 4 созвона с Максом и общий чат. За две недели собираем ИИ-помощника под работу каждого участника — на твоих задачах, а не на учебных примерах. Без кода, в Claude, ChatGPT или DeepSeek.</p>
+    <div class="offer">
+      <div>
+        <div class="prc">25 000 ₽</div>
+        <div class="disc">Сейчас — только анкета, без оплаты. Оплату и даты потока откроем, когда наберётся 10 заявок, и напишем каждому, кто её заполнил.</div>
+      </div>
+      <a class="btn pri lg" href="#form">Заполнить анкету</a>
+    </div>
+  </div>
+
+  <section class="sec" id="get">
+    <div class="eyebrow">Что получишь</div>
+    <h2>Помощник, собранный под тебя</h2>
+    <div class="grid2">
+      <div class="card3"><b>Свой помощник через 2 недели</b><span>Под твою работу: знает тебя и твои задачи, подключён к почте и календарю там, где это возможно, работает по твоим правилам.</span></div>
+      <div class="card3"><b>4 созвона с Максом</b><span>Разбираем задачи каждого участника и собираем решения вживую — показываешь экран, вместе доводим до рабочего состояния.</span></div>
+      <div class="card3"><b>Чат группы</b><span>Вопросы между созвонами, примеры других участников, готовые запросы и настройки, которыми делятся в группе.</span></div>
+      <div class="card3"><b>Разбор твоих задач</b><span>Что отдать помощнику в первую очередь, а что не стоит, — по твоей анкете ещё до старта.</span></div>
+    </div>
+  </section>
+
+  <section class="sec" id="how">
+    <div class="eyebrow">Как попасть</div>
+    <h2>Три шага, без оплаты сейчас</h2>
+    <ol class="steps">
+      <li><div><b>Заполняешь анкету</b><span>Чем занимаешься и что хочешь отдать помощнику — 3 минуты.</span></div></li>
+      <li><div><b>Короткий созвон</b><span>Макс пишет по контакту из анкеты: проверим, что группа подходит под твою задачу.</span></div></li>
+      <li><div><b>Старт потока</b><span>Когда наберётся 10 заявок, пришлём даты и ссылку на оплату. Решаешь после этого.</span></div></li>
+    </ol>
+  </section>
+
+  <section class="sec" id="form">
+    <div class="eyebrow">Анкета</div>
+    <h2>Предзапись в группу</h2>
+    <div id="fbox">
+    <form class="form" id="lf" novalidate>
+      <label class="l" for="name">Как тебя зовут</label>
+      <input type="text" id="name" maxlength="80" autocomplete="name" placeholder="Имя">
+      <label class="l" for="contact">Как с тобой связаться</label>
+      <input type="text" id="contact" maxlength="120" placeholder="@telegram, телефон или почта">
+      <label class="l" for="work">Чем занимаешься</label>
+      <textarea id="work" maxlength="600" placeholder="Например: продаю автомобили, веду салон, работаю бухгалтером, веду блог"></textarea>
+      <label class="l" for="want">Что хочешь отдать помощнику</label>
+      <textarea id="want" maxlength="1200" placeholder="Например: разбирать заявки из почты, готовить КП, вести таблицу клиентов, писать посты"></textarea>
+      <label class="l">На чём работаешь</label>
+      <div class="opts" id="dev"><label><input type="checkbox" value="iphone">iPhone</label><label><input type="checkbox" value="android">Android</label><label><input type="checkbox" value="win">Windows</label><label><input type="checkbox" value="mac">Mac</label></div>
+      <label class="l">Где ты сейчас находишься</label>
+      <div class="opts" id="country"><label><input type="radio" name="country" value="ru">Россия или Беларусь</label><label><input type="radio" name="country" value="cis">Другая страна СНГ</label><label><input type="radio" name="country" value="world">Другая страна</label><label><input type="radio" name="country" value="unsure">Не уверен</label></div>
+      <p class="hint">От страны зависит, какой ИИ-сервис подойдёт. Только официальные способы доступа.</p>
+      <div class="hp" aria-hidden="true"><label>Сайт <input type="text" id="website" tabindex="-1" autocomplete="off"></label></div>
+      <label class="cons"><input type="checkbox" id="consent"><span>Согласен на обработку персональных данных из анкеты, чтобы со мной связались по поводу группы. <a href="/privacy" target="_blank" rel="noopener">Политика</a></span></label>
+      <button class="btn pri lg go" type="submit" id="go">Отправить анкету</button>
+      <div class="err" id="err" role="alert"></div>
+    </form>
+    </div>
+  </section>
+
+  <section class="sec faq" id="faq">
+    <div class="eyebrow">Вопросы</div>
+    <h2>Частые вопросы</h2>
+    <details><summary>Когда старт?</summary><p>Когда наберётся 10 заявок. Даты потока и ссылку на оплату получит каждый, кто заполнил анкету. До этого платить ничего не нужно.</p></details>
+    <details><summary>Нужно сначала пройти другие курсы?</summary><p>Нет. В группе собираем всё с нуля под твою задачу. Если хочешь начать раньше — есть <a href="/start">инструкция за 299 ₽</a>.</p></details>
+    <details><summary>Я из России. Получится?</summary><p>России и Беларуси нет в списках стран, где Claude и ChatGPT официально доступны. Для таких участников подберём сервис, который работает официально, — поэтому в анкете есть вопрос о стране. Обходных путей не показываем.</p></details>
+    <details><summary>Кому не подойдёт?</summary><p>Если нужна автоматизация с программированием, интеграциями с CRM или ботами под ключ — это отдельная работа, а не группа. Напиши в анкете, разберёмся на созвоне.</p></details>
+    <details><summary>Что с возвратом?</summary><p>Условия участия и возврата будут в <a href="/oferta" target="_blank" rel="noopener">публичной оферте</a> до открытия оплаты.</p></details>
+  </section>
+
+  <div class="note" style="margin-top:28px"><b>Без обещаний дохода.</b> В группе собираем помощника для рутинных задач. Сколько времени он сэкономит, зависит от твоей работы — мы не обещаем заработка или конкретных цифр. Места не «горят»: в группе 10–15 человек, и это честный предел, чтобы успеть разобрать задачи каждого.</div>
+</main>
+
+<footer>Сделал Макс · <a href="https://www.instagram.com/makswo/" target="_blank" rel="noopener">@makswo</a> · <a href="/oferta" target="_blank" rel="noopener">Публичная оферта</a> · <a href="/privacy" target="_blank" rel="noopener">Персональные данные</a><br><span class="freq">ИП Малыгин Максим Валерьевич · ИНН 183512338627 · ОГРНИП 323180000018526 · <a href="mailto:mxmginarm@gmail.com">mxmginarm@gmail.com</a></span></footer>
+
+<script src="/assets/bonus.js?v=2"></script>
+<script src="/assets/src.js?v=1"></script>
+<script src="/assets/account.js"></script>
+<script src="/assets/chat.js?v=4" defer></script>
+<script>
+(function(){
+'use strict';
+function $(id){return document.getElementById(id)}
+function track(n,p){try{window.va&&window.va('event',Object.assign({name:n},p||{}))}catch(e){}}
+window.track=track;
+var esc=TP.esc, KEY='tp_group_sent_v1';
+$('acct').textContent=TP.user()?'Профиль':'Войти';
+function done(){
+  $('fbox').innerHTML='<div class="done"><div class="eyebrow">Анкета отправлена</div><h3>Спасибо, анкета у Макса</h3><p>Он прочитает её и напишет по контакту из анкеты, чтобы коротко созвониться. Даты потока и оплату пришлём, когда наберётся группа.</p><p>Пока ждёшь — можно начать с <a href="/start">инструкции «Как начать с ИИ»</a> или посмотреть <a href="/kit">«Стартовый набор»</a>.</p></div>';
+}
+try{ if(localStorage.getItem(KEY)) done() }catch(e){}
+function val(id){return $(id).value.trim()}
+var f=$('lf');
+if(f) f.onsubmit=function(e){
+  e.preventDefault();
+  var dev=[].map.call(document.querySelectorAll('#dev input:checked'),function(i){return i.value});
+  var c=document.querySelector('#country input:checked');
+  var data={kind:'group',name:val('name'),contact:val('contact'),work:val('work'),want:val('want'),dev:dev,country:c?c.value:'',consent:$('consent').checked,website:$('website').value,from:window.TP_SRC?TP_SRC():null};
+  var er=$('err'), miss=null;
+  if(data.name.length<2) miss=['name','Напиши, как тебя зовут'];
+  else if(data.contact.length<3) miss=['contact','Оставь контакт: Telegram, телефон или почту'];
+  else if(data.work.length<3) miss=['work','Напиши пару слов о своей работе'];
+  else if(data.want.length<3) miss=['want','Напиши, что хочешь отдать помощнику'];
+  else if(!dev.length) miss=[null,'Отметь хотя бы одно устройство'];
+  else if(!data.country) miss=[null,'Отметь, где ты сейчас'];
+  else if(!data.consent) miss=['consent','Нужно согласие на обработку данных — иначе мы не сможем связаться'];
+  if(miss){ er.textContent=miss[1]; if(miss[0]) $(miss[0]).focus(); return }
+  er.textContent=''; var b=$('go'); b.disabled=true; b.textContent='Отправляю…';
+  // Анкета работает без входа: токен добавляем, только если человек вошёл в профиль.
+  (TP.user()?TP.token():Promise.resolve(null)).then(function(t){
+    var h={'Content-Type':'application/json'}; if(t) h.Authorization='Bearer '+t;
+    return fetch('/api/lead',{method:'POST',headers:h,body:JSON.stringify(data)}).then(function(r){return r.json().catch(function(){return {}})});
+  }).then(function(d){
+    b.disabled=false; b.textContent='Отправить анкету';
+    if(d.ok){ try{localStorage.setItem(KEY,'1')}catch(e){}; track('group_lead',{src:data.from||''}); done(); $('form').scrollIntoView({block:'start'}); return }
+    er.textContent={limit:'Слишком много анкет с этого устройства за сутки. Напиши в директ @makswo.',consent:'Нужно согласие на обработку данных.',fields:'Проверь, что заполнены все поля.'}[d.error]||'Не получилось отправить. Попробуй ещё раз или напиши в директ @makswo.';
+  },function(){ b.disabled=false; b.textContent='Отправить анкету'; er.textContent='Нет связи. Попробуй ещё раз.' });
+};
+})();
+</script>
+</body>
+</html>

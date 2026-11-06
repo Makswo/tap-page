@@ -6,6 +6,7 @@ const auth = require('./_lib/auth');
 const mail = require('./_lib/mail');
 const { UUID, send, body, site } = require('./_lib/util');
 
+const LEAD_STATUS = ['new', 'call', 'paid', 'no'];
 const COURSES = { nabor: 'Стартовый набор Макса', montage: 'Студия авто-монтажа с ИИ', assistant: 'Свой ИИ-помощник', group: 'Группа «Помощник за 2 недели»' };
 
 function page(res, title, text) {
@@ -90,6 +91,11 @@ module.exports = async (req, res) => {
     if (!user) return send(res, 401, { error: 'auth' });
     if (!auth.isAdmin(user)) return send(res, 403, { error: 'admin' });
 
+    if (req.method === 'GET' && q.leads) {
+      const kind = ['group', 'pro'].includes(q.leads) ? q.leads : 'group';
+      const rows = await db.select('leads', { select: 'id,created_at,status,name,contact,email,work,want,dev,country,src,note', kind: `eq.${kind}`, order: 'created_at.desc', limit: '500' });
+      return send(res, 200, { leads: rows, kind });
+    }
     if (req.method === 'GET' && q.funnel) {
       const days = [7, 30, 90].includes(Number(q.days)) ? Number(q.days) : 0;
       return send(res, 200, { funnel: await funnel(days) });
@@ -98,6 +104,17 @@ module.exports = async (req, res) => {
     if (req.method !== 'POST') return send(res, 405, { error: 'method' });
 
     const b = body(req);
+    // Заявка: сменить статус и/или заметку.
+    if (b.action === 'lead') {
+      const id = Number(b.id);
+      if (!Number.isInteger(id) || id < 1) return send(res, 400, { error: 'id' });
+      const patch = {};
+      if (b.status !== undefined) { if (!LEAD_STATUS.includes(b.status)) return send(res, 400, { error: 'status' }); patch.status = b.status; }
+      if (b.note !== undefined) patch.note = String(b.note || '').slice(0, 1000);
+      if (!Object.keys(patch).length) return send(res, 400, { error: 'empty' });
+      const r = await db.update('leads', { id: `eq.${id}` }, patch);
+      return send(res, 200, { ok: !!r.length });
+    }
     if (b.action !== 'send') return send(res, 400, { error: 'action' });
     const course = String(b.course || '');
     if (!COURSES[course]) return send(res, 400, { error: 'course' });

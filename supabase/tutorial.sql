@@ -144,3 +144,25 @@ alter table public.visits enable row level security;
 alter table public.tutorial_orders add column if not exists mail_ok boolean not null default false;
 alter table public.tutorial_orders add column if not exists mail1_at timestamptz;
 alter table public.tutorial_orders add column if not exists mail2_at timestamptz;
+
+-- Заявки без входа: анкета группы (/group) и «под ключ» (/pro). Статусы: new → call → paid (или no).
+create table if not exists public.leads (
+  id bigint generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  kind text not null,            -- group | pro
+  status text not null default 'new',
+  name text not null,
+  contact text not null,         -- Telegram, телефон или почта — как написал человек
+  email text,                    -- почта профиля, если человек вошёл
+  user_id uuid references auth.users(id) on delete set null,
+  work text,
+  want text,
+  dev text[],
+  country text,
+  src text,
+  note text,                     -- заметка админа
+  ip_hash text
+);
+create index if not exists leads_kind_time_idx on public.leads(kind, created_at desc);
+create index if not exists leads_ip_time_idx on public.leads(ip_hash, created_at desc);
+alter table public.leads enable row level security;
