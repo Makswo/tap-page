@@ -7,7 +7,7 @@ const mail = require('./_lib/mail');
 const { UUID, send, body, site } = require('./_lib/util');
 
 const LEAD_STATUS = ['new', 'call', 'paid', 'no'];
-const COURSES = { nabor: 'Стартовый набор Макса', montage: 'Студия авто-монтажа с ИИ', assistant: 'Свой ИИ-помощник', group: 'Группа «Помощник за 2 недели»' };
+const COURSES = { nabor: 'Стартовый набор Макса', montage: 'Студия авто-монтажа с ИИ', group: 'Группа «ИИ под твою работу за 2 недели»' };
 
 function page(res, title, text) {
   res.statusCode = 200;

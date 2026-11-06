@@ -120,13 +120,13 @@ function gemFromOrder(id){
   return {hue:(h%41)-20, name:names[(h>>>8)%names.length], no:String(id||'').replace(/-/g,'').slice(0,8).toUpperCase()||'DEMO0000', facets:8+((h>>>4)%5)*2};
 }
 
-// Коллекция: 7 кристаллов. Первые четыре выдаются за курсы, три — секретные.
+// Коллекция: 7 кристаллов. Первые три выдаются за курсы, четыре — секретные (Рубин был за курс «Свой ИИ-помощник», курс вошёл в «Стартовый набор»).
 // hue — сдвиг оттенка от базового фиолетового (264°).
 var GEMS=[
   {id:'start',     name:'Аметист',   title:'Кристалл старта',      hue:0,    course:'start'},
   {id:'nabor',     name:'Сапфир',    title:'Кристалл системы',     hue:-46,  course:'nabor'},
   {id:'montage',   name:'Изумруд',   title:'Кристалл монтажа',     hue:-112, course:'montage'},
-  {id:'assistant', name:'Рубин',     title:'Кристалл помощника',   hue:92,   course:'assistant'},
+  {id:'assistant', name:'Рубин',     title:'Секретный кристалл',   hue:92,   secret:true},
   {id:'topaz',     name:'Топаз',     title:'Секретный кристалл',   hue:144,  secret:true},
   {id:'aqua',      name:'Аквамарин', title:'Секретный кристалл',   hue:-78,  secret:true},
   {id:'rose',      name:'Морганит',  title:'Секретный кристалл',   hue:62,   secret:true}

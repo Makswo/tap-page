@@ -8,7 +8,7 @@ const auth = require('./_lib/auth');
 const mail = require('./_lib/mail');
 const { normSrc, send, body, site } = require('./_lib/util');
 
-const KINDS = { group: 'Группа «Помощник за 2 недели»', pro: 'Под ключ' };
+const KINDS = { group: 'Группа «ИИ под твою работу за 2 недели»', pro: 'Под ключ' };
 const DEV = ['iphone', 'android', 'win', 'mac'];
 const COUNTRY = ['ru', 'cis', 'world', 'unsure'];
 const PER_DAY = 5;
@@ -38,7 +38,7 @@ async function notify(lead) {
   if (!process.env.RESEND_API_KEY) return;
   const to = String(process.env.ADMIN_EMAILS || 'mxmgin@gmail.com').split(/[,\s]+/).filter(Boolean)[0];
   const subject = `Новая заявка: ${KINDS[lead.kind]} — ${lead.name}`;
-  const t = `Имя: ${lead.name}\nКонтакт: ${lead.contact}${lead.email ? `\nПочта профиля: ${lead.email}` : ''}\n\nЧем занимается:\n${lead.work}\n\nЧто хочет отдать помощнику:\n${lead.want}` +
+  const t = `Имя: ${lead.name}\nКонтакт: ${lead.contact}${lead.email ? `\nПочта профиля: ${lead.email}` : ''}\n\nЧем занимается:\n${lead.work}\n\nКакие задачи хочет отдать ИИ:\n${lead.want}` +
     (lead.dev && lead.dev.length ? `\n\nУстройства: ${lead.dev.join(', ')}` : '') + (lead.country ? `\nСтрана: ${lead.country}` : '') + (lead.src ? `\nМетка: ${lead.src}` : '');
   const m = mail.render({ subject, text: t, cta: 'Открыть заявки', link: `${site()}/me#leads`, footer: 'Служебное письмо tap-page.ru: пришла новая заявка.' });
   await mail.sendBatch([{ to, subject, html: m.html, text: m.text }]);
