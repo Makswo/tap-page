@@ -36,9 +36,45 @@
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .card3{background:var(--s1);border:1px solid var(--line);border-radius:20px;padding:18px}
 .card3 b{display:block;font-size:16px}.card3 span{display:block;font-size:14px;color:var(--tx2);margin-top:6px}
-.res{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.res li{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;border-radius:16px;background:var(--s1);border:1px solid var(--line);font-size:15px}
-.res li::before{content:"";flex:none;width:8px;height:8px;margin-top:8px;border-radius:2px;background:var(--acc)}
+/* «Что будет через 7 дней»: схема из узлов, как в node-редакторе */
+.graph{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 250px minmax(0,1fr);grid-template-rows:repeat(3,auto);column-gap:86px;row-gap:16px;align-items:center;padding:8px 0}
+.graph svg.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.wires .w{fill:none;stroke:var(--line2);stroke-width:1.6;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .9s ease}
+.wires .f{fill:none;stroke:var(--acc);stroke-width:1.8;stroke-linecap:round;stroke-dasharray:2 12;opacity:0;transition:opacity .6s ease .6s;animation:flow 1.6s linear infinite}
+.wires .pt{fill:var(--bg);stroke:var(--line2);stroke-width:1.6;opacity:0;transition:opacity .4s ease .5s}
+.wires .pt.hp{stroke:var(--acc)}
+.wires .dot{fill:var(--acc);opacity:0;transition:opacity .4s ease 1s;filter:drop-shadow(0 0 4px rgba(212,255,63,.9))}
+.graph.on .w{stroke-dashoffset:0}.graph.on .f{opacity:.55}.graph.on .pt,.graph.on .dot{opacity:1}
+@keyframes flow{to{stroke-dashoffset:-28}}
+.nd{position:relative;z-index:1;border-radius:16px;background:var(--s1);border:1px solid var(--line2);overflow:hidden;opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease,border-color .2s}
+.graph.on .nd,.graph.on .hub{opacity:1;transform:none}
+.nd:hover{border-color:rgba(212,255,63,.5)}
+.nd-h{display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--s2);border-bottom:1px solid var(--line)}
+.nd-h i{flex:none;width:8px;height:8px;border-radius:2px;background:var(--acc)}
+.nd-h b{font-size:14.5px;letter-spacing:-.01em}
+.nd-h span{margin-left:auto;font-family:var(--m);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3);white-space:nowrap}
+.nd p{margin:0;padding:11px 14px 13px;font-size:14px;line-height:1.45;color:var(--tx2)}
+.nd.l1{grid-column:1;grid-row:1}.nd.l2{grid-column:1;grid-row:2}.nd.l3{grid-column:1;grid-row:3}
+.nd.r1{grid-column:3;grid-row:1}.nd.r2{grid-column:3;grid-row:2}.nd.r3{grid-column:3;grid-row:3}
+.hub{grid-column:2;grid-row:1/4;position:relative;z-index:1;text-align:center;padding:26px 18px;border-radius:24px;border:1px solid rgba(212,255,63,.55);background:radial-gradient(90% 70% at 50% 0%,rgba(212,255,63,.14),transparent 70%),var(--s1);opacity:0;transform:scale(.96);transition:opacity .6s ease,transform .6s ease}
+.hub .av{width:58px;height:58px;margin:0 auto 12px;border-radius:18px;display:grid;place-items:center;background:var(--acc);color:var(--acc-ink);font:800 24px var(--f);position:relative}
+.hub .av::after{content:"";position:absolute;inset:-6px;border-radius:22px;border:1.5px solid rgba(212,255,63,.5);animation:ring 2.4s ease-out infinite}
+@keyframes ring{0%{transform:scale(.9);opacity:.9}100%{transform:scale(1.35);opacity:0}}
+.hub b{display:block;font-size:19px;letter-spacing:-.02em;line-height:1.2}
+.hub span{display:block;margin-top:6px;font-size:14px;color:var(--tx2)}
+.hub small{display:inline-block;margin-top:12px;font-family:var(--m);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc)}
+@media (max-width:900px){
+  .graph{grid-template-columns:1fr;column-gap:0;row-gap:14px;padding-left:34px}
+  .hub,.nd.l1,.nd.l2,.nd.l3,.nd.r1,.nd.r2,.nd.r3{grid-column:1;grid-row:auto}
+  .hub{order:0;text-align:left;display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:center;padding:16px}
+  .hub .av{margin:0;grid-row:span 3;width:50px;height:50px;font-size:21px}
+  .hub small{margin-top:6px}
+  .nd.l1{order:1}.nd.l2{order:2}.nd.l3{order:3}.nd.r1{order:4}.nd.r2{order:5}.nd.r3{order:6}
+}
+@media (prefers-reduced-motion:reduce){
+  .wires .f,.hub .av::after{animation:none}.wires .dot{display:none}
+  .nd,.hub,.wires .w{transition:none}
+}
 .mods{display:grid;gap:10px}
 .mod{display:grid;grid-template-columns:110px 1fr;gap:16px;padding:18px;border-radius:20px;background:var(--s1);border:1px solid var(--line)}
 .mod .d{font-family:var(--m);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc)}
@@ -96,14 +132,16 @@
   <section class="sec" id="result">
     <div class="eyebrow">Что будет через 7 дней</div>
     <h2>Помощник, который знает тебя</h2>
-    <ul class="res">
-      <li>Выбран сервис под твою страну и устройства, есть запасной вариант.</li>
-      <li>Проект «Моя работа» с инструкцией «кто я»: ответы сразу про твою работу, а не общие.</li>
-      <li>Подключены почта, календарь и диск — или настроена схема без подключений, если у тебя Яндекс или Mail.ru.</li>
-      <li>2–3 рутинные задачи по твоей «боли»: почта, тексты, таблицы, поиск или учёба.</li>
-      <li>Утренний отчёт: встречи, важные письма и задачи дня — по расписанию или в один клик.</li>
-      <li>Свои шаблоны запросов и понимание, как писать новые.</li>
-    </ul>
+    <div class="graph" id="graph">
+      <svg class="wires" aria-hidden="true"></svg>
+      <div class="nd l1"><div class="nd-h"><i></i><b>Сервис выбран</b><span>День 1</span></div><p>Под твою страну и устройства — и запасной вариант на всякий случай.</p></div>
+      <div class="nd l2"><div class="nd-h"><i></i><b>Проект «Моя работа»</b><span>День 2</span></div><p>Инструкция «кто я»: ответы сразу про твою работу, а не общие.</p></div>
+      <div class="nd l3"><div class="nd-h"><i></i><b>Почта, календарь, диск</b><span>День 3</span></div><p>Подключены — или схема без подключений, если у тебя Яндекс или Mail.ru.</p></div>
+      <div class="hub"><div class="av">AI</div><b>Твой помощник</b><span>знает тебя и твою работу</span><small>через 7 дней</small></div>
+      <div class="nd r1"><div class="nd-h"><i></i><b>2–3 рутинные задачи</b><span>Дни 4–5</span></div><p>По твоей «боли»: почта, тексты, таблицы, поиск или учёба.</p></div>
+      <div class="nd r2"><div class="nd-h"><i></i><b>Утренний отчёт</b><span>День 6</span></div><p>Встречи, важные письма и задачи дня — по расписанию или в один клик.</p></div>
+      <div class="nd r3"><div class="nd-h"><i></i><b>Свои шаблоны</b><span>День 7</span></div><p>Шаблоны запросов и понимание, как писать новые.</p></div>
+    </div>
   </section>
 
   <section class="sec" id="program">
@@ -206,6 +244,54 @@ TPVideo({key:'kit',src:c.video.src,mini:c.video.mini,poster:c.video.poster,title
   soonTitle:'Макс о наборе',soonText:'Видео скоро появится здесь.'});
 $('vid').onclick=function(){ TPVideoPlay({key:'kit',src:c.video.src,mini:c.video.mini,poster:c.video.poster,title:'Макс о наборе'}); track('video_course',{course:ID,page:'kit'}) };
 render(); load();
+})();
+
+// Схема «через 7 дней»: провода между узлами. На широком экране — от каждого узла к центру,
+// на узком — цепочкой сверху вниз. Пересчитываем при изменении размера.
+(function(){
+  var g=document.getElementById('graph'); if(!g) return;
+  var svg=g.querySelector('svg.wires'), NS='http://www.w3.org/2000/svg';
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function box(el){var a=el.getBoundingClientRect(),b=g.getBoundingClientRect();return {x:a.left-b.left,y:a.top-b.top,w:a.width,h:a.height}}
+  function el(n,attrs){var e=document.createElementNS(NS,n);for(var k in attrs)e.setAttribute(k,attrs[k]);return e}
+  function draw(){
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    var hub=box(g.querySelector('.hub')), wide=getComputedStyle(g).gridTemplateColumns.split(' ').length>1, wires=[];
+    if(wide){
+      [['l1',-1],['l2',-1],['l3',-1],['r1',1],['r2',1],['r3',1]].forEach(function(n,i){
+        var b=box(g.querySelector('.nd.'+n[0])), side=n[1], k=i%3;
+        var x1=side<0?b.x+b.w:b.x, y1=b.y+b.h/2;
+        var x2=side<0?hub.x:hub.x+hub.w, y2=hub.y+hub.h*(.3+.2*k);
+        var dx=Math.abs(x2-x1)*.55;
+        wires.push(['M',x1,y1,'C',x1-side*dx,y1,x2+side*dx,y2,x2,y2].join(' '));
+      });
+    } else {
+      var order=['.hub','.nd.l1','.nd.l2','.nd.l3','.nd.r1','.nd.r2','.nd.r3'].map(function(q){return box(g.querySelector(q))});
+      for(var i=0;i<order.length-1;i++){
+        var a=order[i], b=order[i+1], x=Math.min(a.x,b.x)-17, y1=a.y+a.h/2, y2=b.y+b.h/2;
+        wires.push(['M',a.x,y1,'C',x,y1,x,y1,x,(y1+y2)/2,'C',x,y2,x,y2,b.x,y2].join(' '));
+      }
+    }
+    wires.forEach(function(d,i){
+      var id='wire'+i;
+      svg.appendChild(el('path',{d:d,'class':'w',pathLength:'1',style:'transition-delay:'+(i*0.12)+'s'}));
+      svg.appendChild(el('path',{d:d,'class':'f',id:id}));
+      var p=d.split(' '), end=[p[p.length-2],p[p.length-1]];
+      svg.appendChild(el('circle',{cx:p[1],cy:p[2],r:'4','class':'pt'}));
+      svg.appendChild(el('circle',{cx:end[0],cy:end[1],r:'4','class':'pt hp'}));
+      if(!reduce){
+        var dot=el('circle',{r:'3','class':'dot'}), m=el('animateMotion',{dur:'2.8s',repeatCount:'indefinite',begin:(i*0.45)+'s'});
+        var mp=el('mpath',{}); mp.setAttributeNS('http://www.w3.org/1999/xlink','href','#'+id); mp.setAttribute('href','#'+id);
+        m.appendChild(mp); dot.appendChild(m); svg.appendChild(dot);
+      }
+    });
+  }
+  var t; function later(){clearTimeout(t);t=setTimeout(draw,80)}
+  draw(); window.addEventListener('resize',later);
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(draw);
+  var nodes=g.querySelectorAll('.nd'); [].forEach.call(nodes,function(n,i){n.style.transitionDelay=(0.15+i*0.08)+'s'});
+  if(reduce||!('IntersectionObserver' in window)){ g.classList.add('on'); return }
+  new IntersectionObserver(function(e,o){ if(e[0].isIntersecting){ g.classList.add('on'); o.disconnect() } },{threshold:.25}).observe(g);
 })();
 </script>
 </body>
