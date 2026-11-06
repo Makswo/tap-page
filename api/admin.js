@@ -91,6 +91,21 @@ module.exports = async (req, res) => {
     if (!user) return send(res, 401, { error: 'auth' });
     if (!auth.isAdmin(user)) return send(res, 403, { error: 'admin' });
 
+    // Поддержка: что спрашивают ИИ-поддержку и что ИИ ответил; что заблокировано в общем чате.
+    if (req.method === 'GET' && q.support) {
+      const [msgs, blocked] = await Promise.all([
+        db.select('support_messages', { select: 'id,created_at,user_id,question,answer,blocked', order: 'id.desc', limit: '200' }),
+        db.select('chat_blocked', { select: 'id,created_at,user_id,text,reason', order: 'id.desc', limit: '100' }),
+      ]);
+      const ids = [...new Set(msgs.concat(blocked).map((m) => m.user_id).filter(Boolean))];
+      const profs = ids.length ? await db.select('profiles', { select: 'user_id,nick', user_id: `in.(${ids.join(',')})` }) : [];
+      const nick = {}; profs.forEach((p) => { nick[p.user_id] = p.nick; });
+      const who = (m) => (m.user_id ? (nick[m.user_id] || 'из профиля') : null);
+      return send(res, 200, {
+        messages: msgs.map((m) => ({ id: m.id, at: m.created_at, who: who(m), question: m.question, answer: m.answer, blocked: m.blocked })),
+        blocked: blocked.map((m) => ({ id: m.id, at: m.created_at, who: who(m), text: m.text, reason: m.reason })),
+      });
+    }
     if (req.method === 'GET' && q.leads) {
       const kind = ['group', 'pro'].includes(q.leads) ? q.leads : 'group';
       const rows = await db.select('leads', { select: 'id,created_at,status,name,contact,email,work,want,dev,country,src,note', kind: `eq.${kind}`, order: 'created_at.desc', limit: '500' });

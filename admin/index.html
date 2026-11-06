@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Админка — tap-page</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#08090a">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/ui.css">
+<style>
+main{padding-block:32px 64px}
+.topbar{display:flex;align-items:center;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+.topbar h2{font-size:clamp(26px,3.2vw,36px);margin:0;letter-spacing:-.03em}
+.topbar .sp{flex:1}
+.faint{color:var(--tx3);font-size:13px}
+.err{color:var(--bad);font-size:14px;margin:0 0 12px}
+.empty{border:1.5px dashed var(--line2);border-radius:16px;padding:26px 18px;text-align:center;color:var(--tx3);font-size:13.5px}
+.loading{color:var(--tx3);padding:30px 0}
+.card{background:var(--s1);border:1px solid var(--line);border-radius:20px;padding:20px;min-width:0}
+.lbl{font-family:var(--m);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.lbl b{color:var(--tx2);font-weight:500}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+.pill{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:650;white-space:nowrap;color:var(--tx2);background:var(--s2)}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.ok{color:var(--ok);background:rgba(62,224,160,.1)}.pill.info{color:var(--info);background:rgba(122,168,255,.1)}
+.pill.warn{color:var(--warn);background:rgba(255,181,74,.1)}.pill.bad{color:var(--bad);background:rgba(255,107,107,.1)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{height:32px;padding:0 14px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:650;color:var(--tx2)}
+.tabs button.on{background:var(--tx);color:var(--bg);border-color:var(--tx)}
+.adm-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.adm-tabs button{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 13px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:650;color:var(--tx2)}
+.adm-tabs button.on{border-color:var(--acc);color:var(--tx);background:var(--acc-dim)}
+.adm-tabs .n{font-variant-numeric:tabular-nums;color:var(--tx3)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.tile{background:var(--s1);border:1px solid var(--line);border-radius:18px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.tile .l{font-size:13px;color:var(--tx2)}
+.tile .v{font-family:var(--m);font-size:clamp(24px,3vw,32px);font-weight:500;letter-spacing:-.03em;line-height:1}
+.tile .d{font-size:12.5px;color:var(--tx3)}
+.fun-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 18px}
+.inp,select.inp{height:40px;border-radius:12px;background:var(--bg);border:1px solid var(--line2);padding:0 12px;font:14px var(--f);color:var(--tx);max-width:260px}
+.fun-steps{display:grid;gap:10px;border:1px solid var(--line);border-radius:18px;padding:16px 18px;background:var(--s1)}
+.fun-step{display:grid;grid-template-columns:minmax(180px,240px) 1fr 70px 54px;gap:14px;align-items:center;font-size:14px}
+.fun-name{display:flex;gap:10px;color:var(--tx2)}.fun-name .n{font-family:var(--m);font-size:12px;color:var(--acc)}
+.fun-track{height:10px;border-radius:6px;background:var(--s2);overflow:hidden}
+.fun-track i{display:block;height:100%;background:var(--acc);border-radius:6px;min-width:2px}
+.fun-step b{text-align:right;font-variant-numeric:tabular-nums}.fun-step small{color:var(--tx3);text-align:right}
+.fun-note{margin:10px 0 26px}
+h3.sh{font-size:18px;margin:26px 0 12px;letter-spacing:-.01em}
+.fa-table{overflow-x:auto;border:1px solid var(--line);border-radius:16px}
+.fa-table table{width:100%;border-collapse:collapse;font-size:14px;min-width:640px}
+.fa-table th{text-align:left;font-weight:600;color:var(--tx3);font-size:12.5px;padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+.fa-table td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top;font-variant-numeric:tabular-nums}
+.fa-table tr:last-child td{border-bottom:0}
+.fa-row{cursor:pointer}.fa-row:hover td{background:var(--s1)}.fa-row.on td{background:var(--acc-dim)}
+.fa-table i{font-style:normal;color:var(--tx3);font-size:12px}
+.goal{display:flex;align-items:center;gap:14px;margin:0 0 16px;padding:14px 18px;border-radius:18px;background:var(--s1);border:1px solid var(--line)}
+.goal .fun-track{flex:1}.goal b{font-family:var(--m);font-size:20px}
+.adm-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start;padding:16px 18px;border:1px solid var(--line2);border-radius:18px;background:var(--s1)}
+.adm-row + .adm-row{margin-top:12px}
+.adm-row h3{font-size:16px;margin:0 0 4px}
+.adm-row .q{margin:10px 0 0;font-size:14.5px;white-space:pre-wrap;overflow-wrap:anywhere}
+.adm-row .q i{display:block;font-style:normal;font-family:var(--m);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);margin-bottom:2px}
+.adm-row textarea{width:100%;margin-top:12px;border-radius:12px;background:var(--bg);border:1px solid var(--line2);padding:10px 12px;font:14px/1.45 var(--f);color:var(--tx);min-height:56px;resize:vertical}
+.adm-row .side{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.adm-acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.adm-row.st-no{opacity:.55}
+.cmt{border:1px solid var(--line2);border-radius:16px;padding:14px 16px;background:var(--bg)}
+.cmt + .cmt{margin-top:10px}
+.cmt-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cmt-t{margin:8px 0 0;font-size:14px;line-height:1.5;overflow-wrap:anywhere;white-space:pre-wrap}
+.cmt-r{margin:10px 0 0;padding-left:12px;border-left:2px solid var(--acc);font-size:13.5px;line-height:1.5;color:var(--tx2);overflow-wrap:anywhere;white-space:pre-wrap}
+.adm{border-radius:20px;padding:18px;background:var(--s1);border:1px solid var(--line);margin-top:12px}
+.adm-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}.adm-h b{font-size:17px}.adm-h span{font-family:var(--m);font-size:12.5px;color:var(--tx2)}
+.adm label{display:block;font-family:var(--m);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin:14px 0 6px}
+.adm input,.adm textarea{width:100%;border-radius:14px;background:var(--bg);border:1px solid var(--line2);padding:11px 14px;font:15px/1.45 var(--f);color:var(--tx);outline:none}
+.adm textarea{min-height:150px;resize:vertical}
+.adm .row2{display:grid;grid-template-columns:1fr 2fr;gap:10px}
+.adm .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.adm details{margin-top:10px;font-size:14px;color:var(--tx2)}.adm details ul{margin:8px 0 0;padding-left:18px;max-height:220px;overflow:auto}
+.st{font-size:13.5px;color:var(--tx2)}.st.ok{color:var(--ok)}.st.bad{color:var(--bad)}
+.hist{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px;font-size:13.5px}.hist li{display:grid;grid-template-columns:120px 80px 1fr auto;gap:10px;color:var(--tx2)}.hist b{color:var(--tx)}
+.warnbox{border:1px solid rgba(255,181,74,.35);background:rgba(255,181,74,.08);color:var(--warn);border-radius:14px;padding:12px 14px;font-size:14px;margin-top:12px}
+.logincard{max-width:480px;margin-top:24px;border-radius:24px;padding:24px;background:var(--s1);border:1px solid var(--line2)}
+@media (max-width:860px){.grid2{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){
+  .fun-step{grid-template-columns:1fr 54px;gap:6px 10px}.fun-step .fun-track{grid-column:1/-1;grid-row:2}.fun-step small{display:none}
+  .adm-row{grid-template-columns:1fr}.adm-row .side{align-items:flex-start}.adm-acts{justify-content:flex-start}
+  .adm .row2{grid-template-columns:1fr}.hist li{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="wrap wide">
+  <a class="logo" href="/"><i>M</i>makswo</a>
+  <span class="sp"></span>
+  <a class="btn gho sm" id="acct" href="/me">Профиль</a>
+</div></nav>
+<main class="wrap wide" id="app"><p class="loading">Загружаем…</p></main>
+
+<script src="/assets/account.js"></script>
+<script src="/assets/adminbar.js?v=1"></script>
+<script>
+(function(){
+'use strict';
+function $(id){return document.getElementById(id)}
+var esc=TP.esc, app=$('app'), ADMIN=false;
+var SECTIONS={funnel:'Воронка',leads:'Заявки в группу',mail:'Рассылки',support:'Поддержка'};
+function fmt(d){return new Date(d).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}
+function num(n){return Number(n||0).toLocaleString('ru-RU')}
+function pct(a,b){return b?Math.round(a*100/b)+'%':'—'}
+function top(title,extra){return '<div class="topbar"><h2>'+esc(title)+'</h2><span class="sp"></span>'+(extra||'')+'<button class="btn gho sm" type="button" id="rf">Обновить</button></div>'}
+function fail(title,d){ app.innerHTML=top(title)+'<p class="err">Не получилось загрузить ('+esc(d.error||d._status||'нет связи')+'). Если только что обновили сайт — проверь SQL в Supabase.</p>'; bindRf() }
+function bindRf(){ var b=$('rf'); if(b) b.onclick=route }
+function cur(){ var h=(location.hash||'').slice(1); return SECTIONS[h]?h:'funnel' }
+function route(){ if(!ADMIN) return; var s=cur(); document.title=SECTIONS[s]+' — админка tap-page'; ({funnel:funnel,leads:leads,mail:mail,support:support})[s]() }
+window.addEventListener('hashchange',route);
+
+/* ---------- Воронка ---------- */
+var F={days:30,label:null,data:null};
+function funnel(){
+  app.innerHTML=top('Воронка')+'<p class="loading">Загружаем…</p>'; bindRf();
+  TP.call('GET','/api/admin?funnel=1&days='+F.days).then(function(d){ if(!d.funnel) return fail('Воронка',d); F.data=d.funnel; drawFunnel() },function(){fail('Воронка',{})});
+}
+function drawFunnel(){
+  var f=F.data, rows=f.rows, key=function(r){return r.src||''};
+  var sel=F.label===null?f.total:(rows.filter(function(r){return key(r)===F.label})[0]||f.total);
+  var steps=[['Заходы на сайт',sel.visitors],['Начали вопросы',sel.started],['Ответили на 10 вопросов',sel.answered],['Оплатили инструкцию 299',sel.paid],['Купили «Стартовый набор»',sel.kit]];
+  var mx=Math.max(1,steps[0][1],steps[1][1]);
+  var P=[[7,'7 дней'],[30,'30 дней'],[90,'90 дней'],[0,'Всё время']];
+  var h=top('Воронка')+
+    '<div class="fun-bar"><select class="inp" id="lab"><option value="__all">Все метки</option>'+rows.map(function(r){return '<option value="'+esc(key(r))+'"'+(F.label===key(r)?' selected':'')+'>'+esc(r.src||'без метки')+'</option>'}).join('')+'</select>'+
+    '<div class="tabs">'+P.map(function(p){return '<button type="button" data-d="'+p[0]+'" class="'+(p[0]===f.days?'on':'')+'">'+p[1]+'</button>'}).join('')+'</div></div>'+
+    '<div class="stats">'+
+      '<div class="tile"><span class="l">Выручка</span><span class="v">'+num(sel.revenue)+' ₽</span><span class="d">оплаты инструкции</span></div>'+
+      '<div class="tile"><span class="l">Оплатили</span><span class="v">'+num(sel.paid)+'</span><span class="d">'+(sel.free?'+ '+sel.free+' по бесплатному коду':'без бесплатных кодов')+'</span></div>'+
+      '<div class="tile"><span class="l">Заход → оплата</span><span class="v">'+pct(sel.paid,sel.visitors)+'</span><span class="d">из '+num(sel.visitors)+' заходов</span></div>'+
+      '<div class="tile"><span class="l">Ответили → оплата</span><span class="v">'+pct(sel.paid,sel.answered)+'</span><span class="d">из '+num(sel.answered)+' прошедших вопросы</span></div>'+
+    '</div>'+
+    '<div class="fun-steps">'+steps.map(function(s,i){return '<div class="fun-step"><div class="fun-name"><span class="n">'+('0'+(i+1))+'</span>'+esc(s[0])+'</div><div class="fun-track"><i style="width:'+Math.min(100,s[1]/mx*100)+'%"></i></div><b>'+num(s[1])+'</b><small>'+(i?pct(s[1],steps[i-1][1]):'')+'</small></div>'}).join('')+'</div>'+
+    '<p class="faint fun-note">Заходы — уникальные браузеры. Процент — от предыдущего шага. «Купили набор» появится, когда откроется оплата набора. Заказы до появления меток — в «без метки».</p>'+
+    '<h3 class="sh">По меткам</h3>'+
+    (rows.length?'<div class="fa-table"><table><thead><tr><th>Метка</th><th>Заходы</th><th>Начали</th><th>Ответили</th><th>Оплатили</th><th>Выручка</th><th>Набор</th></tr></thead><tbody>'+
+      rows.map(function(r){return '<tr class="fa-row'+(F.label===key(r)?' on':'')+'" data-l="'+esc(key(r))+'"><td><b>'+(r.src?esc(r.src):'<i>без метки</i>')+'</b></td><td>'+num(r.visitors)+'</td><td>'+num(r.started)+'</td><td>'+num(r.answered)+' <i>'+pct(r.answered,r.started)+'</i></td><td>'+num(r.paid)+(r.free?' <i>+'+r.free+' беспл.</i>':'')+'</td><td>'+num(r.revenue)+' ₽</td><td>'+(r.kit||'—')+'</td></tr>'}).join('')+
+      '</tbody></table></div>':'<div class="empty">Пока пусто.</div>')+
+    '<p class="faint" style="margin-top:10px">Ссылка с меткой: <code>tap-page.ru/start?from=start_r23</code> — латиница, цифры, _ и -. Метка живёт в браузере 30 дней. Нажми на строку, чтобы увидеть её воронку.</p>';
+  app.innerHTML=h; bindRf();
+  $('lab').onchange=function(){ F.label=this.value==='__all'?null:this.value; drawFunnel() };
+  [].forEach.call(app.querySelectorAll('[data-d]'),function(b){ b.onclick=function(){ F.days=Number(b.getAttribute('data-d')); funnel() } });
+  [].forEach.call(app.querySelectorAll('.fa-row'),function(tr){ tr.onclick=function(){ var l=tr.getAttribute('data-l'); F.label=F.label===l?null:l; drawFunnel(); window.scrollTo({top:0,behavior:'smooth'}) } });
+}
+
+/* ---------- Заявки в группу ---------- */
+var LST={new:['Заявка','warn'],call:['Созвон','info'],paid:['Оплатил','ok'],no:['Отказ','']};
+var DEVN={iphone:'iPhone',android:'Android',win:'Windows',mac:'Mac'}, CTRN={ru:'Россия/Беларусь',cis:'СНГ',world:'Другая страна',unsure:'Не уверен'};
+var L={filter:'all',list:[]};
+function leads(){
+  app.innerHTML=top('Заявки в группу')+'<p class="loading">Загружаем…</p>'; bindRf();
+  TP.call('GET','/api/admin?leads=group').then(function(d){ if(!d.leads) return fail('Заявки в группу',d); L.list=d.leads; drawLeads() },function(){fail('Заявки в группу',{})});
+}
+function drawLeads(){
+  var cnt={new:0,call:0,paid:0,no:0}; L.list.forEach(function(l){cnt[l.status]=(cnt[l.status]||0)+1});
+  var live=L.list.length-cnt.no;
+  var shown=L.filter==='all'?L.list:L.list.filter(function(l){return l.status===L.filter});
+  var h=top('Заявки в группу','<a class="btn gho sm" href="/group" target="_blank" rel="noopener">Открыть анкету</a>')+
+    '<div class="goal"><span class="faint">Живых заявок</span><div class="fun-track"><i style="width:'+Math.min(100,live*10)+'%"></i></div><b>'+live+' / 10</b></div>'+
+    '<p class="faint" style="margin:-6px 0 16px">Когда наберётся 10 — открывай оплату и даты потока. «Отказ» в счётчик не входит.</p>'+
+    '<div class="adm-tabs"><button type="button" data-f="all" class="'+(L.filter==='all'?'on':'')+'">Все <span class="n">'+L.list.length+'</span></button>'+
+      Object.keys(LST).map(function(k){return '<button type="button" data-f="'+k+'" class="'+(L.filter===k?'on':'')+'">'+LST[k][0]+(cnt[k]?' <span class="n">'+cnt[k]+'</span>':'')+'</button>'}).join('')+'</div>'+
+    (shown.length?'':'<div class="empty">'+(L.list.length?'В этой очереди пусто.':'Пока ни одной заявки. Ссылка для рилса: tap-page.ru/group?from=group_rNN')+'</div>')+
+    shown.map(function(l){
+      var meta=[(l.dev||[]).map(function(x){return DEVN[x]||x}).join(', '),CTRN[l.country]||'',l.src?'метка '+l.src:''].filter(Boolean).join(' · ');
+      var st=LST[l.status]||[l.status,''];
+      return '<article class="adm-row st-'+esc(l.status)+'" data-id="'+l.id+'"><div style="min-width:0"><h3>'+esc(l.name)+'</h3>'+
+        '<div class="faint">'+esc(l.contact)+(l.email&&l.email!==l.contact?' · '+esc(l.email):'')+' · '+esc(fmt(l.created_at))+'</div>'+
+        '<p class="q"><i>Чем занимается</i>'+esc(l.work||'')+'</p><p class="q"><i>Какие задачи отдать ИИ</i>'+esc(l.want||'')+'</p>'+
+        (meta?'<p class="faint" style="margin:8px 0 0">'+esc(meta)+'</p>':'')+
+        '<textarea data-note placeholder="Заметка: когда созвон, что обсудили">'+esc(l.note||'')+'</textarea>'+
+        '<div style="display:flex;gap:10px;align-items:center;margin-top:8px"><button class="btn gho sm" type="button" data-save>Сохранить заметку</button><span class="st"></span></div></div>'+
+        '<div class="side"><span class="pill '+st[1]+'">'+esc(st[0])+'</span><div class="adm-acts">'+
+          Object.keys(LST).filter(function(k){return k!==l.status}).map(function(k){return '<button class="btn gho sm" type="button" data-st="'+k+'">'+LST[k][0]+'</button>'}).join('')+'</div></div></article>';
+    }).join('');
+  app.innerHTML=h; bindRf();
+  [].forEach.call(app.querySelectorAll('[data-f]'),function(b){ b.onclick=function(){ L.filter=b.getAttribute('data-f'); drawLeads() } });
+  [].forEach.call(app.querySelectorAll('.adm-row'),function(el){
+    var id=Number(el.getAttribute('data-id')), st=el.querySelector('.st');
+    function save(data,done){ data.action='lead'; data.id=id; st.className='st'; st.textContent='Сохраняю…';
+      TP.call('POST','/api/admin',data).then(function(r){ if(r.ok){ st.className='st ok'; st.textContent='Сохранено'; done&&done() } else { st.className='st bad'; st.textContent='Ошибка' } },function(){ st.className='st bad'; st.textContent='Нет связи' }) }
+    el.querySelector('[data-save]').onclick=function(){ var v=el.querySelector('[data-note]').value; save({note:v},function(){ L.list.forEach(function(x){ if(x.id===id) x.note=v }) }) };
+    [].forEach.call(el.querySelectorAll('[data-st]'),function(b){ b.onclick=function(){ var s=b.getAttribute('data-st'); save({status:s},function(){ L.list.forEach(function(x){ if(x.id===id) x.status=s }); drawLeads() }) } });
+  });
+}
+
+/* ---------- Рассылки по листу ожидания ---------- */
+function mail(){
+  app.innerHTML=top('Рассылки')+'<p class="loading">Загружаем…</p>'; bindRf();
+  TP.call('GET','/api/admin').then(function(d){ if(!d.courses) return fail('Рассылки',d); drawMail(d) },function(){fail('Рассылки',{})});
+}
+function qt(t){return /«/.test(t)?t:'«'+t+'»'}
+function drawMail(d){
+  var h=top('Рассылки')+'<p class="faint" style="margin:-10px 0 6px">Письмо уходит всем из листа ожидания курса, кто ещё не получал его. Каждому — один раз, в письме есть ссылка «Отписаться».</p>'+
+    (d.mail?'':'<div class="warnbox">Отправка писем не настроена: добавь RESEND_API_KEY в Vercel и сделай Redeploy.</div>');
+  var LINK={nabor:'https://tap-page.ru/kit',group:'https://tap-page.ru/group'};
+  d.courses.forEach(function(c){
+    var sent=c.total-c.pending;
+    h+='<form class="adm" data-c="'+c.id+'"><div class="adm-h"><b>'+esc(c.title)+'</b><span>в листе: '+c.total+' · ждут письма: '+c.pending+' · получили: '+sent+'</span></div>'+
+      (c.total?'<details><summary>Адреса ('+c.total+')</summary><ul>'+c.emails.map(function(e){return '<li>'+esc(e.email)+(e.notified?' ✓':'')+'</li>'}).join('')+'</ul></details>':'')+
+      '<label>Тема письма</label><input name="subject" maxlength="150" value="'+esc(qt(c.title)+': старт')+'">'+
+      '<label>Текст</label><textarea name="text" maxlength="4000">'+esc('Привет!\n\nТы записался на '+qt(c.title)+' — рассказываю, когда старт и как попасть.\n\nМакс')+'</textarea>'+
+      '<div class="row2"><div><label>Текст кнопки</label><input name="cta" maxlength="40" value="Подробнее"></div><div><label>Ссылка кнопки</label><input name="link" maxlength="300" value="'+esc(LINK[c.id]||('https://tap-page.ru/#c-'+c.id))+'"></div></div>'+
+      '<div class="btns"><button class="btn gho sm" type="button" data-a="test">Тест себе</button><button class="btn pri sm" type="button" data-a="send"'+(c.pending&&d.mail?'':' disabled')+'>Разослать ('+c.pending+')</button><span class="st"></span></div></form>';
+  });
+  var NAMES={nabor:'Набор',montage:'Монтаж',assistant:'Помощник',group:'Группа'};
+  h+='<div class="adm"><div class="adm-h"><b>История</b></div>'+(d.history&&d.history.length?'<ul class="hist">'+d.history.map(function(x){
+    return '<li><span>'+esc(fmt(x.created_at))+'</span><b>'+esc(NAMES[x.course]||x.course)+'</b><span>'+esc(x.subject)+'</span><span>'+(x.test?'тест':'отправлено '+x.sent)+(x.failed?' · ошибок '+x.failed:'')+'</span></li>'}).join('')+'</ul>':'<p class="faint" style="margin:8px 0 0">Рассылок ещё не было.</p>')+'</div>';
+  app.innerHTML=h; bindRf();
+  [].forEach.call(app.querySelectorAll('form.adm'),function(f){
+    var st=f.querySelector('.st'); f.onsubmit=function(e){e.preventDefault()};
+    [].forEach.call(f.querySelectorAll('[data-a]'),function(b){ b.onclick=function(){
+      var test=b.getAttribute('data-a')==='test', c=f.getAttribute('data-c');
+      var data={action:'send',course:c,test:test,subject:f.subject.value,text:f.text.value,cta:f.cta.value,link:f.link.value};
+      if(!test){ var n=(b.textContent.match(/\d+/)||['0'])[0]; if(!confirm('Разослать письмо '+n+' адресам? Отменить будет нельзя.')) return }
+      st.className='st'; st.textContent=test?'Отправляем тест…':'Рассылаем…'; b.disabled=true;
+      TP.call('POST','/api/admin',data).then(function(r){
+        b.disabled=false;
+        if(r.ok&&test){ st.className='st ok'; st.textContent='Тест отправлен на '+r.to; return }
+        if(r.ok){ st.className='st ok'; st.textContent='Отправлено: '+r.sent+(r.failed?', ошибок: '+r.failed:''); setTimeout(mail,1500); return }
+        st.className='st bad'; st.textContent={none:'Некому отправлять: все из листа уже получили письмо',empty:'Заполни тему и текст',link:'Ссылка должна начинаться с https://',mail:'Не настроена отправка писем (RESEND_API_KEY)'}[r.error]||('Ошибка: '+(r.error||r._status));
+      },function(){b.disabled=false;st.className='st bad';st.textContent='Нет связи'});
+    }});
+  });
+}
+
+/* ---------- Поддержка ---------- */
+var S={filter:'all'};
+var REASON={mat:['мат','bad'],ad:['реклама','warn'],toxic:['оскорбление','bad']};
+function support(){
+  app.innerHTML=top('Поддержка')+'<p class="loading">Загружаем…</p>'; bindRf();
+  TP.call('GET','/api/admin?support=1').then(function(d){ if(!d.messages) return fail('Поддержка',d); S.data=d; drawSupport() },function(){fail('Поддержка',{})});
+}
+function drawSupport(){
+  var d=S.data, day=Date.now()-864e5, week=Date.now()-7*864e5;
+  var n1=d.messages.filter(function(m){return Date.parse(m.at)>day}).length, n7=d.messages.filter(function(m){return Date.parse(m.at)>week}).length;
+  var guests=d.messages.filter(function(m){return !m.who}).length;
+  var list=S.filter==='guest'?d.messages.filter(function(m){return !m.who}):S.filter==='user'?d.messages.filter(function(m){return m.who}):d.messages;
+  var h=top('Поддержка')+
+    '<div class="stats"><div class="tile"><span class="l">Вопросов за сутки</span><span class="v">'+n1+'</span></div><div class="tile"><span class="l">За 7 дней</span><span class="v">'+n7+'</span></div>'+
+    '<div class="tile"><span class="l">От гостей</span><span class="v">'+guests+'</span><span class="d">из последних '+d.messages.length+'</span></div><div class="tile"><span class="l">Заблокировано в чате</span><span class="v">'+d.blocked.length+'</span><span class="d">последние 100</span></div></div>'+
+    '<div class="grid2"><section class="card"><div class="lbl"><b>О чём спрашивают ИИ-поддержку</b></div>'+
+      '<div class="tabs" style="margin-bottom:12px">'+[['all','Все'],['user','Из профиля'],['guest','Гости']].map(function(t){return '<button type="button" data-sf="'+t[0]+'" class="'+(S.filter===t[0]?'on':'')+'">'+t[1]+'</button>'}).join('')+'</div>'+
+      (list.length?list.map(function(m){return '<article class="cmt"><div class="cmt-h"><span class="faint">'+esc(fmt(m.at))+' · '+(m.who?esc(m.who):'гость')+'</span>'+(m.blocked?'<span class="pill bad">заблокировано</span>':'')+'</div>'+
+        '<p class="cmt-t"><b>'+esc(m.question||'')+'</b></p>'+(m.answer?'<p class="cmt-r">'+esc(m.answer)+'</p>':'')+'</article>'}).join(''):'<div class="empty">Пока никто не писал.</div>')+
+    '</section><section class="card"><div class="lbl"><b>Заблокировано в общем чате</b></div>'+
+      (d.blocked.length?d.blocked.map(function(m){var r=REASON[m.reason]||[m.reason||'',''];return '<article class="cmt"><div class="cmt-h"><span class="faint">'+esc(fmt(m.at))+' · '+(m.who?esc(m.who):'без ника')+'</span><span class="pill '+r[1]+'">'+esc(r[0])+'</span></div><p class="cmt-t">'+esc(m.text||'')+'</p></article>'}).join(''):'<div class="empty">Ничего не блокировалось.</div>')+
+    '</section></div>';
+  app.innerHTML=h; bindRf();
+  [].forEach.call(app.querySelectorAll('[data-sf]'),function(b){ b.onclick=function(){ S.filter=b.getAttribute('data-sf'); drawSupport() } });
+}
+
+/* ---------- вход и проверка прав ---------- */
+function login(){
+  app.innerHTML='<div class="topbar"><h2>Админка</h2></div><div class="logincard"><p class="faint" style="margin:0 0 14px">Войди почтой администратора.</p><div id="lf"></div></div>';
+  TP.loginForm($('lf'),{onDone:start});
+}
+function start(){
+  if(!TP.user()) return login();
+  TP.call('GET','/api/account').then(function(d){
+    if(d._status===401){ TP.logout(); return login() }
+    if(!d.user){ app.innerHTML='<p class="err">Не получилось загрузить профиль. Обнови страницу.</p>'; return }
+    TPAdminBar.set(!!d.admin);
+    if(!d.admin){ app.innerHTML='<div class="topbar"><h2>Админка</h2></div><p class="err">Эта страница только для администратора. Ты вошёл как '+esc(d.user.email)+'.</p>'; return }
+    ADMIN=true; route();
+  },function(){ app.innerHTML='<p class="err">Нет связи. Обнови страницу.</p>' });
+}
+start();
+})();
+</script>
+</body>
+</html>
